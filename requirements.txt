@@ -7,3 +7,4 @@ google-generativeai>=0.8.0
 python-dotenv>=1.0.0
 Pillow>=10.0.0
 customtkinter>=6.0.0
+pythainlp>=5.0.0

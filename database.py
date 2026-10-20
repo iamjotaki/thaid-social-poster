@@ -62,6 +62,12 @@ def init_db():
         except sqlite3.OperationalError:
             pass  # คอลัมน์มีอยู่แล้ว
 
+        # เพิ่มคอลัมน์ card_image_path ในตาราง articles สำหรับเก็บ Social Card
+        try:
+            cursor.execute("ALTER TABLE articles ADD COLUMN card_image_path TEXT DEFAULT ''")
+        except sqlite3.OperationalError:
+            pass
+
         # 4. ตารางคิวตั้งเวลาโพสต์ (Scheduled Posts)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS scheduled_posts (
@@ -248,6 +254,17 @@ def mark_as_posted(url: str):
             SET status = 'posted'
             WHERE url = ?
         """, (url,))
+        conn.commit()
+
+def update_card_image(article_id: int, card_image_path: str):
+    """อัปเดตไฟล์ Social Card ของบทความ"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE articles
+            SET card_image_path = ?
+            WHERE id = ?
+        """, (card_image_path, article_id))
         conn.commit()
 
 def get_recent_articles(limit: int = 30, page_id: Optional[str] = None) -> List[Dict]:

@@ -38,11 +38,13 @@ from database import (
     get_due_scheduled_posts,
     update_scheduled_post_status,
     cancel_scheduled_post,
-    delete_scheduled_post
+    delete_scheduled_post,
+    update_card_image
 )
 from news_fetcher import fetch_all_new_articles, download_image
 from ai_rewriter import rewrite_article
 from fb_poster import post_to_facebook
+from card_generator import generate_social_card
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -75,6 +77,13 @@ def serve_image(filename):
     """ส่งรูปภาพที่บอทดาวน์โหลดไว้"""
     images_dir = config.BASE_DIR / "downloads" / "images"
     return send_from_directory(images_dir, filename)
+
+@app.route("/cards/<path:filename>")
+def serve_card(filename):
+    """ส่งรูปภาพ Social Card ที่สร้างไว้"""
+    cards_dir = config.BASE_DIR / "downloads" / "cards"
+    cards_dir.mkdir(parents=True, exist_ok=True)
+    return send_from_directory(cards_dir, filename)
 
 # -------------------------------------------------------------
 # API: STATUS & OVERVIEW
@@ -379,8 +388,13 @@ def api_create_schedule():
         return jsonify({"success": False, "error": "กรุณาระบุเพจ, แคปชัน และวันเวลาที่ต้องการโพสต์"}), 400
 
     # ดาวน์โหลดรูปลงเครื่องเก็บไว้ล่วงหน้า
+    card_image_path = data.get("card_image_path")
+    use_card = data.get("use_card", True)
+
     local_img = None
-    if image_url:
+    if use_card and card_image_path and os.path.exists(card_image_path):
+        local_img = card_image_path
+    elif image_url:
         local_img = download_image(image_url, filename_prefix=f"sched_{page_id}")
 
     post_id = create_scheduled_post(
@@ -477,6 +491,73 @@ def regenerate_single_news():
     else:
         return jsonify({"success": False, "error": "AI ไม่สามารถเขียนข่าวได้"}), 500
 
+@app.route("/api/articles/<int:article_id>/generate_card", methods=["POST"])
+def api_generate_card(article_id):
+    """สร้างหรือปรับแต่งภาพกราฟิกข่าวกีฬา Social Card สำหรับบทความ"""
+    data = request.json or {}
+    headline = str(data.get("headline", "")).strip()
+    category = str(data.get("category", "🔴 ข่าวลิเวอร์พูล")).strip()
+    theme = str(data.get("theme", "lfc")).strip()
+    subtitle = str(data.get("subtitle", "")).strip() or None
+
+    with get_connection() as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM articles WHERE id = ?", (article_id,))
+        row = cursor.fetchone()
+        if not row:
+            return jsonify({"success": False, "error": "ไม่พบบทความ"}), 404
+        article = dict(row)
+
+    if not headline:
+        rw_text = article.get("rewritten_text") or ""
+        first_line = rw_text.strip().split("\n")[0].replace("🔴", "").replace("⚡", "").replace("🔥", "").strip()
+        if len(first_line) > 10 and len(first_line) < 120:
+            headline = first_line
+        else:
+            headline = article.get("title", "ข่าวลิเวอร์พูลล่าสุด")
+
+    page_name = "หงส์นิวส์"
+    page_id = article.get("page_id")
+    if page_id:
+        pinfo = get_page_by_id(page_id)
+        if pinfo:
+            page_name = pinfo.get("name", "หงส์นิวส์")
+
+    # หาภาพต้นฉบับ
+    local_img = None
+    img_url = article.get("image_url")
+    if img_url:
+        local_img = download_image(img_url, filename_prefix=f"art_{article_id}")
+
+    try:
+        cards_dir = config.BASE_DIR / "downloads" / "cards"
+        cards_dir.mkdir(parents=True, exist_ok=True)
+        out_filename = f"card_{article_id}_{int(time.time())}.jpg"
+        out_path = str(cards_dir / out_filename)
+
+        card_path = generate_social_card(
+            image_path=local_img,
+            headline=headline,
+            category=category,
+            page_name=page_name,
+            subtitle=subtitle,
+            output_path=out_path,
+            theme=theme
+        )
+
+        update_card_image(article_id, card_path)
+
+        add_log(f"🎨 สร้าง Social Card สำเร็จ: {headline[:35]}...", "success")
+        return jsonify({
+            "success": True,
+            "card_image_path": card_path,
+            "card_url": f"/cards/{out_filename}?t={int(time.time())}"
+        })
+    except Exception as e:
+        add_log(f"❌ ไม่สามารถสร้าง Social Card ได้: {e}", "error")
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route("/api/news/post", methods=["POST"])
 def post_single_news():
     """สั่งโพสต์ข่าวนี้ขึ้น Facebook ทันที (ระบุ target page_id ได้)"""
@@ -485,6 +566,8 @@ def post_single_news():
     text = data.get("text")
     image_url = data.get("image_url")
     target_page_id = data.get("page_id")
+    card_image_path = data.get("card_image_path")
+    use_card = data.get("use_card", True)
 
     if not url or not text:
         return jsonify({"success": False, "error": "ข้อมูลไม่ครบถ้วน"}), 400
@@ -500,13 +583,16 @@ def post_single_news():
     add_log(f"🚀 กำลังส่งโพสต์ขึ้น Facebook เพจ '{target_name}': {url[:35]}...", "info")
 
     local_img = None
-    if image_url:
+    if use_card and card_image_path and os.path.exists(card_image_path):
+        local_img = card_image_path
+        add_log(f"🖼️ ใช้ภาพ Social Card คุณภาพสูงสำหรับโพสต์นี้", "info")
+    elif image_url:
         local_img = download_image(image_url, filename_prefix="web_post")
 
     res = post_to_facebook(
         message=text,
         image_path=local_img,
-        image_url=image_url,
+        image_url=image_url if not local_img else None,
         target_page_id=target_page_id,
         target_access_token=target_token
     )
@@ -578,13 +664,54 @@ def manual_fetch():
                 rewritten = rewrite_article(art)
                 if rewritten:
                     update_rewritten(url, rewritten)
+
+                    # สร้างภาพ Social Card อัตโนมัติ
+                    card_path = None
+                    try:
+                        p_name = "หงส์นิวส์"
+                        if art_page:
+                            p_info_card = get_page_by_id(art_page)
+                            if p_info_card:
+                                p_name = p_info_card.get("name", "หงส์นิวส์")
+
+                        first_line = rewritten.strip().split("\n")[0].replace("🔴", "").replace("⚡", "").replace("🔥", "").strip()
+                        card_hl = first_line if 10 < len(first_line) < 120 else title
+
+                        cards_dir = config.BASE_DIR / "downloads" / "cards"
+                        cards_dir.mkdir(parents=True, exist_ok=True)
+                        out_card = str(cards_dir / f"card_{int(time.time()*1000)}.jpg")
+
+                        card_path = generate_social_card(
+                            image_path=local_img,
+                            headline=card_hl,
+                            category="🔴 ข่าวลิเวอร์พูล",
+                            page_name=p_name,
+                            output_path=out_card,
+                            theme="lfc"
+                        )
+                        if card_path:
+                            with get_connection() as c_conn:
+                                c_conn.cursor().execute("UPDATE articles SET card_image_path = ? WHERE url = ?", (card_path, url))
+                                c_conn.commit()
+                            add_log(f"🎨 สร้าง Social Card ข่าว '{card_hl[:25]}...' สำเร็จ", "success")
+                    except Exception as e_c:
+                        print(f"Auto card generation error: {e_c}")
+
                     # โพสต์อัตโนมัติหากเปิดโหมด Live
                     if not config.DRY_RUN and art_page:
                         p_info = get_page_by_id(art_page)
                         if p_info:
-                            post_to_facebook(rewritten, local_img, img, target_page_id=art_page, target_access_token=p_info["access_token"])
-                            mark_as_posted(url)
-                            add_log(f"✅ โพสต์ขึ้นเพจ '{p_info['name']}' สำเร็จ: {title[:30]}...", "success")
+                            post_img = card_path if (card_path and os.path.exists(card_path)) else local_img
+                            res = post_to_facebook(
+                                message=rewritten,
+                                image_path=post_img,
+                                image_url=img if not post_img else None,
+                                target_page_id=art_page,
+                                target_access_token=p_info["access_token"]
+                            )
+                            if res.get("success"):
+                                mark_as_posted(url)
+                                add_log(f"✅ โพสต์ขึ้นเพจ '{p_info['name']}' สำเร็จ: {title[:30]}...", "success")
                     else:
                         add_log(f"✅ เขียนข่าวเสร็จแล้ว (รอให้คุณตรวจดูในหน้าเว็บ)", "success")
                 time.sleep(2)

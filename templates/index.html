@@ -392,6 +392,108 @@
     </main>
 
     <!-- ============================================================== -->
+    <!-- MODAL: SOCIAL CARD GENERATOR & CUSTOMIZER -->
+    <!-- ============================================================== -->
+    <div id="modal-card" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 hidden">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-4xl w-full p-5 sm:p-7 space-y-5 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+            <button onclick="closeModal('modal-card')" class="absolute top-5 right-5 text-zinc-400 hover:text-white z-10">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-2xl bg-lfc-red/20 text-lfc-red flex items-center justify-center text-xl shadow-lg shadow-lfc-red/20 shrink-0">
+                    <i class="fa-solid fa-paintbrush"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg sm:text-xl text-zinc-100 flex items-center gap-2">
+                        <span>สร้างภาพกราฟิกข่าวกีฬา (Social Card Studio)</span>
+                        <span class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-semibold">1080x1080 Pro</span>
+                    </h3>
+                    <p class="text-xs text-zinc-400">สร้างภาพพาดหัวสไตล์สื่อชั้นนำ (ขอบสนาม / Main Stand) พร้อมโลโก้เพจและกรอบสโมสร</p>
+                </div>
+            </div>
+
+            <!-- Content Grid: Preview on Left, Controls on Right -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left: Live Preview (5 cols) -->
+                <div class="md:col-span-5 space-y-3">
+                    <div class="relative bg-zinc-950 rounded-2xl border border-zinc-800 overflow-hidden shadow-2xl aspect-square flex items-center justify-center">
+                        <img id="card-preview-img" src="" alt="Social Card Preview" class="w-full h-full object-cover">
+                        <div id="card-loading-spinner" class="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center space-y-2 text-white hidden">
+                            <i class="fa-solid fa-circle-notch fa-spin text-3xl text-lfc-red"></i>
+                            <span class="text-xs font-medium">กำลังเรนเดอร์ภาพกราฟิก...</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-zinc-400 px-1">
+                        <span><i class="fa-solid fa-check text-emerald-400 mr-1"></i> ขนาด 1080x1080 (1:1)</span>
+                        <a id="card-download-link" href="#" download="social_card.jpg" target="_blank" class="text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1">
+                            <i class="fa-solid fa-download"></i> ดาวน์โหลดภาพ
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Customization Controls (7 cols) -->
+                <div class="md:col-span-7 space-y-4">
+                    <input type="hidden" id="card-article-id">
+                    
+                    <!-- Headline Input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1 flex items-center justify-between">
+                            <span>พาดหัวข่าวบนภาพ (Headline ภาษาไทย):</span>
+                            <span class="text-[10px] text-zinc-500">ฟอนต์ Kanit-Bold ตัดคำอัตโนมัติ</span>
+                        </label>
+                        <textarea id="card-input-headline" rows="2" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-lfc-red transition resize-none font-medium" placeholder="เช่น คล็อปป์ส่งสัญญาณ! หงส์แดงเตรียมปิดดีลแข้งใหม่ค่าตัวสถิติสโมสร"></textarea>
+                    </div>
+
+                    <!-- Category & Theme Selection -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1">หมวดหมู่ / ป้าย Tag บนภาพ:</label>
+                            <select id="card-input-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-lfc-red">
+                                <option value="🔴 ข่าวลิเวอร์พูล">🔴 ข่าวลิเวอร์พูล</option>
+                                <option value="⚡ BREAKING NEWS">⚡ BREAKING NEWS</option>
+                                <option value="🔥 ข่าวเด่นประเด็นร้อน">🔥 ข่าวเด่นประเด็นร้อน</option>
+                                <option value="💰 ตลาดซื้อขายนักเตะ">💰 ตลาดซื้อขายนักเตะ</option>
+                                <option value="📊 MATCH PREVIEW">📊 MATCH PREVIEW</option>
+                                <option value="💬 สัมภาษณ์พิเศษ">💬 สัมภาษณ์พิเศษ</option>
+                                <option value="⭐ ผลการแข่งขัน">⭐ ผลการแข่งขัน</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1">สไตล์สีของการ์ด (Theme):</label>
+                            <select id="card-input-theme" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-lfc-red">
+                                <option value="lfc">🔴 หงส์แดง (LFC Red & Gold)</option>
+                                <option value="breaking">⚡ ข่าวด่วนเดือด (Hot Red & Yellow)</option>
+                                <option value="tactics">💎 แท็กติก & สถิติ (Teal & Cyan)</option>
+                                <option value="gold">👑 พรีเมียมโกลด์ (Royal Gold)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Subtitle / Quote -->
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1">ข้อความย่อย / โควทเด่น (ไม่ใส่ก็ได้):</label>
+                        <input type="text" id="card-input-subtitle" placeholder="เช่น แหล่งข่าวเผยการเจรจาคืบหน้ากว่า 90% เตรียมตรวจร่างกาย" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-zinc-100 focus:outline-none focus:border-lfc-red">
+                    </div>
+
+                    <!-- Action Buttons inside Modal -->
+                    <div class="pt-3 flex items-center justify-end space-x-2 border-t border-zinc-800">
+                        <button type="button" onclick="regenerateCardFromModal()" id="btn-card-regen" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-zinc-700 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrows-rotate"></i> เรนเดอร์ภาพใหม่
+                        </button>
+                        <button type="button" onclick="applyCardToArticle()" class="bg-lfc-red hover:bg-lfc-darkred text-white text-xs font-bold px-5 py-2.5 rounded-xl transition shadow-lg shadow-lfc-red/20 flex items-center gap-1.5">
+                            <i class="fa-solid fa-check"></i> บันทึกและใช้ภาพนี้
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
     <!-- MODAL: SCHEDULE POST (ตั้งเวลาโพสต์) -->
     <!-- ============================================================== -->
     <div id="modal-schedule" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -1154,6 +1256,8 @@
                         caption: caption,
                         article_url: url,
                         image_url: img,
+                        card_image_path: art.card_image_path || '',
+                        use_card: !!art.card_image_path,
                         title: art.title || ''
                     })
                 });
@@ -1221,9 +1325,29 @@
                         ? `<span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><i class="fa-solid fa-check"></i> โพสต์แล้ว</span>`
                         : `<span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><i class="fa-regular fa-clock"></i> รอดำเนินการ</span>`;
 
-                    const imgTag = art.image_url 
-                        ? `<img src="${art.image_url}" alt="Cover" class="w-full sm:w-48 h-36 object-cover rounded-xl border border-zinc-800 shrink-0" onerror="this.style.display='none'">`
-                        : '';
+                    const hasCard = !!art.card_image_path;
+                    const cardFilename = hasCard ? art.card_image_path.split(/[\\/]/).pop() : '';
+                    const cardUrl = hasCard ? `/cards/${cardFilename}?t=${Date.now()}` : '';
+                    const displayImg = cardUrl || art.image_url;
+
+                    const imgTag = displayImg 
+                        ? `
+                        <div class="relative group shrink-0 w-full sm:w-52">
+                            <img src="${displayImg}" alt="Cover" class="w-full sm:w-52 h-44 object-cover rounded-2xl border border-zinc-800 shadow-lg transition" onerror="this.style.display='none'">
+                            ${hasCard ? `<span class="absolute top-2 left-2 bg-lfc-red/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1"><i class="fa-solid fa-paintbrush"></i> Social Card</span>` : ''}
+                            <button onclick="openCardModal(${idx})" class="absolute bottom-2 right-2 bg-black/85 hover:bg-lfc-red text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-xl backdrop-blur border border-white/20 transition flex items-center gap-1.5 shadow-lg" title="ปรับแต่งภาพกราฟิกข่าวกีฬา">
+                                <i class="fa-solid fa-wand-magic-sparkles text-lfc-gold"></i> ปรับแต่งการ์ด
+                            </button>
+                        </div>
+                        `
+                        : `
+                        <div class="shrink-0 w-full sm:w-52 h-40 bg-zinc-950 border border-dashed border-zinc-800 rounded-2xl flex flex-col items-center justify-center p-3 text-center">
+                            <i class="fa-solid fa-image text-zinc-700 text-2xl mb-1"></i>
+                            <button onclick="openCardModal(${idx})" class="text-[11px] text-lfc-red hover:underline font-semibold">
+                                + สร้าง Social Card
+                            </button>
+                        </div>
+                        `;
 
                     return `
                         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 hover:border-zinc-700 transition">
@@ -1255,7 +1379,10 @@
 
                                     <!-- ACTION BUTTONS -->
                                     <div class="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-zinc-800/80">
-                                        <div class="flex items-center space-x-2">
+                                        <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                                            <button onclick="openCardModal(${idx})" class="text-xs bg-lfc-red/20 hover:bg-lfc-red/30 text-rose-300 border border-lfc-red/30 font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1.5" title="สร้างหรือปรับแต่งภาพ Social Card สไตล์สื่อกีฬา">
+                                                <i class="fa-solid fa-paintbrush text-lfc-gold"></i> <span>Social Card</span>
+                                            </button>
                                             <button onclick="regenerateCaption(${idx}, '${art.url}')" class="text-xs bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
                                                 <i class="fa-solid fa-wand-magic-sparkles text-lfc-gold"></i> AI เขียนใหม่
                                             </button>
@@ -1385,6 +1512,7 @@
 
         async function publishPost(idx, url, imageUrl) {
             const text = document.getElementById(`caption-${idx}`).value;
+            const art = currentArticles[idx] || {};
             showToast("กำลังส่งโพสต์ขึ้น Facebook...");
 
             try {
@@ -1395,7 +1523,9 @@
                         url: url,
                         text: text,
                         image_url: imageUrl,
-                        page_id: currentActivePageId
+                        page_id: currentActivePageId || art.page_id,
+                        card_image_path: art.card_image_path || '',
+                        use_card: !!art.card_image_path
                     })
                 });
                 const data = await res.json();
@@ -1410,6 +1540,99 @@
             } catch (e) {
                 showToast("เกิดข้อผิดพลาดในการเชื่อมต่อ", false);
             }
+        }
+
+        // ==========================================
+        // SOCIAL CARD STUDIO MODAL LOGIC
+        // ==========================================
+        let currentCardArticleIdx = null;
+
+        function openCardModal(idx) {
+            currentCardArticleIdx = idx;
+            const art = currentArticles[idx];
+            if (!art) return;
+
+            document.getElementById('card-article-id').value = art.id;
+
+            // พาดหัวเริ่มต้น
+            let defaultHeadline = art.title;
+            if (art.rewritten_text) {
+                const firstLine = art.rewritten_text.split('\n')[0].replace(/[🔴⚡🔥]/g, '').trim();
+                if (firstLine.length > 10 && firstLine.length < 120) {
+                    defaultHeadline = firstLine;
+                }
+            }
+            document.getElementById('card-input-headline').value = defaultHeadline;
+            document.getElementById('card-input-subtitle').value = '';
+
+            // Image Preview & Download link
+            const previewImg = document.getElementById('card-preview-img');
+            const dlLink = document.getElementById('card-download-link');
+
+            if (art.card_image_path) {
+                const cFilename = art.card_image_path.split(/[\\/]/).pop();
+                const cUrl = `/cards/${cFilename}?t=${Date.now()}`;
+                previewImg.src = cUrl;
+                dlLink.href = cUrl;
+            } else if (art.image_url) {
+                previewImg.src = art.image_url;
+                dlLink.href = art.image_url;
+            } else {
+                previewImg.src = '';
+                dlLink.href = '#';
+            }
+
+            openModal('modal-card');
+
+            // หากยังไม่เคยสร้างการ์ด ให้เริ่มเรนเดอร์อัตโนมัติทันที
+            if (!art.card_image_path) {
+                regenerateCardFromModal();
+            }
+        }
+
+        async function regenerateCardFromModal() {
+            if (currentCardArticleIdx === null) return;
+            const art = currentArticles[currentCardArticleIdx];
+            if (!art) return;
+
+            const spinner = document.getElementById('card-loading-spinner');
+            spinner.classList.remove('hidden');
+
+            const payload = {
+                headline: document.getElementById('card-input-headline').value,
+                category: document.getElementById('card-input-category').value,
+                theme: document.getElementById('card-input-theme').value,
+                subtitle: document.getElementById('card-input-subtitle').value
+            };
+
+            try {
+                const res = await fetch(`/api/articles/${art.id}/generate_card`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    art.card_image_path = data.card_image_path;
+                    const previewImg = document.getElementById('card-preview-img');
+                    const dlLink = document.getElementById('card-download-link');
+                    previewImg.src = data.card_url;
+                    dlLink.href = data.card_url;
+                    showToast("🎨 เรนเดอร์ Social Card เรียบร้อยแล้ว!");
+                } else {
+                    showToast(`❌ สร้างการ์ดไม่สำเร็จ: ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการเชื่อมต่อ", false);
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function applyCardToArticle() {
+            closeModal('modal-card');
+            showToast("🎨 บันทึกและพร้อมใช้ Social Card นี้แล้ว!");
+            loadNews();
         }
 
         // ==========================================
