@@ -43,7 +43,7 @@ from database import (
 )
 from news_fetcher import fetch_all_new_articles, download_image
 from ai_rewriter import rewrite_article
-from fb_poster import post_to_facebook
+from fb_poster import post_to_facebook, post_reel_to_facebook
 from card_generator import generate_social_card
 from match_center import (
     get_liverpool_schedule,
@@ -782,6 +782,55 @@ def api_generate_video(article_id):
     except Exception as e:
         add_log(f"❌ สร้างวิดีโอสั้นล้มเหลว: {e}", "error")
         return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/articles/<int:article_id>/post_reel", methods=["POST"])
+def api_post_reel(article_id):
+    """โพสต์วิดีโอสั้นที่สร้างขึ้นไปยัง Facebook Reels"""
+    data = request.json or {}
+    filename = data.get("filename")
+    caption = str(data.get("caption", "")).strip()
+
+    if not filename:
+        return jsonify({"success": False, "error": "ไม่พบชื่อไฟล์วิดีโอ"}), 400
+
+    videos_dir = config.BASE_DIR / "downloads" / "videos"
+    video_path = str(videos_dir / filename)
+    if not os.path.exists(video_path):
+        return jsonify({"success": False, "error": "ไม่พบไฟล์วิดีโอนี้ในโฟลเดอร์"}), 404
+
+    with get_connection() as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM articles WHERE id = ?", (article_id,))
+        row = cursor.fetchone()
+        article = dict(row) if row else {}
+
+    target_page_id = data.get("page_id") or article.get("page_id")
+    target_token = None
+    if target_page_id:
+        p_info = get_page_by_id(target_page_id)
+        if p_info:
+            target_token = p_info.get("access_token")
+
+    if not caption:
+        caption = article.get("rewritten_text") or article.get("title") or "ข่าวด่วนลิเวอร์พูลล่าสุด #LFC #Liverpool #Reels"
+
+    add_log(f"🚀 กำลังส่งคลิปขึ้น Facebook Reels ({filename})...", "info")
+    res = post_reel_to_facebook(
+        video_path=video_path,
+        description=caption,
+        target_page_id=target_page_id,
+        target_access_token=target_token
+    )
+
+    if res.get("success"):
+        mode = " [DRY RUN]" if res.get("mode") == "dry_run" else ""
+        add_log(f"🎉 โพสต์ Facebook Reel สำเร็จเรียบร้อย!{mode} (Video ID: {res.get('video_id', 'N/A')})", "success")
+        return jsonify({"success": True, "result": res})
+    else:
+        err = res.get("error", "ไม่สามารถโพสต์ได้")
+        add_log(f"❌ โพสต์ Facebook Reel ล้มเหลว: {err}", "error")
+        return jsonify({"success": False, "error": err}), 500
 
 # -------------------------------------------------------------
 # API: COMMUNITY MANAGER & COMMENTS

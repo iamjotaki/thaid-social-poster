@@ -842,6 +842,11 @@
                             <i class="fa-solid fa-download"></i> ดาวน์โหลดวิดีโอ MP4
                         </a>
                     </div>
+
+                    <!-- ปุ่มโพสต์ขึ้น Facebook Reels ทันที -->
+                    <button id="video-post-reels-btn" type="button" onclick="postReelFromModal()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 hidden">
+                        <i class="fa-brands fa-facebook text-base"></i> <span>🚀 โพสต์คลิปนี้ลง Facebook Reels ทันที</span>
+                    </button>
                 </div>
 
                 <!-- Right: Text & Narration Inputs (7 cols) -->
@@ -1221,9 +1226,11 @@
         // SHORT VIDEO STUDIO (TIKTOK / REELS / SHORTS)
         // ==========================================
         let currentVideoArticleIdx = null;
+        let currentVideoFilename = null;
 
         function openVideoModal(idx) {
             currentVideoArticleIdx = idx;
+            currentVideoFilename = null;
             const art = currentArticles[idx];
             if (!art) return;
 
@@ -1245,10 +1252,12 @@
             const player = document.getElementById('video-preview-player');
             const placeholder = document.getElementById('video-placeholder');
             const dlBtn = document.getElementById('video-download-btn');
+            const reelsBtn = document.getElementById('video-post-reels-btn');
             player.classList.add('hidden');
             player.src = "";
             placeholder.classList.remove('hidden');
             dlBtn.classList.add('hidden');
+            if (reelsBtn) reelsBtn.classList.add('hidden');
 
             openModal('modal-video');
         }
@@ -1279,9 +1288,11 @@
                 });
                 const data = await res.json();
                 if (data.success) {
+                    currentVideoFilename = data.filename;
                     const player = document.getElementById('video-preview-player');
                     const placeholder = document.getElementById('video-placeholder');
                     const dlBtn = document.getElementById('video-download-btn');
+                    const reelsBtn = document.getElementById('video-post-reels-btn');
 
                     placeholder.classList.add('hidden');
                     player.src = data.video_url;
@@ -1293,6 +1304,8 @@
                     dlBtn.download = data.filename;
                     dlBtn.classList.remove('hidden');
 
+                    if (reelsBtn) reelsBtn.classList.remove('hidden');
+
                     showToast("🎉 เรนเดอร์คลิปวิดีโอสั้นพร้อมเสียงพากย์สำเร็จแล้ว!");
                 } else {
                     showToast(`❌ สร้างวิดีโอไม่สำเร็จ: ${data.error}`, false);
@@ -1302,6 +1315,49 @@
             } finally {
                 spinner.classList.add('hidden');
                 btn.disabled = false;
+            }
+        }
+
+        async function postReelFromModal() {
+            if (currentVideoArticleIdx === null || !currentVideoFilename) {
+                showToast("กรุณาเรนเดอร์วิดีโอก่อนทำการโพสต์ Reels", false);
+                return;
+            }
+            const art = currentArticles[currentVideoArticleIdx];
+            if (!art) return;
+
+            const caption = document.getElementById('video-input-speech').value || art.rewritten_text || art.title;
+            const reelsBtn = document.getElementById('video-post-reels-btn');
+
+            if (!confirm(`ยืนยันการโพสต์คลิปนี้ลง Facebook Reels หรือไม่?`)) return;
+
+            reelsBtn.disabled = true;
+            reelsBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> กำลังอัปโหลดขึ้น Facebook Reels...`;
+            showToast("🚀 กำลังส่งคลิปขึ้น Facebook Reels...");
+
+            try {
+                const res = await fetch(`/api/articles/${art.id}/post_reel`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        filename: currentVideoFilename,
+                        caption: caption,
+                        page_id: currentSelectedPageId
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast("🎉 โพสต์ลง Facebook Reels เรียบร้อยแล้ว!");
+                    reelsBtn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> โพสต์สำเร็จแล้ว!`;
+                } else {
+                    showToast(`❌ โพสต์ Reel ไม่สำเร็จ: ${data.error}`, false);
+                    reelsBtn.disabled = false;
+                    reelsBtn.innerHTML = `<i class="fa-brands fa-facebook"></i> 🚀 โพสต์คลิปนี้ลง Facebook Reels ทันที`;
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการเชื่อมต่อระบบโพสต์ Reel", false);
+                reelsBtn.disabled = false;
+                reelsBtn.innerHTML = `<i class="fa-brands fa-facebook"></i> 🚀 โพสต์คลิปนี้ลง Facebook Reels ทันที`;
             }
         }
 

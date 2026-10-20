@@ -82,6 +82,94 @@ def post_to_facebook(
         print(f"❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Facebook API: {e}")
         return {"success": False, "error": str(e)}
 
+def post_reel_to_facebook(
+    video_path: str,
+    description: str,
+    target_page_id: Optional[str] = None,
+    target_access_token: Optional[str] = None
+) -> Dict:
+    """
+    โพสต์คลิปวิดีโอแนวตั้งสั้น (Reels) ขึ้น Facebook Page ผ่าน Graph API 3-step Resumable Upload
+    Step 1: Init upload session (upload_phase=start)
+    Step 2: Upload binary video to rupload.facebook.com
+    Step 3: Publish Reel (upload_phase=finish)
+    """
+    config.reload_config()
+
+    page_id = target_page_id or config.FB_PAGE_ID
+    access_token = target_access_token or config.FB_PAGE_ACCESS_TOKEN
+
+    if not video_path or not os.path.exists(video_path):
+        return {"success": False, "error": f"ไม่พบไฟล์วิดีโอที่: {video_path}"}
+
+    # โหมดจำลองการโพสต์ (Dry Run) หรือไม่มีคีย์
+    if config.DRY_RUN or not page_id or not access_token:
+        print(f"📢 [DRY RUN] โหมดทดสอบสำหรับเพจ {page_id}: จำลองการโพสต์ Reel ({video_path})")
+        save_to_html_preview(f"🎬 [REELS] {description}", None)
+        return {
+            "success": True,
+            "mode": "dry_run",
+            "message": "จำลองการโพสต์ Facebook Reel เรียบร้อยแล้ว (DRY RUN)"
+        }
+
+    url_base = f"https://graph.facebook.com/v19.0/{page_id}/video_reels"
+
+    try:
+        # Step 1: Start upload session
+        init_resp = requests.post(
+            url_base,
+            data={
+                "upload_phase": "start",
+                "access_token": access_token
+            },
+            timeout=30
+        )
+        init_data = init_resp.json()
+        if init_resp.status_code != 200:
+            err_msg = init_data.get("error", {}).get("message", "ไม่สามารถเริ่มเซสชันอัปโหลด Reel ได้")
+            return {"success": False, "error": err_msg}
+
+        video_id = init_data.get("video_id")
+        upload_url = init_data.get("upload_url")
+        if not video_id or not upload_url:
+            return {"success": False, "error": "ไม่ได้รับ video_id หรือ upload_url จาก Facebook"}
+
+        # Step 2: Upload binary video
+        file_size = os.path.getsize(video_path)
+        with open(video_path, "rb") as vf:
+            video_bytes = vf.read()
+
+        upload_headers = {
+            "Authorization": f"OAuth {access_token}",
+            "offset": "0",
+            "file_size": str(file_size)
+        }
+        up_resp = requests.post(upload_url, headers=upload_headers, data=video_bytes, timeout=120)
+        if up_resp.status_code != 200:
+            return {"success": False, "error": f"อัปโหลดไฟล์วิดีโอไม่สำเร็จ (HTTP {up_resp.status_code}): {up_resp.text[:150]}"}
+
+        # Step 3: Publish Reel
+        finish_data = {
+            "upload_phase": "finish",
+            "video_id": video_id,
+            "video_state": "PUBLISHED",
+            "description": description,
+            "access_token": access_token
+        }
+        finish_resp = requests.post(url_base, data=finish_data, timeout=30)
+        fin_res = finish_resp.json()
+
+        if finish_resp.status_code == 200 and fin_res.get("success"):
+            print(f"🎉 โพสต์ Facebook Reel สำเร็จเรียบร้อย! (Video ID: {video_id})")
+            return {"success": True, "video_id": video_id}
+        else:
+            err_msg = fin_res.get("error", {}).get("message", "ไม่สามารถเผยแพร่ Reel ได้")
+            return {"success": False, "error": err_msg}
+
+    except Exception as e:
+        print(f"❌ เกิดข้อผิดพลาดในการโพสต์ Reel: {e}")
+        return {"success": False, "error": str(e)}
+
 def save_to_html_preview(message: str, image_source: Optional[str] = None):
     """สร้างหน้า HTML พรีวิวเลียนแบบหน้าจอโพสต์ Facebook ให้อ่านง่ายและสวยงาม"""
     PREVIEW_HTML_PATH.parent.mkdir(parents=True, exist_ok=True)
