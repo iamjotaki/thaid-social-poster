@@ -77,12 +77,11 @@ def generate_voiceover_google_ai_studio(text: str, output_path: str = None, voic
     # 1. พยายามเรียกใช้ Google AI Studio Gemini TTS
     if api_key:
         tts_models = ["gemini-3.8-flash-tts", "gemini-2.5-flash-preview-tts", "gemini-3.1-flash-tts-preview"]
-        prompt = f"กรุณาอ่านออกเสียงข่าวนี้ด้วยน้ำเสียงผู้ประกาศข่าวกีฬาที่ชัดเจน กระฉับกระเฉง น่าติดตาม เป็นธรรมชาติ:\n{clean_speech}"
         
         for model in tts_models:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
             payload = {
-                "contents": [{"parts": [{"text": prompt}]}],
+                "contents": [{"parts": [{"text": clean_speech}]}],
                 "generationConfig": {
                     "responseModalities": ["AUDIO"],
                     "speechConfig": {
