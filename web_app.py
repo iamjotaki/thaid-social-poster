@@ -52,6 +52,18 @@ from match_center import (
     generate_ai_player_ratings,
     generate_ai_postmatch_report
 )
+from video_generator import generate_short_video
+from community_manager import (
+    generate_engagement_post,
+    draft_ai_comment_reply,
+    fetch_facebook_post_comments,
+    reply_to_facebook_comment
+)
+from affiliate_manager import (
+    load_affiliate_products,
+    save_affiliate_products,
+    attach_affiliate_if_enabled
+)
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -91,6 +103,13 @@ def serve_card(filename):
     cards_dir = config.BASE_DIR / "downloads" / "cards"
     cards_dir.mkdir(parents=True, exist_ok=True)
     return send_from_directory(cards_dir, filename)
+
+@app.route("/videos/<path:filename>")
+def serve_video(filename):
+    """ส่งไฟล์วิดีโอสั้น MP4 สำหรับ TikTok / Reels / Shorts"""
+    videos_dir = config.BASE_DIR / "downloads" / "videos"
+    videos_dir.mkdir(parents=True, exist_ok=True)
+    return send_from_directory(videos_dir, filename)
 
 # -------------------------------------------------------------
 # API: STATUS & OVERVIEW
@@ -398,6 +417,12 @@ def api_create_schedule():
     card_image_path = data.get("card_image_path")
     use_card = data.get("use_card", True)
 
+    # แนบลิงก์ Affiliate ท้ายโพสต์อัตโนมัติหากเปิดตัวเลือกไว้
+    enable_affiliate = data.get("enable_affiliate", False)
+    aff_prod_id = data.get("affiliate_product_id")
+    if enable_affiliate:
+        caption = attach_affiliate_if_enabled(caption, True, aff_prod_id)
+
     local_img = None
     if use_card and card_image_path and os.path.exists(card_image_path):
         local_img = card_image_path
@@ -680,6 +705,12 @@ def post_single_news():
     elif image_url:
         local_img = download_image(image_url, filename_prefix="web_post")
 
+    # แนบลิงก์ Affiliate ท้ายโพสต์อัตโนมัติหากเปิดตัวเลือกไว้
+    enable_affiliate = data.get("enable_affiliate", False)
+    aff_prod_id = data.get("affiliate_product_id")
+    if enable_affiliate:
+        text = attach_affiliate_if_enabled(text, True, aff_prod_id)
+
     res = post_to_facebook(
         message=text,
         image_path=local_img,
@@ -687,6 +718,152 @@ def post_single_news():
         target_page_id=target_page_id,
         target_access_token=target_token
     )
+
+# -------------------------------------------------------------
+# API: SHORT VIDEO GENERATOR (TIKTOK / REELS / SHORTS)
+# -------------------------------------------------------------
+@app.route("/api/articles/<int:article_id>/generate_video", methods=["POST"])
+def api_generate_video(article_id):
+    """สร้างคลิปวิดีโอสั้น 9:16 สำหรับ TikTok, Reels และ Shorts พร้อมเสียงพากย์ Google TTS"""
+    data = request.json or {}
+    headline = str(data.get("headline", "")).strip()
+    speech_text = str(data.get("speech_text", "")).strip()
+
+    with get_connection() as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM articles WHERE id = ?", (article_id,))
+        row = cursor.fetchone()
+        if not row:
+            return jsonify({"success": False, "error": "ไม่พบบทความ"}), 404
+        article = dict(row)
+
+    if not headline:
+        headline = article.get("title", "ข่าวด่วนลิเวอร์พูล")
+
+    if not speech_text:
+        speech_text = article.get("rewritten_text") or article.get("summary") or headline
+
+    page_name = "หงส์นิวส์"
+    page_id = article.get("page_id")
+    if page_id:
+        p_info = get_page_by_id(page_id)
+        if p_info:
+            page_name = p_info.get("name", "หงส์นิวส์")
+
+    # หาภาพที่คมชัดที่สุด (ใช้ Social Card ถ้ามี หรือภาพต้นฉบับ)
+    img_path = None
+    if article.get("card_image_path") and os.path.exists(article["card_image_path"]):
+        img_path = article["card_image_path"]
+    elif article.get("image_url"):
+        img_path = download_image(article["image_url"], filename_prefix=f"vid_art_{article_id}")
+
+    try:
+        add_log(f"🎬 กำลังประมวลผลสร้างวิดีโอสั้น (Google TTS): {headline[:30]}...", "info")
+        out_filename = f"short_{article_id}_{int(time.time())}.mp4"
+        out_path = str(config.BASE_DIR / "downloads" / "videos" / out_filename)
+
+        vid_path = generate_short_video(
+            image_path=img_path,
+            headline=headline,
+            speech_text=speech_text,
+            page_name=page_name,
+            output_path=out_path
+        )
+
+        add_log(f"🎉 สร้างคลิปวิดีโอสั้นสำเร็จ: {out_filename}", "success")
+        return jsonify({
+            "success": True,
+            "video_url": f"/videos/{out_filename}?t={int(time.time())}",
+            "filename": out_filename
+        })
+    except Exception as e:
+        add_log(f"❌ สร้างวิดีโอสั้นล้มเหลว: {e}", "error")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# -------------------------------------------------------------
+# API: COMMUNITY MANAGER & COMMENTS
+# -------------------------------------------------------------
+@app.route("/api/community/generate_engagement", methods=["POST"])
+def api_community_engagement():
+    """สร้างโพสต์ชวนคุย โพลล์ หรือทายผลบอล"""
+    data = request.json or {}
+    p_type = data.get("type", "poll")
+    topic = data.get("topic")
+
+    add_log(f"💬 กำลังให้ AI คิดโพสต์ Engagement ({p_type})...", "info")
+    content = generate_engagement_post(post_type=p_type, custom_topic=topic)
+    if content:
+        return jsonify({"success": True, "content": content})
+    return jsonify({"success": False, "error": "AI ไม่สามารถสร้างโพสต์ได้"}), 500
+
+@app.route("/api/community/comments", methods=["GET"])
+def api_community_get_comments():
+    """ดึงคอมเมนต์จาก Facebook โพสต์"""
+    page_id = request.args.get("page_id")
+    post_id = request.args.get("post_id")
+
+    if not page_id or not post_id:
+        return jsonify({"success": False, "error": "กรุณาระบุ page_id และ post_id"}), 400
+
+    p_info = get_page_by_id(page_id)
+    if not p_info:
+        return jsonify({"success": False, "error": "ไม่พบเพจ"}), 404
+
+    comments = fetch_facebook_post_comments(post_id, p_info["access_token"])
+    return jsonify({"success": True, "comments": comments})
+
+@app.route("/api/community/draft_reply", methods=["POST"])
+def api_community_draft_reply():
+    """ให้ AI ช่วยร่างคำตอบคอมเมนต์"""
+    data = request.json or {}
+    comment = data.get("comment", "")
+    caption = data.get("caption", "")
+
+    if not comment:
+        return jsonify({"success": False, "error": "ไม่มีข้อความคอมเมนต์"}), 400
+
+    reply = draft_ai_comment_reply(comment, caption)
+    return jsonify({"success": True, "reply": reply})
+
+@app.route("/api/community/send_reply", methods=["POST"])
+def api_community_send_reply():
+    """ส่งข้อความตอบกลับไปยัง Facebook"""
+    data = request.json or {}
+    comment_id = data.get("comment_id")
+    reply_text = data.get("reply_text")
+    page_id = data.get("page_id")
+
+    if not comment_id or not reply_text or not page_id:
+        return jsonify({"success": False, "error": "ข้อมูลไม่ครบถ้วน"}), 400
+
+    p_info = get_page_by_id(page_id)
+    if not p_info:
+        return jsonify({"success": False, "error": "ไม่พบเพจ"}), 404
+
+    res = reply_to_facebook_comment(comment_id, reply_text, p_info["access_token"])
+    if res.get("success"):
+        add_log(f"💬 ตอบกลับคอมเมนต์บนเพจ '{p_info['name']}' เรียบร้อยแล้ว!", "success")
+        return jsonify({"success": True, "result": res})
+    return jsonify({"success": False, "error": res.get("error")}), 500
+
+# -------------------------------------------------------------
+# API: AFFILIATE MANAGER
+# -------------------------------------------------------------
+@app.route("/api/affiliate/products", methods=["GET"])
+def api_affiliate_get_products():
+    """ดึงรายการสินค้า Affiliate"""
+    return jsonify(load_affiliate_products())
+
+@app.route("/api/affiliate/save", methods=["POST"])
+def api_affiliate_save_products():
+    """บันทึกรายการสินค้า Affiliate"""
+    products = request.json or []
+    success = save_affiliate_products(products)
+    if success:
+        add_log("🛒 บันทึกรายการสินค้าและลิงก์ Affiliate สำเร็จแล้ว!", "success")
+        return jsonify({"success": True})
+    return jsonify({"success": False, "error": "ไม่สามารถบันทึกได้"}), 500
 
     if res.get("success"):
         mark_as_posted(url)

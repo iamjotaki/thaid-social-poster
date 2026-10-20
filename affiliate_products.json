@@ -1,0 +1,30 @@
+[
+  {
+    "id": "lfc_jersey",
+    "name": "เสื้อแข่งลิเวอร์พูลของแท้ 2024/25 (เหย้า/เยือน)",
+    "url": "https://shope.ee/liverpool-official-jersey",
+    "desc": "ของแท้ 100% สกรีนชื่อเบอร์นักเตะได้ พร้อมโค้ดส่งฟรี",
+    "is_active": true
+  },
+  {
+    "id": "lfc_boots",
+    "name": "รองเท้าสตั๊ด / รองเท้าฟุตบอลรุ่นล่าสุด",
+    "url": "https://shope.ee/football-boots-pro",
+    "desc": "ลดราคาสูงสุด 40% ใส่สบาย ยึดเกาะสนามเยี่ยม",
+    "is_active": true
+  },
+  {
+    "id": "lfc_scarf",
+    "name": "ผ้าพันคอ & หมวกสโมสรลิเวอร์พูลของแท้",
+    "url": "https://shope.ee/lfc-scarf-collection",
+    "desc": "สินค้านำเข้าจากสโมสร ลิขสิทธิ์แท้สำหรับแฟนพันธุ์แท้",
+    "is_active": true
+  },
+  {
+    "id": "lfc_tumbler",
+    "name": "แก้วน้ำ & กระบอกน้ำเก็บความเย็นลายสโมสร",
+    "url": "https://shope.ee/lfc-tumbler-cold",
+    "desc": "เก็บความเย็นได้นาน 24 ชม. ลายลิขสิทธิ์ทางการ",
+    "is_active": true
+  }
+]
