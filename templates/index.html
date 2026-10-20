@@ -814,8 +814,9 @@
                     <h3 class="font-bold text-lg sm:text-xl text-zinc-100 flex items-center gap-2">
                         <span>วิดีโอสั้นแนวตั้ง (TikTok, Reels & Shorts Studio)</span>
                         <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded-full font-semibold">9:16 Vertical HD</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-semibold">✨ Google AI Studio TTS</span>
                     </h3>
-                    <p class="text-xs text-zinc-400">สร้างคลิปวิดีโอสั้นพร้อมเสียงพากย์ภาษาไทยจาก Google Text-to-Speech อัตโนมัติ</p>
+                    <p class="text-xs text-zinc-400">สร้างคลิปวิดีโอสั้นพร้อมเสียงพากย์ภาษาไทยจาก Google AI Studio Gemini เสียงสมจริง คมชัด</p>
                 </div>
             </div>
 
@@ -847,15 +848,30 @@
                 <div class="md:col-span-7 space-y-4">
                     <input type="hidden" id="video-article-id">
 
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-300 mb-1">พาดหัวบนคลิป (Headline ตัวใหญ่):</label>
-                        <input type="text" id="video-input-headline" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-pink-500 font-semibold">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1">พาดหัวบนคลิป (Headline ตัวใหญ่):</label>
+                            <input type="text" id="video-input-headline" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-pink-500 font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1 flex items-center justify-between">
+                                <span>เลือกเสียงพากย์ (Google AI Voice):</span>
+                                <span class="text-[10px] text-emerald-400 font-medium">Gemini TTS</span>
+                            </label>
+                            <select id="video-input-voice" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-pink-500 font-semibold cursor-pointer">
+                                <option value="Charon" selected>🎙️ Charon (ชาย - สุขุม หนักแน่น เหมาะกับข่าวกีฬา)</option>
+                                <option value="Puck">🎙️ Puck (ชาย - สดใส ตื่นเต้น กระฉับกระเฉง)</option>
+                                <option value="Fenrir">🎙️ Fenrir (ชาย - ดุดัน ทรงพลัง เข้มข้น)</option>
+                                <option value="Aoede">🎙️ Aoede (หญิง - นุ่มนวล ชัดเจน ไพเราะ)</option>
+                                <option value="Kore">🎙️ Kore (หญิง - มั่นใจ ทันสมัย เป็นธรรมชาติ)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-zinc-300 mb-1 flex items-center justify-between">
-                            <span>ข้อความสำหรับเสียงพากย์ (Google Text-to-Speech):</span>
-                            <span class="text-[10px] text-emerald-400 font-medium">Google TTS ภาษาไทย</span>
+                            <span>ข้อความสำหรับเสียงพากย์ (Google AI Studio TTS):</span>
+                            <span class="text-[10px] text-emerald-400 font-medium"><i class="fa-solid fa-sparkles mr-1"></i>Gemini Neural Audio</span>
                         </label>
                         <textarea id="video-input-speech" rows="7" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 text-xs text-zinc-200 focus:outline-none focus:border-pink-500 resize-y leading-relaxed" placeholder="ข้อความที่ AI จะอ่านออกเสียงในคลิป..."></textarea>
                     </div>
@@ -1249,10 +1265,11 @@
 
             const payload = {
                 headline: document.getElementById('video-input-headline').value,
-                speech_text: document.getElementById('video-input-speech').value
+                speech_text: document.getElementById('video-input-speech').value,
+                voice: document.getElementById('video-input-voice')?.value || 'Charon'
             };
 
-            showToast("🎬 กำลังสร้างเสียง Google TTS และเรนเดอร์วิดีโอ 9:16...");
+            showToast("🎬 กำลังสร้างเสียงพากย์ Google AI Studio & เรนเดอร์วิดีโอ 9:16...");
 
             try {
                 const res = await fetch(`/api/articles/${art.id}/generate_video`, {

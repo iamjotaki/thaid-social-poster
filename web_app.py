@@ -724,10 +724,11 @@ def post_single_news():
 # -------------------------------------------------------------
 @app.route("/api/articles/<int:article_id>/generate_video", methods=["POST"])
 def api_generate_video(article_id):
-    """สร้างคลิปวิดีโอสั้น 9:16 สำหรับ TikTok, Reels และ Shorts พร้อมเสียงพากย์ Google TTS"""
+    """สร้างคลิปวิดีโอสั้น 9:16 สำหรับ TikTok, Reels และ Shorts พร้อมเสียงพากย์ Google AI Studio Gemini TTS"""
     data = request.json or {}
     headline = str(data.get("headline", "")).strip()
     speech_text = str(data.get("speech_text", "")).strip()
+    voice = str(data.get("voice", "Charon")).strip()
 
     with get_connection() as conn:
         conn.row_factory = sqlite3.Row
@@ -759,7 +760,7 @@ def api_generate_video(article_id):
         img_path = download_image(article["image_url"], filename_prefix=f"vid_art_{article_id}")
 
     try:
-        add_log(f"🎬 กำลังประมวลผลสร้างวิดีโอสั้น (Google TTS): {headline[:30]}...", "info")
+        add_log(f"🎬 กำลังสร้างวิดีโอสั้นด้วยเสียงพากย์ Google AI Studio ({voice}): {headline[:30]}...", "info")
         out_filename = f"short_{article_id}_{int(time.time())}.mp4"
         out_path = str(config.BASE_DIR / "downloads" / "videos" / out_filename)
 
@@ -768,7 +769,8 @@ def api_generate_video(article_id):
             headline=headline,
             speech_text=speech_text,
             page_name=page_name,
-            output_path=out_path
+            output_path=out_path,
+            voice_name=voice
         )
 
         add_log(f"🎉 สร้างคลิปวิดีโอสั้นสำเร็จ: {out_filename}", "success")

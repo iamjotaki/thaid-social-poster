@@ -8,8 +8,14 @@ import os
 import sys
 import re
 import time
+import base64
+import wave
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 if sys.platform.startswith("win"):
     try:
@@ -54,18 +60,81 @@ def clean_text_for_speech(text: str) -> str:
     cleaned = re.sub(r'\s+', ' ', cleaned).strip()
     return cleaned
 
-def generate_voiceover_google(text: str, output_path: str = None) -> str:
-    """สร้างไฟล์เสียงพากย์ภาษาไทยด้วย Google TTS Engine"""
+def generate_voiceover_google_ai_studio(text: str, output_path: str = None, voice_name: str = "Charon") -> tuple[str, str]:
+    """
+    สร้างไฟล์เสียงพากย์ภาษาไทยด้วย Google AI Studio Gemini TTS API
+    (เช่น โมเดล gemini-2.5-flash-preview-tts / gemini-3.8-flash-tts)
+    พร้อมถอดรหัสคลื่นเสียง PCM 24kHz บันทึกเป็น WAV
+    หากโควต้าเต็มหรือไม่มีคีย์ จะสลับไปใช้ gTTS สำรองให้อัตโนมัติ
+    :return: (file_path, engine_used)
+    """
     clean_speech = clean_text_for_speech(text)
     if not clean_speech:
         clean_speech = "ข่าวด่วนล่าสุดจากสโมสรลิเวอร์พูล"
 
+    api_key = os.getenv("GEMINI_API_KEY")
+
+    # 1. พยายามเรียกใช้ Google AI Studio Gemini TTS
+    if api_key:
+        tts_models = ["gemini-3.8-flash-tts", "gemini-2.5-flash-preview-tts", "gemini-3.1-flash-tts-preview"]
+        prompt = f"กรุณาอ่านออกเสียงข่าวนี้ด้วยน้ำเสียงผู้ประกาศข่าวกีฬาที่ชัดเจน กระฉับกระเฉง น่าติดตาม เป็นธรรมชาติ:\n{clean_speech}"
+        
+        for model in tts_models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "responseModalities": ["AUDIO"],
+                    "speechConfig": {
+                        "voiceConfig": {
+                            "prebuiltVoiceConfig": {
+                                "voiceName": voice_name
+                            }
+                        }
+                    }
+                }
+            }
+            try:
+                resp = requests.post(url, json=payload, timeout=25)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+                    for p in parts:
+                        if "inlineData" in p:
+                            raw_pcm = base64.b64decode(p["inlineData"].get("data", ""))
+                            if not output_path:
+                                output_path = str(AUDIO_DIR / f"voice_ai_{int(time.time()*1000)}.wav")
+                            elif output_path.endswith(".mp3"):
+                                output_path = output_path[:-4] + ".wav"
+                            
+                            with wave.open(output_path, "wb") as wf:
+                                wf.setnchannels(1)
+                                wf.setsampwidth(2)
+                                wf.setframerate(24000)
+                                wf.writeframes(raw_pcm)
+                            
+                            print(f"[Google AI Studio TTS] สร้างเสียงพากย์ด้วยโมเดล {model} สำเร็จ (เสียง: {voice_name}) -> {output_path}")
+                            return output_path, "google_ai_studio"
+                else:
+                    print(f"[Google AI Studio TTS] โมเดล {model} ตอบกลับ {resp.status_code}: {resp.text[:120]}")
+            except Exception as ex:
+                print(f"[Google AI Studio TTS] เกิดข้อผิดพลาดกับโมเดล {model}: {ex}")
+
+    # 2. สำรอง: สลับไปใช้ gTTS ถ้า AI Studio ไม่ตอบสนอง
+    print("[TTS Fallback] กำลังสลับไปใช้ gTTS สำรอง...")
     if not output_path:
-        output_path = str(AUDIO_DIR / f"voice_{int(time.time()*1000)}.mp3")
+        output_path = str(AUDIO_DIR / f"voice_gtts_{int(time.time()*1000)}.mp3")
+    elif output_path.endswith(".wav"):
+        output_path = output_path[:-4] + ".mp3"
 
     tts = gTTS(text=clean_speech, lang="th", slow=False)
     tts.save(output_path)
-    return output_path
+    return output_path, "gtts"
+
+def generate_voiceover_google(text: str, output_path: str = None) -> str:
+    """ฟังก์ชันเดิมสำหรับเรียกสร้างเสียงพากย์ คืนค่าที่อยู่ไฟล์เสียง"""
+    path, _ = generate_voiceover_google_ai_studio(text, output_path=output_path)
+    return path
 
 def get_font(path, size):
     """โหลดฟอนต์"""
@@ -227,14 +296,15 @@ def generate_short_video(
     headline: str,
     speech_text: str,
     page_name: str = "หงส์นิวส์",
-    output_path: str = None
+    output_path: str = None,
+    voice_name: str = "Charon"
 ) -> str:
     """
-    สร้างไฟล์วิดีโอแนวตั้ง 9:16 (MP4) พร้อมเสียงพากย์ภาษาไทยจาก Google TTS
+    สร้างไฟล์วิดีโอแนวตั้ง 9:16 (MP4) พร้อมเสียงพากย์ภาษาไทยจาก Google AI Studio Gemini TTS
     :return: ที่อยู่ไฟล์ MP4 ที่สร้างสำเร็จ
     """
-    # 1. สร้างเสียงพากย์ Google TTS
-    voice_file = generate_voiceover_google(speech_text)
+    # 1. สร้างเสียงพากย์ Google AI Studio Gemini TTS (หรือ gTTS สำรอง)
+    voice_file, engine = generate_voiceover_google_ai_studio(speech_text, voice_name=voice_name)
 
     # 2. วัดความยาวของเสียง
     audio_clip = AudioFileClip(voice_file)
