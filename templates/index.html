@@ -36,6 +36,8 @@
         ::-webkit-scrollbar-track { background: #18181b; }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col">
@@ -86,41 +88,46 @@
     </header>
 
     <!-- NAVIGATION TABS -->
-    <div class="bg-zinc-900 border-b border-zinc-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-4 overflow-x-auto py-2">
-            <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 bg-lfc-red text-white transition shrink-0">
-                <i class="fa-solid fa-newspaper"></i> <span>รายการข่าว & โพสต์</span>
+    <nav class="bg-zinc-900 border-b border-zinc-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between sm:justify-start gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-2">
+            <!-- กลุ่มคอนเทนต์ -->
+            <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-lfc-red text-white transition shrink-0" title="รายการข่าว & โพสต์">
+                <i class="fa-solid fa-newspaper"></i> <span>ข่าวสาร</span>
             </button>
-            <button onclick="switchTab('tab-match')" id="nav-tab-match" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
-                <i class="fa-solid fa-futbol text-emerald-400"></i> <span>Match Center (พรีวิว & ตัดเกรด)</span>
-                <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded-full font-bold">PRO</span>
+            <button onclick="switchTab('tab-match')" id="nav-tab-match" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0" title="Match Center (พรีวิว & ตัดเกรด)">
+                <i class="fa-solid fa-futbol text-emerald-400"></i> <span>Match Center</span>
             </button>
-            <button onclick="switchTab('tab-community')" id="nav-tab-community" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
-                <i class="fa-solid fa-comments text-violet-400"></i> <span>Community & ตอบคอมเมนต์</span>
+            <button onclick="switchTab('tab-community')" id="nav-tab-community" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0" title="Community & ตอบคอมเมนต์">
+                <i class="fa-solid fa-comments text-violet-400"></i> <span>Community</span>
             </button>
-            <button onclick="switchTab('tab-affiliate')" id="nav-tab-affiliate" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
-                <i class="fa-solid fa-bag-shopping text-amber-400"></i> <span>Affiliate สร้างรายได้</span>
+            <button onclick="switchTab('tab-affiliate')" id="nav-tab-affiliate" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0" title="Affiliate สร้างรายได้">
+                <i class="fa-solid fa-bag-shopping text-amber-400"></i> <span>Affiliate</span>
             </button>
-            <button onclick="switchTab('tab-schedule')" id="nav-tab-schedule" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
-                <i class="fa-solid fa-calendar-days text-amber-400"></i> <span>คิวตั้งเวลาโพสต์</span>
-                <span id="badge-sched-count" class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded-full">0</span>
+
+            <!-- เส้นคั่นบางๆ แบ่งหมวด -->
+            <div class="h-4 w-px bg-zinc-800 hidden md:block mx-1"></div>
+
+            <!-- กลุ่มเครื่องมือจัดการ -->
+            <button onclick="switchTab('tab-schedule')" id="nav-tab-schedule" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0" title="คิวตั้งเวลาโพสต์">
+                <i class="fa-solid fa-calendar-days text-amber-400"></i> <span>ตั้งเวลา</span>
+                <span id="badge-sched-count" class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded-full font-bold">0</span>
             </button>
-            <button onclick="switchTab('tab-analytics')" id="nav-tab-analytics" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
-                <i class="fa-solid fa-chart-line text-cyan-400"></i> <span>สถิติเพจ & ข้อมูลเชิงลึก</span>
+            <button onclick="switchTab('tab-analytics')" id="nav-tab-analytics" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0" title="สถิติเพจ & ข้อมูลเชิงลึก">
+                <i class="fa-solid fa-chart-line text-cyan-400"></i> <span>สถิติเพจ</span>
             </button>
-            <button onclick="switchTab('tab-feeds')" id="nav-tab-feeds" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
-                <i class="fa-solid fa-rss text-purple-400"></i> <span>จัดการ RSS Feeds</span>
-                <span id="badge-feed-count" class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.2 rounded-full">0</span>
+            <button onclick="switchTab('tab-feeds')" id="nav-tab-feeds" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0" title="จัดการ RSS Feeds">
+                <i class="fa-solid fa-rss text-purple-400"></i> <span>RSS Feeds</span>
+                <span id="badge-feed-count" class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.2 rounded-full font-bold">0</span>
             </button>
-            <button onclick="switchTab('tab-pages')" id="nav-tab-pages" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
-                <i class="fa-brands fa-facebook text-blue-400"></i> <span>จัดการเพจ Facebook</span>
-                <span id="badge-page-count" class="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-1.5 py-0.2 rounded-full">0</span>
+            <button onclick="switchTab('tab-pages')" id="nav-tab-pages" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0" title="จัดการเพจ Facebook">
+                <i class="fa-brands fa-facebook text-blue-400"></i> <span>จัดการเพจ</span>
+                <span id="badge-page-count" class="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-1.5 py-0.2 rounded-full font-bold">0</span>
             </button>
-            <button onclick="switchTab('tab-logs')" id="nav-tab-logs" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
-                <i class="fa-solid fa-terminal text-emerald-400"></i> <span>Live Logs</span>
+            <button onclick="switchTab('tab-logs')" id="nav-tab-logs" class="nav-tab px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0" title="Live Logs">
+                <i class="fa-solid fa-terminal text-emerald-400"></i> <span>Logs</span>
             </button>
         </div>
-    </div>
+    </nav>
 
     <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
