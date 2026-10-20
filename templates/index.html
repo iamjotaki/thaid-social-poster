@@ -1319,12 +1319,29 @@
         }
 
         async function postReelFromModal() {
-            if (currentVideoArticleIdx === null || !currentVideoFilename) {
-                showToast("กรุณาเรนเดอร์วิดีโอก่อนทำการโพสต์ Reels", false);
+            if (currentVideoArticleIdx === null) {
+                showToast("กรุณาเลือกข่าวและเรนเดอร์วิดีโอก่อน", false);
                 return;
             }
             const art = currentArticles[currentVideoArticleIdx];
             if (!art) return;
+
+            // ค้นหาชื่อไฟล์วิดีโอจากตัวแปร หรือจาก Player URL สำรอง
+            if (!currentVideoFilename) {
+                const player = document.getElementById('video-preview-player');
+                if (player && player.src) {
+                    try {
+                        const urlObj = new URL(player.src, window.location.origin);
+                        const parts = urlObj.pathname.split('/');
+                        currentVideoFilename = parts[parts.length - 1];
+                    } catch (e) {}
+                }
+            }
+
+            if (!currentVideoFilename) {
+                showToast("กรุณากด 'เรนเดอร์วิดีโอสั้นทันที' ให้เสร็จก่อนโพสต์ Reels", false);
+                return;
+            }
 
             const caption = document.getElementById('video-input-speech').value || art.rewritten_text || art.title;
             const reelsBtn = document.getElementById('video-post-reels-btn');
@@ -1336,26 +1353,33 @@
             showToast("🚀 กำลังส่งคลิปขึ้น Facebook Reels...");
 
             try {
+                // ดึงเพจที่กำลังเลือกอยู่
+                const activePageId = (typeof currentActivePageId !== 'undefined' && currentActivePageId)
+                    ? currentActivePageId
+                    : (document.getElementById('active-page-select')?.value || art.page_id || null);
+
                 const res = await fetch(`/api/articles/${art.id}/post_reel`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         filename: currentVideoFilename,
                         caption: caption,
-                        page_id: currentSelectedPageId
+                        page_id: activePageId
                     })
                 });
                 const data = await res.json();
                 if (data.success) {
                     showToast("🎉 โพสต์ลง Facebook Reels เรียบร้อยแล้ว!");
-                    reelsBtn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> โพสต์สำเร็จแล้ว!`;
+                    reelsBtn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> โพสต์ Reels สำเร็จแล้ว!`;
                 } else {
-                    showToast(`❌ โพสต์ Reel ไม่สำเร็จ: ${data.error}`, false);
+                    const errMsg = data.error || "ไม่ทราบสาเหตุ";
+                    showToast(`❌ โพสต์ Reel ไม่สำเร็จ: ${errMsg}`, false);
                     reelsBtn.disabled = false;
                     reelsBtn.innerHTML = `<i class="fa-brands fa-facebook"></i> 🚀 โพสต์คลิปนี้ลง Facebook Reels ทันที`;
                 }
             } catch (e) {
-                showToast("เกิดข้อผิดพลาดในการเชื่อมต่อระบบโพสต์ Reel", false);
+                console.error("Error posting reel:", e);
+                showToast(`เกิดข้อผิดพลาด: ${e.message || e}`, false);
                 reelsBtn.disabled = false;
                 reelsBtn.innerHTML = `<i class="fa-brands fa-facebook"></i> 🚀 โพสต์คลิปนี้ลง Facebook Reels ทันที`;
             }

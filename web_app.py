@@ -787,8 +787,10 @@ def api_generate_video(article_id):
 def api_post_reel(article_id):
     """โพสต์วิดีโอสั้นที่สร้างขึ้นไปยัง Facebook Reels"""
     data = request.json or {}
-    filename = data.get("filename")
-    caption = str(data.get("caption", "")).strip()
+    filename = str(data.get("filename", "")).strip()
+    if "?" in filename:
+        filename = filename.split("?")[0]
+    filename = os.path.basename(filename)
 
     if not filename:
         return jsonify({"success": False, "error": "ไม่พบชื่อไฟล์วิดีโอ"}), 400
@@ -796,7 +798,7 @@ def api_post_reel(article_id):
     videos_dir = config.BASE_DIR / "downloads" / "videos"
     video_path = str(videos_dir / filename)
     if not os.path.exists(video_path):
-        return jsonify({"success": False, "error": "ไม่พบไฟล์วิดีโอนี้ในโฟลเดอร์"}), 404
+        return jsonify({"success": False, "error": f"ไม่พบไฟล์วิดีโอ {filename} ในโฟลเดอร์"}), 404
 
     with get_connection() as conn:
         conn.row_factory = sqlite3.Row
