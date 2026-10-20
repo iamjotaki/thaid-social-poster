@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔴 LFC Auto News - Multi-Page & Scheduler Manager</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        lfc: {
+                            red: '#C8102E',
+                            darkred: '#9B0014',
+                            gold: '#F6EB61',
+                            teal: '#00B2A9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #18181b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col">
+
+    <!-- TOP NAVBAR -->
+    <header class="bg-zinc-900/95 backdrop-blur border-b border-zinc-800 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-lfc-red flex items-center justify-center font-black text-white text-xl shadow-lg shadow-lfc-red/30 shrink-0">
+                    LFC
+                </div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg leading-tight flex items-center gap-2">
+                        <span>Auto-Poster Pro</span>
+                        <span class="text-[10px] bg-lfc-red/20 text-lfc-red border border-lfc-red/30 px-2 py-0.5 rounded-full font-semibold">Multi-Page & Schedule</span>
+                    </h1>
+                    <p class="text-[11px] text-zinc-400 hidden sm:block">ระบบจัดการหลายเพจ · เพิ่ม RSS อิสระ · ตั้งเวลาโพสต์อัตโนมัติ</p>
+                </div>
+            </div>
+
+            <!-- Page Selector & Controls -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Page Selector Dropdown -->
+                <div class="flex items-center bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5">
+                    <i class="fa-brands fa-facebook text-blue-500 mr-2 text-sm"></i>
+                    <select id="active-page-select" onchange="onPageChange()" class="bg-transparent text-xs font-semibold text-zinc-200 focus:outline-none cursor-pointer pr-2">
+                        <option value="">ทุกเพจ (All Pages)</option>
+                    </select>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <button onclick="triggerFetch()" id="btn-fetch" class="bg-lfc-red hover:bg-lfc-darkred text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition shadow-lg shadow-lfc-red/20">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span class="hidden md:inline">ดึงข่าวทันที</span>
+                </button>
+
+                <button onclick="toggleAutoBot()" id="btn-auto" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-clock"></i>
+                    <span id="auto-btn-text" class="hidden md:inline">เริ่ม Auto-Bot</span>
+                </button>
+
+                <button onclick="openSettingsModal()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm px-3 py-2 rounded-xl transition border border-zinc-700" title="ตั้งค่าระบบ">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <div class="bg-zinc-900 border-b border-zinc-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-4 overflow-x-auto py-2">
+            <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 bg-lfc-red text-white transition shrink-0">
+                <i class="fa-solid fa-newspaper"></i> <span>รายการข่าว & โพสต์</span>
+            </button>
+            <button onclick="switchTab('tab-schedule')" id="nav-tab-schedule" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
+                <i class="fa-solid fa-calendar-days text-amber-400"></i> <span>คิวตั้งเวลาโพสต์</span>
+                <span id="badge-sched-count" class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded-full">0</span>
+            </button>
+            <button onclick="switchTab('tab-analytics')" id="nav-tab-analytics" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
+                <i class="fa-solid fa-chart-line text-cyan-400"></i> <span>สถิติเพจ & ข้อมูลเชิงลึก</span>
+            </button>
+            <button onclick="switchTab('tab-feeds')" id="nav-tab-feeds" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
+                <i class="fa-solid fa-rss text-purple-400"></i> <span>จัดการ RSS Feeds</span>
+                <span id="badge-feed-count" class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.2 rounded-full">0</span>
+            </button>
+            <button onclick="switchTab('tab-pages')" id="nav-tab-pages" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
+                <i class="fa-brands fa-facebook text-blue-400"></i> <span>จัดการเพจ Facebook</span>
+                <span id="badge-page-count" class="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-1.5 py-0.2 rounded-full">0</span>
+            </button>
+            <button onclick="switchTab('tab-logs')" id="nav-tab-logs" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
+                <i class="fa-solid fa-terminal text-emerald-400"></i> <span>Live Logs</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+        <!-- STATS BAR -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-lfc-red/10 text-lfc-red flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-newspaper"></i>
+                </div>
+                <div>
+                    <div id="stat-total" class="text-xl font-bold text-white">0</div>
+                    <div class="text-[11px] text-zinc-400">ข่าวทั้งหมด</div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <div id="stat-posted" class="text-xl font-bold text-emerald-400">0</div>
+                    <div class="text-[11px] text-zinc-400">โพสต์สำเร็จแล้ว</div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <div>
+                    <div id="stat-scheduled" class="text-xl font-bold text-amber-400">0</div>
+                    <div class="text-[11px] text-zinc-400">ตั้งเวลาโพสต์ไว้</div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-rss"></i>
+                </div>
+                <div>
+                    <div id="stat-sources" class="text-xl font-bold text-purple-400">0</div>
+                    <div class="text-[11px] text-zinc-400">RSS Feeds</div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3 col-span-2 md:col-span-1">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-brands fa-facebook"></i>
+                </div>
+                <div>
+                    <div id="stat-pages" class="text-xl font-bold text-blue-400">0</div>
+                    <div class="text-[11px] text-zinc-400">เพจในระบบ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 1: รายการข่าว & โพสต์ (NEWS FEED) -->
+        <!-- ============================================================== -->
+        <section id="tab-news" class="tab-content space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-fire text-lfc-red"></i>
+                    <span>รายการข่าวล่าสุด & เตรียมโพสต์</span>
+                    <span id="current-page-label" class="text-xs bg-zinc-800 text-zinc-300 px-2.5 py-0.5 rounded-lg border border-zinc-700 font-normal">ทุกเพจ</span>
+                </h2>
+                <div class="flex items-center space-x-2">
+                    <button onclick="loadNews()" class="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
+                        <i class="fa-solid fa-arrows-rotate"></i> รีเฟรชข่าว
+                    </button>
+                </div>
+            </div>
+
+            <!-- CARDS CONTAINER -->
+            <div id="news-container" class="space-y-4">
+                <div class="text-center py-12 text-zinc-500">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>กำลังโหลดรายการข่าว...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB: สถิติเพจ & ข้อมูลเชิงลึก (PAGE ANALYTICS & INSIGHTS) -->
+        <!-- ============================================================== -->
+        <section id="tab-analytics" class="tab-content hidden space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-cyan-400"></i>
+                        <span>สถิติการเข้าชม & การมีส่วนร่วมของเพจ (Page Analytics)</span>
+                    </h2>
+                    <p class="text-xs text-zinc-400">ติดตามยอดผู้ติดตาม, ไลค์, คอมเมนต์, แชร์ และสถิติของโพสต์ล่าสุดแบบเรียลไทม์</p>
+                </div>
+                <button onclick="loadAnalytics()" class="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
+                    <i class="fa-solid fa-arrows-rotate"></i> อัปเดตสถิติ
+                </button>
+            </div>
+
+            <!-- ANALYTICS CARDS (OVERVIEW) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-1">
+                    <div class="text-xs text-zinc-400 flex items-center justify-between">
+                        <span>ผู้ติดตามเพจ (Followers)</span>
+                        <i class="fa-solid fa-user-plus text-blue-400"></i>
+                    </div>
+                    <div id="ana-followers" class="text-2xl font-black text-white">0</div>
+                    <div class="text-[10px] text-zinc-500">คนติดตามเพจปัจจุบัน</div>
+                </div>
+
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-1">
+                    <div class="text-xs text-zinc-400 flex items-center justify-between">
+                        <span>คนกดถูกใจเพจ (Fans)</span>
+                        <i class="fa-solid fa-thumbs-up text-emerald-400"></i>
+                    </div>
+                    <div id="ana-fans" class="text-2xl font-black text-emerald-400">0</div>
+                    <div class="text-[10px] text-zinc-500">ยอด Page Likes</div>
+                </div>
+
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-1">
+                    <div class="text-xs text-zinc-400 flex items-center justify-between">
+                        <span>รีแอคชันรวม (Reactions)</span>
+                        <i class="fa-solid fa-heart text-rose-500"></i>
+                    </div>
+                    <div id="ana-reactions" class="text-2xl font-black text-rose-400">0</div>
+                    <div class="text-[10px] text-zinc-500">จากโพสต์ล่าสุดทั้งหมด</div>
+                </div>
+
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-1">
+                    <div class="text-xs text-zinc-400 flex items-center justify-between">
+                        <span>แชร์ & คอมเมนต์ (Engagement)</span>
+                        <i class="fa-solid fa-share-nodes text-purple-400"></i>
+                    </div>
+                    <div id="ana-engagement" class="text-2xl font-black text-purple-400">0</div>
+                    <div class="text-[10px] text-zinc-500">ยอดการมีส่วนร่วมกับโพสต์</div>
+                </div>
+            </div>
+
+            <!-- NOTICE BOX ON INSIGHTS SCOPES -->
+            <div id="insights-notice-box" class="bg-blue-950/30 border border-blue-500/30 rounded-2xl p-4 flex items-start space-x-3">
+                <i class="fa-solid fa-circle-info text-blue-400 text-lg mt-0.5 shrink-0"></i>
+                <div class="text-xs space-y-1 text-zinc-300">
+                    <div class="font-bold text-blue-300 flex items-center gap-1.5">
+                        <span>ต้องการดูยอดวิว (Views/Reach) และยอดคลิก (Post Clicks) อย่างละเอียด?</span>
+                    </div>
+                    <p class="text-zinc-400 leading-relaxed">
+                        Facebook บังคับให้เพิ่มสิทธิ์ <code class="bg-zinc-800 text-amber-300 px-1 py-0.5 rounded font-mono">read_insights</code> ให้กับ Token ของคุณ 
+                        (สามารถเข้าไปที่ <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-blue-400 underline">Meta Graph API Explorer</a> แล้วติ๊กเพิ่มสิทธิ์ <strong>read_insights</strong> จากนั้นกด Generate Token แล้วนำมาอัปเดตที่เพจของคุณในแท็บ 'จัดการเพจ' ได้ทันทีครับ)
+                    </p>
+                </div>
+            </div>
+
+            <!-- POSTS PERFORMANCE LIST -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm text-zinc-100 flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-cyan-400"></i>
+                        <span>ประสิทธิภาพของโพสต์ล่าสุดบนเพจ (Post Performance)</span>
+                    </h3>
+                    <span id="ana-post-count" class="text-xs text-zinc-400">0 โพสต์</span>
+                </div>
+
+                <div id="ana-posts-table" class="space-y-3">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 2: คิวตั้งเวลาโพสต์ (SCHEDULED POSTS QUEUE) -->
+        <!-- ============================================================== -->
+        <section id="tab-schedule" class="tab-content hidden space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-days text-amber-400"></i>
+                        <span>คิวตั้งเวลาโพสต์อัตโนมัติ (Scheduled Queue)</span>
+                    </h2>
+                    <p class="text-xs text-zinc-400">ระบบทำงานเบื้องหลังตลอดเวลา เมื่อถึงเวลาจะโพสต์ขึ้น Facebook ให้อัตโนมัติ</p>
+                </div>
+                <button onclick="loadSchedules()" class="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
+                    <i class="fa-solid fa-arrows-rotate"></i> รีเฟรชคิว
+                </button>
+            </div>
+
+            <div id="schedules-container" class="space-y-3">
+                <!-- Scheduled cards populated by JS -->
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 3: จัดการ RSS FEEDS ประจำเพจ (FEEDS MANAGER) -->
+        <!-- ============================================================== -->
+        <section id="tab-feeds" class="tab-content hidden space-y-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-rss text-purple-400"></i>
+                            <span>จัดการแหล่งข่าว RSS ประจำเพจ</span>
+                        </h2>
+                        <p class="text-xs text-zinc-400">สามารถเพิ่ม RSS Feed อิสระสำหรับแต่ละเพจ (เช่น ข่าวหงส์แดง, ข่าวทีมอื่น, หรือข่าวกีฬาทั่วไป)</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-xs text-zinc-400">เลือกเพจที่จะจัดการฟีด:</label>
+                        <select id="feed-target-page" onchange="loadPageFeeds()" class="bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-1.5 text-xs text-zinc-200">
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ADD FEED FORM -->
+                <form onsubmit="event.preventDefault(); addFeed();" class="grid grid-cols-1 md:grid-cols-12 gap-3 pt-3 border-t border-zinc-800">
+                    <div class="md:col-span-4">
+                        <input type="text" id="new-feed-name" placeholder="ชื่อแหล่งข่าว (เช่น DaveOCKOP, BBC Sport)" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div class="md:col-span-6">
+                        <input type="url" id="new-feed-url" placeholder="RSS Feed URL (เช่น https://www.daveockop.com/feed/)" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-lg shadow-purple-600/20">
+                            <i class="fa-solid fa-plus"></i> เพิ่ม Feed
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- FEEDS LIST -->
+            <div id="feeds-list" class="space-y-2">
+                <!-- Feeds populated by JS -->
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB: สถิติเพจ & ข้อมูลเชิงลึก (PAGE ANALYTICS & INSIGHTS) -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <section id="tab-pages" class="tab-content hidden space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
+                        <i class="fa-brands fa-facebook text-blue-500"></i>
+                        <span>จัดการเพจ Facebook ทั้งหมด (Multi-Page Manager)</span>
+                    </h2>
+                    <p class="text-xs text-zinc-400">คุณสามารถเชื่อมต่อได้หลายเพจ โดยแต่ละเพจมี Page ID, Token และแหล่งข่าวเป็นของตัวเอง</p>
+                </div>
+                <button onclick="openAddPageModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-blue-600/20">
+                    <i class="fa-solid fa-plus"></i> เพิ่มเพจใหม่
+                </button>
+            </div>
+
+            <div id="pages-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Pages populated by JS -->
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB: สถิติเพจ & ข้อมูลเชิงลึก (PAGE ANALYTICS & INSIGHTS) -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <section id="tab-logs" class="tab-content hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-emerald-400"></i>
+                    <span>บันทึกการทำงานสด (Live Logs)</span>
+                </h2>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col h-[600px] shadow-xl">
+                <div class="text-xs text-zinc-400 border-b border-zinc-800 pb-2 mb-2 flex items-center justify-between">
+                    <span>Activity Stream</span>
+                    <span id="log-count" class="text-[10px] bg-zinc-800 px-2 py-0.5 rounded">0 รายการ</span>
+                </div>
+                <div id="logs-container" class="flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-xs"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: SCHEDULE POST (ตั้งเวลาโพสต์) -->
+    <!-- ============================================================== -->
+    <div id="modal-schedule" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeModal('modal-schedule')" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-base sm:text-lg">ตั้งเวลาโพสต์ข่าว (Schedule Post)</h3>
+                    <p class="text-xs text-zinc-400">ระบบจะส่งโพสต์ขึ้น Facebook เมื่อถึงเวลาที่กำหนด</p>
+                </div>
+            </div>
+
+            <input type="hidden" id="sched-article-idx">
+            <input type="hidden" id="sched-article-url">
+            <input type="hidden" id="sched-article-img">
+
+            <div class="space-y-3 text-sm">
+                <!-- Target Page -->
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">เลือกเพจที่จะโพสต์:</label>
+                    <select id="sched-target-page" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-zinc-100 text-xs">
+                    </select>
+                </div>
+
+                <!-- DateTime Picker -->
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">วันและเวลาที่ต้องการโพสต์:</label>
+                    <input type="datetime-local" id="sched-datetime" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-zinc-100 text-xs focus:outline-none focus:border-amber-500">
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                    <span class="text-[11px] text-zinc-400 self-center mr-1">ทางลัด:</span>
+                    <button type="button" onclick="setSchedulePreset(15)" class="text-[11px] bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-lg text-zinc-300">+15 นาที</button>
+                    <button type="button" onclick="setSchedulePreset(30)" class="text-[11px] bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-lg text-zinc-300">+30 นาที</button>
+                    <button type="button" onclick="setSchedulePreset(60)" class="text-[11px] bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-lg text-zinc-300">+1 ชั่วโมง</button>
+                    <button type="button" onclick="setScheduleEvening()" class="text-[11px] bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-lg text-zinc-300">เย็นนี้ 18:00</button>
+                    <button type="button" onclick="setScheduleTomorrowMorning()" class="text-[11px] bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-lg text-zinc-300">พรุ่งนี้ 08:30</button>
+                </div>
+
+                <!-- Caption Preview -->
+                <div class="pt-2">
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">แคปชันที่จะโพสต์:</label>
+                    <textarea id="sched-caption-preview" rows="4" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs text-zinc-300 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end space-x-2 border-t border-zinc-800">
+                <button onclick="closeModal('modal-schedule')" class="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white">ยกเลิก</button>
+                <button onclick="submitSchedule()" class="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-clock mr-1"></i> ยืนยันตั้งเวลาโพสต์
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: ADD / EDIT PAGE (เพิ่ม/แก้ไขเพจ) -->
+    <!-- ============================================================== -->
+    <div id="modal-page" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeModal('modal-page')" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">
+                    <i class="fa-brands fa-facebook"></i>
+                </div>
+                <div>
+                    <h3 id="modal-page-title" class="font-bold text-base sm:text-lg">เพิ่ม / แก้ไขเพจ Facebook</h3>
+                    <p class="text-xs text-zinc-400">เชื่อมต่อเพจด้วย Page ID และ Page Access Token</p>
+                </div>
+            </div>
+
+            <form onsubmit="event.preventDefault(); submitSavePage();" class="space-y-3 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">ชื่อเพจ (เช่น หงส์นิวส์ หรือ เพจฟุตบอล):</label>
+                    <input type="text" id="page-input-name" required placeholder="เช่น หงส์นิวส์" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-zinc-100 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">Facebook Page ID (ตัวเลขรหัสเพจ):</label>
+                    <input type="text" id="page-input-id" required placeholder="เช่น 675881132277790" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-zinc-100 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">Page Access Token (ขึ้นต้นด้วย EAAB...):</label>
+                    <div class="relative">
+                        <input type="password" id="page-input-token" required placeholder="วาง Page Access Token ที่นี่..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-zinc-100 focus:outline-none focus:border-blue-500 pr-10">
+                        <button type="button" onclick="toggleInputType('page-input-token', this)" class="absolute right-3 top-2 text-zinc-400 hover:text-white">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Test Connection -->
+                <div class="flex items-center justify-between pt-1">
+                    <button type="button" onclick="testPageModalConnection()" class="text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 border border-blue-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-plug"></i> ทดสอบเชื่อมต่อ Token
+                    </button>
+                    <span id="page-test-feedback" class="text-xs"></span>
+                </div>
+
+                <div class="pt-3 flex items-center justify-end space-x-2 border-t border-zinc-800">
+                    <button type="button" onclick="closeModal('modal-page')" class="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white">ยกเลิก</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-lg shadow-blue-600/20">
+                        💾 บันทึกเพจ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: SETTINGS (ตั้งค่า GEMINI & ทั่วไป) -->
+    <!-- ============================================================== -->
+    <div id="modal-settings" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeModal('modal-settings')" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-zinc-800 text-zinc-300 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-base sm:text-lg">ตั้งค่าระบบทั่วไป</h3>
+                    <p class="text-xs text-zinc-400">Gemini AI Key และระบบ Auto-Run</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">Google Gemini API Key:</label>
+                    <input type="text" id="cfg-gemini-key" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-zinc-100 focus:outline-none focus:border-lfc-red">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-1">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1">โหมดการโพสต์ (Mode):</label>
+                        <select id="cfg-dry-run" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100">
+                            <option value="false">🟢 LIVE (โพสต์จริงขึ้น Facebook)</option>
+                            <option value="true">🟡 DRY-RUN (ทดสอบพรีวิว)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1">รอบเวลา Auto-Bot (นาที):</label>
+                        <select id="cfg-interval" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100">
+                            <option value="15">ทุกๆ 15 นาที</option>
+                            <option value="30">ทุกๆ 30 นาที</option>
+                            <option value="60">ทุกๆ 1 ชั่วโมง</option>
+                            <option value="120">ทุกๆ 2 ชั่วโมง</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 flex items-center justify-end space-x-2 border-t border-zinc-800">
+                <button onclick="closeModal('modal-settings')" class="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white">ยกเลิก</button>
+                <button onclick="saveGeneralSettings()" class="bg-lfc-red hover:bg-lfc-darkred text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-lg shadow-lfc-red/20">
+                    💾 บันทึกการตั้งค่า
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-zinc-900 border border-zinc-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-msg" class="text-sm">ข้อความแจ้งเตือน</span>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        let allPages = [];
+        let currentActivePageId = "";
+        let currentArticles = [];
+
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const txt = document.getElementById('toast-msg');
+
+            txt.innerText = msg;
+            icon.className = isSuccess 
+                ? "fa-solid fa-circle-check text-emerald-400 text-lg" 
+                : "fa-solid fa-circle-exclamation text-rose-500 text-lg";
+
+            toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+            }, 3500);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.classList.remove('bg-lfc-red', 'text-white');
+                el.classList.add('text-zinc-400');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) {
+                activeNav.classList.remove('text-zinc-400');
+                activeNav.classList.add('bg-lfc-red', 'text-white');
+            }
+
+            if (tabId === 'tab-schedule') loadSchedules();
+            if (tabId === 'tab-analytics') loadAnalytics();
+            if (tabId === 'tab-feeds') loadPageFeeds();
+            if (tabId === 'tab-pages') loadPagesTab();
+            if (tabId === 'tab-news') loadNews();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        async function loadAnalytics() {
+            try {
+                const pageId = currentActivePageId;
+                const url = pageId ? `/api/analytics?page_id=${pageId}` : `/api/analytics`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (!data.success) {
+                    showToast(`❌ ${data.error}`, false);
+                    return;
+                }
+
+                document.getElementById('ana-followers').innerText = (data.page.followers || 0).toLocaleString();
+                document.getElementById('ana-fans').innerText = (data.page.fans || 0).toLocaleString();
+                document.getElementById('ana-reactions').innerText = (data.summary.total_reactions || 0).toLocaleString();
+                document.getElementById('ana-engagement').innerText = ((data.summary.total_comments || 0) + (data.summary.total_shares || 0)).toLocaleString();
+                document.getElementById('ana-post-count').innerText = `${data.posts.length} โพสต์ล่าสุด`;
+
+                const noticeBox = document.getElementById('insights-notice-box');
+                if (data.has_read_insights_scope) {
+                    noticeBox.className = "bg-emerald-950/30 border border-emerald-500/30 rounded-2xl p-4 flex items-start space-x-3";
+                    noticeBox.innerHTML = `
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5 shrink-0"></i>
+                        <div class="text-xs space-y-1 text-zinc-300">
+                            <div class="font-bold text-emerald-300">สิทธิ์ read_insights เปิดใช้งานสมบูรณ์!</div>
+                            <p class="text-zinc-400">ระบบสามารถอ่านสถิติการแสดงผลและการมีส่วนร่วมได้อย่างละเอียด</p>
+                        </div>
+                    `;
+                }
+
+                const container = document.getElementById('ana-posts-table');
+                if (data.posts.length === 0) {
+                    container.innerHTML = `<div class="text-center py-6 text-zinc-500">ยังไม่มีโพสต์บนเพจนี้</div>`;
+                    return;
+                }
+
+                container.innerHTML = data.posts.map(p => {
+                    return `
+                        <div class="bg-zinc-950/70 border border-zinc-800 rounded-xl p-3.5 flex flex-col sm:flex-row gap-3 items-start justify-between hover:border-zinc-700 transition">
+                            <div class="flex items-start space-x-3 flex-1 min-w-0">
+                                ${p.full_picture ? `<img src="${p.full_picture}" class="w-16 h-16 object-cover rounded-lg border border-zinc-800 shrink-0">` : ''}
+                                <div class="space-y-1 min-w-0">
+                                    <p class="text-xs text-zinc-200 line-clamp-2">${p.message || 'โพสต์รูปภาพ/ข้อความ'}</p>
+                                    <div class="text-[10px] text-zinc-500">${p.created_time ? new Date(p.created_time).toLocaleString('th-TH') : ''}</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-4 shrink-0 text-xs text-zinc-300 self-end sm:self-center">
+                                <div class="flex items-center gap-1.5 text-rose-400" title="Reactions / Likes">
+                                    <i class="fa-solid fa-heart"></i>
+                                    <span class="font-bold">${p.reactions}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-blue-400" title="Comments">
+                                    <i class="fa-solid fa-comment"></i>
+                                    <span class="font-bold">${p.comments}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-purple-400" title="Shares">
+                                    <i class="fa-solid fa-share"></i>
+                                    <span class="font-bold">${p.shares}</span>
+                                </div>
+                                ${p.permalink_url ? `<a href="${p.permalink_url}" target="_blank" class="text-zinc-400 hover:text-white p-1" title="ดูโพสต์จริงบน Facebook"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        function toggleInputType(inputId, btn) {
+            const el = document.getElementById(inputId);
+            if (el.type === 'password') {
+                el.type = 'text';
+                btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+            } else {
+                el.type = 'password';
+                btn.innerHTML = '<i class="fa-solid fa-eye"></i>';
+            }
+        }
+
+        // ==========================================
+        // PAGES LOGIC
+        // ==========================================
+        async function loadPages() {
+            try {
+                const res = await fetch('/api/pages');
+                allPages = await res.json();
+                document.getElementById('badge-page-count').innerText = allPages.length;
+                document.getElementById('stat-pages').innerText = allPages.length;
+
+                // Populate active page select
+                const select = document.getElementById('active-page-select');
+                const feedSelect = document.getElementById('feed-target-page');
+                const schedSelect = document.getElementById('sched-target-page');
+
+                let options = `<option value="">ทุกเพจ (All Pages)</option>`;
+                let specificOptions = ``;
+
+                allPages.forEach(p => {
+                    options += `<option value="${p.page_id}">🔴 ${p.name} (${p.feeds_count} feeds)</option>`;
+                    specificOptions += `<option value="${p.page_id}">🔴 ${p.name}</option>`;
+                });
+
+                select.innerHTML = options;
+                feedSelect.innerHTML = specificOptions;
+                schedSelect.innerHTML = specificOptions;
+
+                if (currentActivePageId) {
+                    select.value = currentActivePageId;
+                    feedSelect.value = currentActivePageId;
+                } else if (allPages.length > 0 && !feedSelect.value) {
+                    feedSelect.value = allPages[0].page_id;
+                }
+            } catch (e) {
+                console.error("Error loading pages:", e);
+            }
+        }
+
+        function onPageChange() {
+            currentActivePageId = document.getElementById('active-page-select').value;
+            const p = allPages.find(x => x.page_id === currentActivePageId);
+            document.getElementById('current-page-label').innerText = p ? p.name : 'ทุกเพจ';
+            loadStatus();
+            loadNews();
+        }
+
+        async function loadPagesTab() {
+            await loadPages();
+            const container = document.getElementById('pages-container');
+
+            if (allPages.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-2 bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center text-zinc-400 space-y-3">
+                        <i class="fa-brands fa-facebook text-4xl text-zinc-600"></i>
+                        <p>ยังไม่มีเพจในระบบ กดปุ่ม 'เพิ่มเพจใหม่' เพื่อเริ่มต้น</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = allPages.map(p => {
+                return `
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-3 relative hover:border-zinc-700 transition">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center text-lg">
+                                    <i class="fa-brands fa-facebook"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-base text-zinc-100">${p.name}</h4>
+                                    <p class="text-xs text-zinc-400">ID: ${p.page_id}</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md font-semibold">Active</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs text-zinc-400 pt-2 border-t border-zinc-800/80">
+                            <div><i class="fa-solid fa-rss text-purple-400 mr-1"></i> ${p.feeds_count} RSS Feeds</div>
+                            <div><i class="fa-solid fa-newspaper text-lfc-red mr-1"></i> ${p.articles_count} ข่าวในระบบ</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2 border-t border-zinc-800/80 flex-wrap gap-2">
+                            <button onclick="testSpecificPage('${p.page_id}', '${p.access_token}')" class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                                <i class="fa-solid fa-plug"></i> ตรวจสอบ Token
+                            </button>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="openEditPageModal('${p.page_id}')" class="text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 border border-blue-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1 font-medium transition" title="แก้ไขชื่อเพจ หรือ อัปเดต Token ใหม่">
+                                    <i class="fa-solid fa-pen-to-square"></i> แก้ไขเพจ / เปลี่ยน Token
+                                </button>
+                                <button onclick="selectAndManageFeeds('${p.page_id}')" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-lg border border-zinc-700">
+                                    จัดการ Feeds
+                                </button>
+                                <button onclick="deletePageConfirm('${p.page_id}', '${p.name}')" class="text-xs text-rose-400 hover:text-rose-300 px-2 py-1.5" title="ลบเพจ">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openAddPageModal() {
+            const titleElem = document.getElementById('modal-page-title');
+            if (titleElem) titleElem.innerText = 'เพิ่มเพจ Facebook ใหม่';
+            document.getElementById('page-input-name').value = '';
+            document.getElementById('page-input-id').value = '';
+            document.getElementById('page-input-token').value = '';
+            document.getElementById('page-test-feedback').innerText = '';
+            openModal('modal-page');
+        }
+
+        function openEditPageModal(pageId) {
+            const p = allPages.find(x => String(x.page_id) === String(pageId));
+            if (!p) return;
+            const titleElem = document.getElementById('modal-page-title');
+            if (titleElem) titleElem.innerText = `✏️ แก้ไขเพจ '${p.name}' & อัปเดต Token`;
+            document.getElementById('page-input-name').value = p.name || '';
+            document.getElementById('page-input-id').value = p.page_id || '';
+            document.getElementById('page-input-token').value = p.access_token || '';
+            document.getElementById('page-test-feedback').innerText = '';
+            openModal('modal-page');
+        }
+
+        async function submitSavePage() {
+            const payload = {
+                name: document.getElementById('page-input-name').value,
+                page_id: document.getElementById('page-input-id').value,
+                access_token: document.getElementById('page-input-token').value
+            };
+
+            try {
+                const res = await fetch('/api/pages/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast("บันทึกเพจเรียบร้อยแล้ว!");
+                    closeModal('modal-page');
+                    loadPages();
+                    loadPagesTab();
+                } else {
+                    showToast(`❌ ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการบันทึก", false);
+            }
+        }
+
+        async function deletePageConfirm(pageId, name) {
+            if (!confirm(`คุณต้องการลบเพจ '${name}' (ID: ${pageId}) ออกจากระบบหรือไม่?`)) return;
+            try {
+                const res = await fetch('/api/pages/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ page_id: pageId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`ลบเพจ '${name}' แล้ว`);
+                    loadPages();
+                    loadPagesTab();
+                }
+            } catch (e) {
+                showToast("ไม่สามารถลบเพจได้", false);
+            }
+        }
+
+        async function testPageModalConnection() {
+            const pageId = document.getElementById('page-input-id').value;
+            const token = document.getElementById('page-input-token').value;
+            const feedback = document.getElementById('page-test-feedback');
+            feedback.className = "text-xs text-blue-400";
+            feedback.innerText = "กำลังตรวจสอบ...";
+
+            try {
+                const res = await fetch('/api/pages/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ page_id: pageId, access_token: token })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    feedback.className = "text-xs text-emerald-400 font-semibold";
+                    feedback.innerText = `✅ สำเร็จ: ${data.name}`;
+                    if (!document.getElementById('page-input-name').value) {
+                        document.getElementById('page-input-name').value = data.name;
+                    }
+                } else {
+                    feedback.className = "text-xs text-rose-400 font-semibold";
+                    feedback.innerText = `❌ ${data.error}`;
+                }
+            } catch (e) {
+                feedback.className = "text-xs text-rose-400";
+                feedback.innerText = "เชื่อมต่อไม่ได้";
+            }
+        }
+
+        async function testSpecificPage(pageId, token) {
+            showToast("กำลังตรวจสอบสถานะเพจ...");
+            try {
+                const res = await fetch('/api/pages/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ page_id: pageId, access_token: token })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`✅ เพจ '${data.name}' เชื่อมต่อสมบูรณ์ 100%!`);
+                } else {
+                    showToast(`❌ เชื่อมต่อล้มเหลว: ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการเชื่อมต่อ", false);
+            }
+        }
+
+        function selectAndManageFeeds(pageId) {
+            document.getElementById('feed-target-page').value = pageId;
+            switchTab('tab-feeds');
+        }
+
+        // ==========================================
+        // FEEDS LOGIC PER PAGE
+        // ==========================================
+        async function loadPageFeeds() {
+            const pageId = document.getElementById('feed-target-page').value;
+            if (!pageId) return;
+
+            try {
+                const res = await fetch(`/api/pages/${pageId}/feeds`);
+                const feeds = await res.json();
+                document.getElementById('badge-feed-count').innerText = feeds.length;
+                document.getElementById('stat-sources').innerText = feeds.length;
+                const container = document.getElementById('feeds-list');
+
+                if (feeds.length === 0) {
+                    container.innerHTML = `
+                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center text-zinc-400">
+                            ยังไม่มี RSS Feed สำหรับเพจนี้ สามารถเพิ่มได้จากฟอร์มด้านบน
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = feeds.map(f => {
+                    const isEn = f.is_enabled === 1;
+                    return `
+                        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 flex items-center justify-between flex-wrap gap-2 hover:border-zinc-700 transition">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-sm font-bold shrink-0">
+                                    <i class="fa-solid fa-rss"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-sm text-zinc-100">${f.feed_name}</h4>
+                                    <a href="${f.feed_url}" target="_blank" class="text-xs text-zinc-400 hover:text-purple-400 font-mono">${f.feed_url}</a>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center space-x-3">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" onchange="toggleFeedState(${f.id}, this.checked)" ${isEn ? 'checked' : ''} class="sr-only peer">
+                                    <div class="w-9 h-5 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                                <button onclick="deleteFeedConfirm(${f.id}, '${f.feed_name}')" class="text-xs text-rose-400 hover:text-rose-300 px-2 py-1">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Error loading feeds:", e);
+            }
+        }
+
+        async function addFeed() {
+            const pageId = document.getElementById('feed-target-page').value;
+            const name = document.getElementById('new-feed-name').value;
+            const url = document.getElementById('new-feed-url').value;
+
+            try {
+                const res = await fetch(`/api/pages/${pageId}/feeds/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ feed_name: name, feed_url: url })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`เพิ่ม Feed '${name}' เรียบร้อย!`);
+                    document.getElementById('new-feed-name').value = '';
+                    document.getElementById('new-feed-url').value = '';
+                    loadPageFeeds();
+                } else {
+                    showToast(`❌ ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาด", false);
+            }
+        }
+
+        async function toggleFeedState(feedId, isEnabled) {
+            try {
+                await fetch(`/api/feeds/${feedId}/toggle`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_enabled: isEnabled })
+                });
+                showToast(isEnabled ? "เปิดใช้งาน Feed แล้ว" : "ปิดใช้งาน Feed ชั่วคราว");
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function deleteFeedConfirm(feedId, name) {
+            if (!confirm(`ลบฟีด '${name}' หรือไม่?`)) return;
+            try {
+                await fetch(`/api/feeds/${feedId}/delete`, { method: 'POST' });
+                showToast(`ลบฟีด '${name}' แล้ว`);
+                loadPageFeeds();
+            } catch (e) {
+                showToast("ไม่สามารถลบได้", false);
+            }
+        }
+
+        // ==========================================
+        // SCHEDULED POSTS LOGIC
+        // ==========================================
+        async function loadSchedules() {
+            try {
+                const pageId = currentActivePageId;
+                const url = pageId ? `/api/schedule?page_id=${pageId}` : `/api/schedule`;
+                const res = await fetch(url);
+                const posts = await res.json();
+                document.getElementById('badge-sched-count').innerText = posts.filter(p => p.status === 'scheduled').length;
+                document.getElementById('stat-scheduled').innerText = posts.filter(p => p.status === 'scheduled').length;
+
+                const container = document.getElementById('schedules-container');
+                if (posts.length === 0) {
+                    container.innerHTML = `
+                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center text-zinc-400 space-y-2">
+                            <i class="fa-solid fa-calendar-check text-4xl text-zinc-600"></i>
+                            <p>ไม่มีคิวโพสต์ที่ตั้งเวลาไว้ในขณะนี้</p>
+                            <p class="text-xs text-zinc-500">คุณสามารถไปที่แท็บ 'รายการข่าว' แล้วกดปุ่ม '📅 ตั้งเวลา' ที่ข่าวใดก็ได้</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = posts.map(sp => {
+                    let statusBadge = "";
+                    if (sp.status === 'scheduled') {
+                        statusBadge = `<span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1"><i class="fa-solid fa-clock"></i> รอถึงเวลา</span>`;
+                    } else if (sp.status === 'posted') {
+                        statusBadge = `<span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1"><i class="fa-solid fa-check"></i> โพสต์สำเร็จ</span>`;
+                    } else {
+                        statusBadge = `<span class="text-xs bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1"><i class="fa-solid fa-xmark"></i> ยกเลิก/ล้มเหลว</span>`;
+                    }
+
+                    return `
+                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-start hover:border-zinc-700 transition">
+                            ${sp.image_url ? `<img src="${sp.image_url}" class="w-full sm:w-28 h-20 object-cover rounded-xl border border-zinc-800 shrink-0">` : ''}
+                            <div class="flex-1 space-y-2 w-full">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold bg-blue-600/30 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-md">เพจ: ${sp.page_name || sp.page_id}</span>
+                                        <span class="text-xs text-amber-400 font-semibold"><i class="fa-solid fa-calendar mr-1"></i> ${sp.scheduled_time}</span>
+                                    </div>
+                                    ${statusBadge}
+                                </div>
+                                <h4 class="font-bold text-sm text-zinc-100">${sp.title || 'โพสต์ที่ตั้งเวลา'}</h4>
+                                <p class="text-xs text-zinc-400 line-clamp-2">${sp.caption}</p>
+
+                                ${sp.status === 'scheduled' ? `
+                                    <div class="flex items-center justify-end pt-1">
+                                        <button onclick="cancelSchedule(${sp.id})" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1">
+                                            <i class="fa-solid fa-ban"></i> ยกเลิกการตั้งเวลา
+                                        </button>
+                                    </div>
+                                ` : `
+                                    <div class="flex items-center justify-end pt-1">
+                                        <button onclick="deleteSchedule(${sp.id})" class="text-xs text-zinc-500 hover:text-rose-400 flex items-center gap-1">
+                                            <i class="fa-solid fa-trash"></i> ลบรายการ
+                                        </button>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function openScheduleModal(idx, url, imgUrl) {
+            document.getElementById('sched-article-idx').value = idx;
+            document.getElementById('sched-article-url').value = url;
+            document.getElementById('sched-article-img').value = imgUrl;
+
+            const caption = document.getElementById(`caption-${idx}`).value;
+            document.getElementById('sched-caption-preview').value = caption;
+
+            // Default to 30 mins ahead
+            setSchedulePreset(30);
+
+            if (currentActivePageId) {
+                document.getElementById('sched-target-page').value = currentActivePageId;
+            }
+
+            openModal('modal-schedule');
+        }
+
+        function setSchedulePreset(minutesAhead) {
+            const d = new Date(Date.now() + minutesAhead * 60000);
+            const pad = (n) => String(n).padStart(2, '0');
+            const isoLocal = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            document.getElementById('sched-datetime').value = isoLocal;
+        }
+
+        function setScheduleEvening() {
+            const d = new Date();
+            d.setHours(18, 0, 0, 0);
+            if (d.getTime() < Date.now()) d.setDate(d.getDate() + 1);
+            const pad = (n) => String(n).padStart(2, '0');
+            document.getElementById('sched-datetime').value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T18:00`;
+        }
+
+        function setScheduleTomorrowMorning() {
+            const d = new Date();
+            d.setDate(d.getDate() + 1);
+            const pad = (n) => String(n).padStart(2, '0');
+            document.getElementById('sched-datetime').value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T08:30`;
+        }
+
+        async function submitSchedule() {
+            const pageId = document.getElementById('sched-target-page').value;
+            const scheduledTime = document.getElementById('sched-datetime').value;
+            const caption = document.getElementById('sched-caption-preview').value;
+            const url = document.getElementById('sched-article-url').value;
+            const img = document.getElementById('sched-article-img').value;
+
+            const art = currentArticles.find(a => a.url === url) || {};
+
+            try {
+                const res = await fetch('/api/schedule/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        page_id: pageId,
+                        scheduled_time: scheduledTime,
+                        caption: caption,
+                        article_url: url,
+                        image_url: img,
+                        title: art.title || ''
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`ตั้งเวลาโพสต์เรียบร้อย! (${scheduledTime})`);
+                    closeModal('modal-schedule');
+                    loadSchedules();
+                    loadStatus();
+                } else {
+                    showToast(`❌ ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการตั้งเวลา", false);
+            }
+        }
+
+        async function cancelSchedule(id) {
+            if (!confirm("ต้องการยกเลิกการตั้งเวลานี้หรือไม่?")) return;
+            try {
+                await fetch(`/api/schedule/${id}/cancel`, { method: 'POST' });
+                showToast("ยกเลิกรายการตั้งเวลาแล้ว");
+                loadSchedules();
+            } catch (e) {
+                showToast("ยกเลิกไม่สำเร็จ", false);
+            }
+        }
+
+        async function deleteSchedule(id) {
+            try {
+                await fetch(`/api/schedule/${id}/delete`, { method: 'POST' });
+                loadSchedules();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ==========================================
+        // NEWS & POSTING LOGIC
+        // ==========================================
+        async function loadNews() {
+            try {
+                const pageParam = currentActivePageId ? `?page_id=${currentActivePageId}` : '';
+                const res = await fetch(`/api/news${pageParam}`);
+                const articles = await res.json();
+                currentArticles = articles;
+                const container = document.getElementById('news-container');
+
+                if (articles.length === 0) {
+                    container.innerHTML = `
+                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center text-zinc-400 space-y-3">
+                            <i class="fa-solid fa-mug-hot text-4xl text-zinc-600"></i>
+                            <p class="font-medium">ยังไม่มีข่าวสำหรับเพจนี้ในระบบ</p>
+                            <button onclick="triggerFetch()" class="bg-lfc-red text-white text-xs px-4 py-2 rounded-xl font-semibold hover:bg-lfc-darkred transition">
+                                <i class="fa-solid fa-bolt mr-1"></i> ดึงข่าวจากฟีดของเพจนี้
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = articles.map((art, idx) => {
+                    const isPosted = art.status === 'posted';
+                    const statusBadge = isPosted 
+                        ? `<span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><i class="fa-solid fa-check"></i> โพสต์แล้ว</span>`
+                        : `<span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><i class="fa-regular fa-clock"></i> รอดำเนินการ</span>`;
+
+                    const imgTag = art.image_url 
+                        ? `<img src="${art.image_url}" alt="Cover" class="w-full sm:w-48 h-36 object-cover rounded-xl border border-zinc-800 shrink-0" onerror="this.style.display='none'">`
+                        : '';
+
+                    return `
+                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 hover:border-zinc-700 transition">
+                            <div class="flex flex-col sm:flex-row gap-4 items-start">
+                                ${imgTag}
+                                <div class="flex-1 space-y-2 w-full">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[11px] font-bold bg-lfc-red text-white px-2 py-0.5 rounded-md">${art.source}</span>
+                                            <span class="text-xs text-zinc-400">${art.published_at || 'ล่าสุด'}</span>
+                                        </div>
+                                        ${statusBadge}
+                                    </div>
+
+                                    <h3 class="font-bold text-base text-zinc-100 hover:text-lfc-red transition">
+                                        <a href="${art.url}" target="_blank" rel="noopener">${art.title}</a>
+                                    </h3>
+
+                                    <!-- REWRITTEN CAPTION (EDITABLE) -->
+                                    <div class="space-y-1 pt-1">
+                                        <div class="flex items-center justify-between">
+                                            <label class="text-[11px] font-semibold text-zinc-400 flex items-center gap-1">
+                                                <i class="fa-solid fa-pen-to-square text-lfc-gold"></i> แคปชันสไตล์เก๋าจัดจ้าน (แก้ไขได้ก่อนโพสต์):
+                                            </label>
+                                            ${!art.rewritten_text ? `<span class="text-[11px] text-amber-400 flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่มีแคปชัน</span>` : ''}
+                                        </div>
+                                        <textarea id="caption-${idx}" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-lfc-red transition resize-y min-h-[110px]" rows="4" placeholder="กำลังรอ AI เขียนแคปชัน...">${art.rewritten_text || ''}</textarea>
+                                    </div>
+
+                                    <!-- ACTION BUTTONS -->
+                                    <div class="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-zinc-800/80">
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="regenerateCaption(${idx}, '${art.url}')" class="text-xs bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                                                <i class="fa-solid fa-wand-magic-sparkles text-lfc-gold"></i> AI เขียนใหม่
+                                            </button>
+                                            <button onclick="saveCaption(${idx}, '${art.url}')" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-lg border border-zinc-700 transition flex items-center gap-1.5">
+                                                <i class="fa-solid fa-floppy-disk"></i> บันทึก
+                                            </button>
+                                            <button onclick="copyCaption(${idx})" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-lg border border-zinc-700 transition flex items-center gap-1.5">
+                                                <i class="fa-regular fa-copy"></i> คัดลอก
+                                            </button>
+                                            <a href="${art.url}" target="_blank" class="text-xs text-zinc-400 hover:text-white px-2 py-1.5 flex items-center gap-1">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i> ดูต้นฉบับ
+                                            </a>
+                                        </div>
+
+                                        <div class="flex items-center space-x-2">
+                                            <!-- Button Schedule -->
+                                            <button onclick="openScheduleModal(${idx}, '${art.url}', '${art.image_url || ''}')" class="text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+                                                <i class="fa-solid fa-calendar-plus text-amber-400"></i> ตั้งเวลา
+                                            </button>
+
+                                            <!-- Button Post Now -->
+                                            <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="text-xs bg-lfc-red hover:bg-lfc-darkred text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-lfc-red/20">
+                                                <i class="fa-solid fa-paper-plane"></i> โพสต์ทันที
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (e) {
+                console.error("Error loading news:", e);
+            }
+        }
+
+        async function triggerFetch() {
+            const btn = document.getElementById('btn-fetch');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังดึง...`;
+            showToast("กำลังเริ่มตรวจสอบข่าวใหม่จากฟีดของเพจ...");
+
+            try {
+                await fetch('/api/fetch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ page_id: currentActivePageId })
+                });
+                setTimeout(() => {
+                    loadNews();
+                    loadStatus();
+                    loadLogs();
+                }, 3000);
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการดึงข่าว", false);
+            } finally {
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-bolt"></i> <span class="hidden md:inline">ดึงข่าวทันที</span>`;
+                }, 2000);
+            }
+        }
+
+        async function toggleAutoBot() {
+            try {
+                const res = await fetch('/api/auto/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                const data = await res.json();
+                showToast(data.auto_running ? "เปิดระบบ Auto-Bot สำหรับทุกเพจแล้ว!" : "หยุดระบบ Auto-Bot แล้ว");
+                loadStatus();
+            } catch (e) {
+                showToast("ไม่สามารถเปิด/ปิด Auto-Bot ได้", false);
+            }
+        }
+
+        async function saveCaption(idx, url) {
+            const text = document.getElementById(`caption-${idx}`).value;
+            try {
+                const res = await fetch('/api/news/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url, text: text })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast("บันทึกการแก้ไขข้อความแล้ว!");
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาด", false);
+            }
+        }
+
+        function copyCaption(idx) {
+            const text = document.getElementById(`caption-${idx}`).value;
+            navigator.clipboard.writeText(text);
+            showToast("คัดลอกแคปชันลงคลิปบอร์ดแล้ว! 📋");
+        }
+
+        async function regenerateCaption(idx, url) {
+            const textarea = document.getElementById(`caption-${idx}`);
+            showToast("✨ กำลังส่งให้ AI เรียบเรียงข่าวใหม่...");
+            textarea.value = "⏳ กำลังให้ AI เรียบเรียงสำนวนใหม่ กรุณารอสักครู่...";
+
+            try {
+                const res = await fetch('/api/news/regenerate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    textarea.value = data.rewritten_text;
+                    showToast("🎉 AI เขียนข่าวใหม่สำเร็จแล้ว!");
+                } else {
+                    showToast(`❌ เกิดข้อผิดพลาด: ${data.error}`, false);
+                    loadNews();
+                }
+            } catch (e) {
+                showToast("เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ", false);
+                loadNews();
+            }
+        }
+
+        async function publishPost(idx, url, imageUrl) {
+            const text = document.getElementById(`caption-${idx}`).value;
+            showToast("กำลังส่งโพสต์ขึ้น Facebook...");
+
+            try {
+                const res = await fetch('/api/news/post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: url,
+                        text: text,
+                        image_url: imageUrl,
+                        page_id: currentActivePageId
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast("🎉 โพสต์ขึ้น Facebook เรียบร้อยแล้ว!");
+                    loadNews();
+                    loadStatus();
+                    loadLogs();
+                } else {
+                    showToast(`❌ โพสต์ล้มเหลว: ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการเชื่อมต่อ", false);
+            }
+        }
+
+        // ==========================================
+        // STATUS & LOGS
+        // ==========================================
+        async function loadStatus() {
+            try {
+                const pageParam = currentActivePageId ? `?page_id=${currentActivePageId}` : '';
+                const res = await fetch(`/api/status${pageParam}`);
+                const data = await res.json();
+
+                document.getElementById('stat-total').innerText = data.stats.total;
+                document.getElementById('stat-posted').innerText = data.stats.posted;
+                document.getElementById('stat-scheduled').innerText = data.stats.scheduled_count || 0;
+                document.getElementById('stat-sources').innerText = data.stats.sources_count;
+
+                const autoBtn = document.getElementById('btn-auto');
+                const autoText = document.getElementById('auto-btn-text');
+                if (data.auto_running) {
+                    autoBtn.className = "bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition animate-pulse";
+                    autoText.innerText = `หยุด Auto-Bot (${data.interval_minutes}m)`;
+                } else {
+                    autoBtn.className = "bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition";
+                    autoText.innerText = "เริ่ม Auto-Bot";
+                }
+            } catch (e) {
+                console.error("Error loading status:", e);
+            }
+        }
+
+        async function loadLogs() {
+            try {
+                const res = await fetch('/api/logs');
+                const logs = await res.json();
+                document.getElementById('log-count').innerText = `${logs.length} รายการ`;
+                const container = document.getElementById('logs-container');
+
+                if (logs.length === 0) {
+                    container.innerHTML = `<div class="text-zinc-600 italic">ยังไม่มีกิจกรรม...</div>`;
+                    return;
+                }
+
+                container.innerHTML = logs.map(l => {
+                    let color = "text-zinc-300";
+                    if (l.level === "error") color = "text-rose-400";
+                    if (l.level === "success") color = "text-emerald-400";
+                    return `
+                        <div class="p-1.5 rounded bg-zinc-950/60 border border-zinc-800/40">
+                            <span class="text-zinc-500">[${l.time}]</span>
+                            <span class="${color} break-words">${l.message}</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Error loading logs:", e);
+            }
+        }
+
+        // ==========================================
+        // SETTINGS MODAL
+        // ==========================================
+        async function openSettingsModal() {
+            try {
+                const res = await fetch('/api/settings');
+                const data = await res.json();
+                document.getElementById('cfg-gemini-key').value = data.gemini_api_key || '';
+                document.getElementById('cfg-dry-run').value = data.dry_run ? "true" : "false";
+                document.getElementById('cfg-interval').value = String(data.interval || 30);
+                openModal('modal-settings');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function saveGeneralSettings() {
+            const payload = {
+                gemini_api_key: document.getElementById('cfg-gemini-key').value,
+                dry_run: document.getElementById('cfg-dry-run').value === "true",
+                interval: parseInt(document.getElementById('cfg-interval').value)
+            };
+
+            try {
+                const res = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast("บันทึกการตั้งค่าลง .env สำเร็จแล้ว!");
+                    closeModal('modal-settings');
+                    loadStatus();
+                }
+            } catch (e) {
+                showToast("บันทึกไม่สำเร็จ", false);
+            }
+        }
+
+        // INITIALIZE
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadPages();
+            loadStatus();
+            loadNews();
+            loadLogs();
+
+            // Auto refresh logs & schedules every 5 seconds
+            setInterval(() => {
+                loadLogs();
+                loadStatus();
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
