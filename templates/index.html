@@ -91,6 +91,10 @@
             <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 bg-lfc-red text-white transition shrink-0">
                 <i class="fa-solid fa-newspaper"></i> <span>รายการข่าว & โพสต์</span>
             </button>
+            <button onclick="switchTab('tab-match')" id="nav-tab-match" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
+                <i class="fa-solid fa-futbol text-emerald-400"></i> <span>Match Center (พรีวิว & ตัดเกรด)</span>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.2 rounded-full font-bold">PRO</span>
+            </button>
             <button onclick="switchTab('tab-schedule')" id="nav-tab-schedule" class="nav-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition shrink-0">
                 <i class="fa-solid fa-calendar-days text-amber-400"></i> <span>คิวตั้งเวลาโพสต์</span>
                 <span id="badge-sched-count" class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded-full">0</span>
@@ -278,6 +282,260 @@
                     <!-- Populated by JS -->
                 </div>
             </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB: MATCH CENTER (พรีวิว, ตัดเกรด & รายงานผลสด) -->
+        <!-- ============================================================== -->
+        <section id="tab-match" class="tab-content hidden space-y-6">
+            
+            <!-- Hero Header -->
+            <div class="flex items-center justify-between flex-wrap gap-3 bg-gradient-to-r from-emerald-950/40 via-zinc-900 to-zinc-900 p-5 rounded-2xl border border-emerald-900/40 shadow-xl">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> MATCH CENTER PRO
+                        </span>
+                        <span class="text-xs text-zinc-400">All Competitions • Premier League & Champions League</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                        <span>ศูนย์ข้อมูลการแข่งขัน & AI คอลัมนิสต์</span>
+                    </h2>
+                    <p class="text-xs text-zinc-400">พรีวิววิเคราะห์ก่อนเกม · ตัดเกรดคะแนนผู้เล่น 1-10 หลังเกม · ตารางคะแนนสด</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="loadMatchCenter()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs px-3.5 py-2 rounded-xl transition border border-zinc-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrows-rotate"></i> อัปเดตข้อมูลสด
+                    </button>
+                    <button onclick="toggleCustomMatchBox()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-emerald-600/20">
+                        <i class="fa-solid fa-sliders"></i> กำหนดแมตช์เอง
+                    </button>
+                </div>
+            </div>
+
+            <!-- Top Grid: Next Match & Recent Match -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                
+                <!-- Recent Completed Match Card -->
+                <div id="card-recent-match" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 hover:border-zinc-700 transition shadow-lg relative overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span id="recent-comp-badge" class="text-xs bg-zinc-800 text-zinc-200 px-2.5 py-1 rounded-lg font-semibold">🏴󠁧󠁢󠁥󠁮󠁧󠁿 พรีเมียร์ลีก</span>
+                            <span id="recent-status-badge" class="text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md font-bold">จบการแข่งขัน</span>
+                        </div>
+                        <span id="recent-date" class="text-xs text-zinc-400">ล่าสุด</span>
+                    </div>
+
+                    <div class="py-2 flex items-center justify-around text-center">
+                        <div class="space-y-1 w-2/5">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-zinc-800 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-shield-halved text-zinc-400"></i>
+                            </div>
+                            <h4 id="recent-home-team" class="font-bold text-sm text-zinc-100 truncate">Brentford</h4>
+                            <span class="text-[11px] text-zinc-400">เจ้าบ้าน</span>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div id="recent-score-display" class="text-2xl sm:text-3xl font-black text-white tracking-wider px-3 py-1 bg-zinc-950 rounded-xl border border-zinc-800">
+                                1 - 2
+                            </div>
+                            <span class="text-[10px] text-emerald-400 font-semibold block">Full Time</span>
+                        </div>
+
+                        <div class="space-y-1 w-2/5">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-lfc-red/20 flex items-center justify-center text-lg font-bold text-lfc-red">
+                                🦅
+                            </div>
+                            <h4 id="recent-away-team" class="font-bold text-sm text-zinc-100 truncate">Liverpool</h4>
+                            <span class="text-[11px] text-lfc-red font-semibold">ทีมเยือน</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between flex-wrap gap-2">
+                        <div class="text-[11px] text-zinc-400 flex items-center gap-1">
+                            <i class="fa-solid fa-location-dot text-zinc-500"></i>
+                            <span id="recent-venue">Gtech Community Stadium</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="triggerQuickRatings()" class="text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                <i class="fa-solid fa-star text-amber-400"></i> ตัดเกรดคะแนน (1-10)
+                            </button>
+                            <button onclick="triggerQuickReport()" class="text-xs bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                <i class="fa-solid fa-file-lines text-blue-400"></i> รายงานผลเกม
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Upcoming Match Card -->
+                <div id="card-next-match" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 hover:border-zinc-700 transition shadow-lg relative overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span id="next-comp-badge" class="text-xs bg-lfc-red text-white px-2.5 py-1 rounded-lg font-semibold">🏴󠁧󠁢󠁥󠁮󠁧󠁿 พรีเมียร์ลีก</span>
+                            <span class="text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-md font-bold">นัดถัดไป</span>
+                        </div>
+                        <span id="next-date" class="text-xs text-amber-300 font-semibold">รอคิวแข่งขัน</span>
+                    </div>
+
+                    <div class="py-2 flex items-center justify-around text-center">
+                        <div class="space-y-1 w-2/5">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-lfc-red/20 flex items-center justify-center text-lg font-bold text-lfc-red">
+                                🦅
+                            </div>
+                            <h4 id="next-home-team" class="font-bold text-sm text-zinc-100 truncate">Liverpool</h4>
+                            <span class="text-[11px] text-lfc-red font-semibold">เจ้าบ้าน</span>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="text-xl font-black text-amber-400 tracking-wider px-3 py-1 bg-zinc-950 rounded-xl border border-zinc-800">
+                                VS
+                            </div>
+                            <span class="text-[10px] text-zinc-400 block" id="next-countdown">เตรียมฟาดแข้ง</span>
+                        </div>
+
+                        <div class="space-y-1 w-2/5">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-zinc-800 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-shield-halved text-zinc-400"></i>
+                            </div>
+                            <h4 id="next-away-team" class="font-bold text-sm text-zinc-100 truncate">Opponent</h4>
+                            <span class="text-[11px] text-zinc-400">ผู้มาเยือน</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between flex-wrap gap-2">
+                        <div class="text-[11px] text-zinc-400 flex items-center gap-1">
+                            <i class="fa-solid fa-location-dot text-zinc-500"></i>
+                            <span id="next-venue">Anfield</span>
+                        </div>
+                        <button onclick="triggerQuickPreview()" class="text-xs bg-lfc-red hover:bg-lfc-darkred text-white font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-lfc-red/20">
+                            <i class="fa-solid fa-bolt text-lfc-gold"></i> AI วิเคราะห์พรีวิวแมตช์นี้
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Custom Match Studio (Form) -->
+            <div id="custom-match-box" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl hidden">
+                <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+                    <h3 class="font-bold text-sm text-zinc-100 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-emerald-400"></i>
+                        <span>กำหนดข้อมูลแมตช์เอง (Custom Match Studio)</span>
+                    </h3>
+                    <button onclick="toggleCustomMatchBox()" class="text-zinc-400 hover:text-white text-xs">
+                        <i class="fa-solid fa-xmark text-sm"></i> ปิด
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                    <div>
+                        <label class="block text-zinc-400 mb-1 font-semibold">คู่แข่ง (Opponent):</label>
+                        <input type="text" id="cust-opponent" placeholder="เช่น แมนเชสเตอร์ ยูไนเต็ด" value="แมนเชสเตอร์ ยูไนเต็ด" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-100 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-zinc-400 mb-1 font-semibold">รายการแข่งขัน:</label>
+                        <select id="cust-comp" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-100 focus:outline-none focus:border-emerald-500">
+                            <option value="พรีเมียร์ลีก">🏴󠁧󠁢󠁥󠁮󠁧󠁿 พรีเมียร์ลีก</option>
+                            <option value="ยูฟ่า แชมเปียนส์ลีก">🏆 ยูฟ่า แชมเปียนส์ลีก</option>
+                            <option value="คาราบาว คัพ">🏆 คาราบาว คัพ</option>
+                            <option value="เอฟเอ คัพ">🏆 เอฟเอ คัพ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-zinc-400 mb-1 font-semibold">สนาม (Venue):</label>
+                        <select id="cust-venue" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-100 focus:outline-none focus:border-emerald-500">
+                            <option value="แอนฟิลด์ (เหย้า)">แอนฟิลด์ (เหย้า)</option>
+                            <option value="เกมเยือน">เกมเยือน</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-zinc-400 mb-1 font-semibold">สกอร์จบเกม (สำหรับตัดเกรด):</label>
+                        <input type="text" id="cust-score" placeholder="เช่น 2-1 (ชนะ) หรือ 0-0" value="3-1 (ชนะ)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-100 focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div class="text-xs">
+                    <label class="block text-zinc-400 mb-1 font-semibold">ประเด็นเน้นย้ำหรือไฮไลท์พิเศษ (ถ้ามี):</label>
+                    <input type="text" id="cust-notes" placeholder="เช่น ซาลาห์ยิงเบิ้ล, โกนาเต้โหม่งประตูแรก, แดนกลางขาดโซโบสไล" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-zinc-100 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="flex items-center justify-end space-x-2 pt-2 border-t border-zinc-800">
+                    <button onclick="generateCustomPreview()" class="bg-lfc-red hover:bg-lfc-darkred text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-bolt text-lfc-gold"></i> สร้างบทความพรีวิว
+                    </button>
+                    <button onclick="generateCustomRatings()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-star text-white"></i> สร้างตัดเกรดคะแนน (1-10)
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Output Workspace (บทความที่สร้างเสร็จแล้ว) -->
+            <div id="match-output-card" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl hidden">
+                <div class="flex items-center justify-between flex-wrap gap-2 border-b border-zinc-800 pb-3">
+                    <div class="flex items-center space-x-2">
+                        <span id="match-output-badge" class="text-xs bg-lfc-red text-white px-2.5 py-0.5 rounded-md font-bold">พรีวิวก่อนเกม</span>
+                        <h3 id="match-output-title" class="font-bold text-sm text-zinc-100">บทความพร้อมโพสต์</h3>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="copyMatchContent()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-lg border border-zinc-700 transition flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> คัดลอก
+                        </button>
+                    </div>
+                </div>
+
+                <textarea id="match-content-area" rows="12" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-xs sm:text-sm text-zinc-200 focus:outline-none focus:border-emerald-500 leading-relaxed font-sans resize-y min-h-[220px]" placeholder="เนื้อหาบทความจะปรากฏที่นี่..."></textarea>
+
+                <div class="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-zinc-800">
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openCardModalFromMatch()" class="text-xs bg-lfc-red/20 hover:bg-lfc-red/30 text-rose-300 border border-lfc-red/30 font-semibold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-paintbrush text-lfc-gold"></i> สร้าง Social Card สำหรับแมตช์นี้
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openScheduleModalFromMatch()" class="text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-plus text-amber-400"></i> ตั้งเวลาโพสต์
+                        </button>
+                        <button onclick="publishMatchPost()" class="text-xs bg-lfc-red hover:bg-lfc-darkred text-white font-bold px-5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-lfc-red/20">
+                            <i class="fa-solid fa-paper-plane"></i> โพสต์ขึ้น Facebook ทันที
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premier League Standings Table -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base text-zinc-100 flex items-center gap-2">
+                            <i class="fa-solid fa-ranking-star text-amber-400"></i>
+                            <span>ตารางคะแนนพรีเมียร์ลีกล่าสุด (Premier League Table)</span>
+                        </h3>
+                        <p class="text-xs text-zinc-400">อัปเดตสถานะอันดับ คะแนน และผลต่างประตูได้เสียแบบสดๆ</p>
+                    </div>
+                    <span class="text-xs text-zinc-400"><i class="fa-solid fa-futbol text-emerald-400 mr-1"></i> ซีซั่นปัจจุบัน</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-zinc-300">
+                        <thead class="bg-zinc-950/70 text-zinc-400 uppercase text-[10px] tracking-wider border-b border-zinc-800">
+                            <tr>
+                                <th class="py-2.5 px-3"># อันดับ</th>
+                                <th class="py-2.5 px-3">สโมสร</th>
+                                <th class="py-2.5 px-2 text-center">แข่ง</th>
+                                <th class="py-2.5 px-2 text-center">ชนะ</th>
+                                <th class="py-2.5 px-2 text-center">เสมอ</th>
+                                <th class="py-2.5 px-2 text-center">แพ้</th>
+                                <th class="py-2.5 px-2 text-center">GD</th>
+                                <th class="py-2.5 px-3 text-center font-bold text-white">แต้ม (PTS)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="standings-tbody" class="divide-y divide-zinc-800/60">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </section>
 
         <!-- ============================================================== -->
@@ -710,11 +968,350 @@
                 activeNav.classList.add('bg-lfc-red', 'text-white');
             }
 
+            if (tabId === 'tab-match') loadMatchCenter();
             if (tabId === 'tab-schedule') loadSchedules();
             if (tabId === 'tab-analytics') loadAnalytics();
             if (tabId === 'tab-feeds') loadPageFeeds();
             if (tabId === 'tab-pages') loadPagesTab();
             if (tabId === 'tab-news') loadNews();
+        }
+
+        // ==========================================
+        // MATCH CENTER LOGIC
+        // ==========================================
+        let currentScheduleData = null;
+
+        async function loadMatchCenter() {
+            showToast("กำลังดึงข้อมูลแมตช์และตารางคะแนนล่าสุด...");
+            try {
+                // 1. ดึงข้อมูลตารางแข่ง
+                const schedRes = await fetch('/api/match_center/schedule');
+                const schedData = await schedRes.json();
+                currentScheduleData = schedData;
+
+                // Render Recent Match
+                const recent = schedData.latest_completed;
+                if (recent) {
+                    document.getElementById('recent-comp-badge').innerText = recent.competition;
+                    document.getElementById('recent-date').innerText = recent.date_th;
+                    document.getElementById('recent-home-team').innerText = recent.home_team;
+                    document.getElementById('recent-away-team').innerText = recent.away_team;
+                    document.getElementById('recent-score-display').innerText = `${recent.home_score} - ${recent.away_score}`;
+                    document.getElementById('recent-venue').innerText = recent.venue;
+                }
+
+                // Render Next Match
+                const next = schedData.next_upcoming;
+                if (next) {
+                    document.getElementById('next-comp-badge').innerText = next.competition;
+                    document.getElementById('next-date').innerText = next.date_th;
+                    document.getElementById('next-home-team').innerText = next.home_team;
+                    document.getElementById('next-away-team').innerText = next.away_team;
+                    document.getElementById('next-venue').innerText = next.venue;
+                    document.getElementById('next-countdown').innerText = next.status_desc;
+                } else if (recent) {
+                    document.getElementById('next-home-team').innerText = "Liverpool";
+                    document.getElementById('next-away-team').innerText = "รอประกาศโปรแกรม";
+                    document.getElementById('next-countdown').innerText = "เร็วๆ นี้";
+                }
+
+                // 2. ดึงตารางคะแนนพรีเมียร์ลีก
+                const standRes = await fetch('/api/match_center/standings');
+                const standData = await standRes.json();
+                renderStandingsTable(standData);
+
+            } catch (e) {
+                console.error("Match center error:", e);
+                showToast("ไม่สามารถโหลดข้อมูลการแข่งขันได้", false);
+            }
+        }
+
+        function renderStandingsTable(teams) {
+            const tbody = document.getElementById('standings-tbody');
+            if (!teams || teams.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-zinc-500">ไม่มีข้อมูลตารางคะแนน</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = teams.map(t => {
+                const isLfc = t.is_lfc;
+                const rowClass = isLfc ? "bg-lfc-red/20 font-bold text-white border-y border-lfc-red/40" : "hover:bg-zinc-800/40";
+                const rankBadge = isLfc 
+                    ? `<span class="w-6 h-6 rounded-full bg-lfc-red text-white flex items-center justify-center font-bold text-xs">${t.rank}</span>`
+                    : `<span class="text-xs text-zinc-400 font-medium pl-1">${t.rank}</span>`;
+
+                const logoTag = t.logo ? `<img src="${t.logo}" class="w-5 h-5 object-contain" alt="">` : '';
+
+                return `
+                    <tr class="${rowClass} transition">
+                        <td class="py-2.5 px-3 flex items-center gap-2">${rankBadge}</td>
+                        <td class="py-2.5 px-3 font-semibold flex items-center gap-2">
+                            ${logoTag}
+                            <span>${t.team}</span>
+                            ${isLfc ? `<span class="text-[10px] bg-lfc-red text-white px-1.5 py-0.2 rounded font-bold ml-1">LFC</span>` : ''}
+                        </td>
+                        <td class="py-2.5 px-2 text-center text-zinc-400">${t.played}</td>
+                        <td class="py-2.5 px-2 text-center">${t.won}</td>
+                        <td class="py-2.5 px-2 text-center text-zinc-400">${t.drawn}</td>
+                        <td class="py-2.5 px-2 text-center text-zinc-400">${t.lost}</td>
+                        <td class="py-2.5 px-2 text-center font-mono ${parseInt(t.gd) > 0 ? 'text-emerald-400' : 'text-zinc-400'}">${t.gd}</td>
+                        <td class="py-2.5 px-3 text-center font-black text-white bg-zinc-950/40">${t.points}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function toggleCustomMatchBox() {
+            const box = document.getElementById('custom-match-box');
+            box.classList.toggle('hidden');
+        }
+
+        // Action Trigger 1: Quick Ratings for latest completed match
+        async function triggerQuickRatings() {
+            if (!currentScheduleData || !currentScheduleData.latest_completed) {
+                showToast("ไม่มีข้อมูลแมตช์ล่าสุด กรุณากำหนดข้อมูลเองที่ 'กำหนดแมตช์เอง'");
+                toggleCustomMatchBox();
+                return;
+            }
+            const m = currentScheduleData.latest_completed;
+            const scoreStr = `${m.home_team} ${m.home_score} - ${m.away_score} ${m.away_team}`;
+            
+            showMatchLoading("⭐ กำลังให้ AI วิเคราะห์ตัดเกรดคะแนนผู้เล่น 1-10...");
+            try {
+                const res = await fetch('/api/match_center/ratings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        opponent: m.opponent,
+                        score: scoreStr,
+                        competition: m.competition,
+                        match_highlight: `แข่งที่ ${m.venue} (${m.date_th})`
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMatchOutput("⭐ ตัดเกรดคะแนนผู้เล่น (Player Ratings)", `ตัดเกรดหลังเกม: ลิเวอร์พูล พบ ${m.opponent}`, data.content);
+                } else {
+                    showToast(`❌ ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการสร้างบทความ", false);
+            }
+        }
+
+        // Action Trigger 2: Quick Preview for next upcoming match
+        async function triggerQuickPreview() {
+            let opp = "คู่แข่งนัดถัดไป";
+            let comp = "พรีเมียร์ลีก";
+            let ven = "แอนฟิลด์ (เหย้า)";
+            let dt = "สุดสัปดาห์นี้";
+
+            if (currentScheduleData && currentScheduleData.next_upcoming) {
+                const n = currentScheduleData.next_upcoming;
+                opp = n.opponent;
+                comp = n.competition;
+                ven = n.venue;
+                dt = n.date_th;
+            }
+
+            showMatchLoading("⚡ กำลังให้ AI วิเคราะห์พรีวิวก่อนเตะ...");
+            try {
+                const res = await fetch('/api/match_center/preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        opponent: opp,
+                        competition: comp,
+                        venue: ven,
+                        date_str: dt
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMatchOutput("🔴 พรีวิวก่อนเกม (Match Preview)", `พรีวิวบิ๊กแมตช์: ลิเวอร์พูล พบ ${opp}`, data.content);
+                } else {
+                    showToast(`❌ ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการสร้างบทความ", false);
+            }
+        }
+
+        // Action Trigger 3: Quick Report for latest match
+        async function triggerQuickReport() {
+            if (!currentScheduleData || !currentScheduleData.latest_completed) return;
+            const m = currentScheduleData.latest_completed;
+            const scoreStr = `${m.home_team} ${m.home_score} - ${m.away_score} ${m.away_team}`;
+
+            showMatchLoading("📝 กำลังให้ AI เขียนรายงานผลการแข่งขันหลังจบเกม...");
+            try {
+                const res = await fetch('/api/match_center/report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        opponent: m.opponent,
+                        score: scoreStr,
+                        competition: m.competition
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMatchOutput("📝 รายงานผลหลังเกม (Match Report)", `รายงานผล: ลิเวอร์พูล พบ ${m.opponent}`, data.content);
+                } else {
+                    showToast(`❌ ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการสร้างบทความ", false);
+            }
+        }
+
+        // Custom Preview
+        async function generateCustomPreview() {
+            const opp = document.getElementById('cust-opponent').value.trim();
+            const comp = document.getElementById('cust-comp').value;
+            const ven = document.getElementById('cust-venue').value;
+            const notes = document.getElementById('cust-notes').value.trim();
+
+            if (!opp) { showToast("กรุณาระบุชื่อคู่แข่ง"); return; }
+            showMatchLoading(`⚡ กำลังให้ AI วิเคราะห์พรีวิวคู่ ลิเวอร์พูล vs ${opp}...`);
+
+            try {
+                const res = await fetch('/api/match_center/preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        opponent: opp,
+                        competition: comp,
+                        venue: ven,
+                        extra_notes: notes
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMatchOutput("🔴 พรีวิวก่อนเกม (Custom Preview)", `พรีวิว: ลิเวอร์พูล vs ${opp}`, data.content);
+                } else {
+                    showToast(`❌ ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาด", false);
+            }
+        }
+
+        // Custom Ratings
+        async function generateCustomRatings() {
+            const opp = document.getElementById('cust-opponent').value.trim();
+            const comp = document.getElementById('cust-comp').value;
+            const score = document.getElementById('cust-score').value.trim();
+            const notes = document.getElementById('cust-notes').value.trim();
+
+            if (!opp) { showToast("กรุณาระบุชื่อคู่แข่ง"); return; }
+            showMatchLoading(`⭐ กำลังให้ AI ตัดเกรดคะแนนผู้เล่นคู่ ลิเวอร์พูล พบ ${opp}...`);
+
+            try {
+                const res = await fetch('/api/match_center/ratings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        opponent: opp,
+                        score: score,
+                        competition: comp,
+                        extra_notes: notes
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMatchOutput("⭐ ตัดเกรดคะแนนผู้เล่น (Player Ratings)", `ตัดเกรดหลังเกม: ลิเวอร์พูล พบ ${opp} (${score})`, data.content);
+                } else {
+                    showToast(`❌ ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาด", false);
+            }
+        }
+
+        function showMatchLoading(msg) {
+            showToast(msg);
+            const box = document.getElementById('match-output-card');
+            box.classList.remove('hidden');
+            document.getElementById('match-output-badge').innerText = "กำลังประมวลผล";
+            document.getElementById('match-output-title').innerText = "AI กำลังเรียบเรียงบทความ...";
+            document.getElementById('match-content-area').value = "⏳ กำลังให้ AI คอลัมนิสต์วิเคราะห์ข้อมูลและเขียนบทความสไตล์เดือดจัดจ้าน กรุณารอสักครู่...";
+            box.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showMatchOutput(badge, title, content) {
+            const box = document.getElementById('match-output-card');
+            box.classList.remove('hidden');
+            document.getElementById('match-output-badge').innerText = badge;
+            document.getElementById('match-output-title').innerText = title;
+            document.getElementById('match-content-area').value = content;
+            showToast("🎉 AI เขียนบทความแมตช์เซ็นเตอร์เสร็จสมบูรณ์!");
+            box.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyMatchContent() {
+            const text = document.getElementById('match-content-area').value;
+            navigator.clipboard.writeText(text);
+            showToast("คัดลอกบทความลงคลิปบอร์ดแล้ว! 📋");
+        }
+
+        async function publishMatchPost() {
+            const text = document.getElementById('match-content-area').value.trim();
+            if (!text || text.startsWith("⏳")) {
+                showToast("ยังไม่มีเนื้อหาสำหรับโพสต์", false);
+                return;
+            }
+            showToast("กำลังส่งโพสต์ขึ้น Facebook...");
+            try {
+                const res = await fetch('/api/news/post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: `https://www.liverpoolfc.com/match/${Date.now()}`,
+                        text: text,
+                        page_id: currentActivePageId
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast("🎉 โพสต์บทความขึ้น Facebook เรียบร้อยแล้ว!");
+                    loadStatus();
+                    loadLogs();
+                } else {
+                    showToast(`❌ โพสต์ล้มเหลว: ${data.error}`, false);
+                }
+            } catch (e) {
+                showToast("เกิดข้อผิดพลาดในการโพสต์", false);
+            }
+        }
+
+        function openScheduleModalFromMatch() {
+            const text = document.getElementById('match-content-area').value.trim();
+            if (!text || text.startsWith("⏳")) {
+                showToast("ยังไม่มีเนื้อหาสำหรับตั้งเวลา", false);
+                return;
+            }
+            document.getElementById('sched-caption-preview').value = text;
+            document.getElementById('sched-article-url').value = `https://www.liverpoolfc.com/match/${Date.now()}`;
+            document.getElementById('sched-article-img').value = '';
+            setSchedulePreset(30);
+            if (currentActivePageId) {
+                document.getElementById('sched-target-page').value = currentActivePageId;
+            }
+            openModal('modal-schedule');
+        }
+
+        function openCardModalFromMatch() {
+            const text = document.getElementById('match-content-area').value.trim();
+            if (!text || text.startsWith("⏳")) {
+                showToast("ยังไม่มีเนื้อหาสำหรับการสร้างการ์ด", false);
+                return;
+            }
+            const firstLine = text.split('\n')[0].replace(/[🔴⚡🔥⭐*#]/g, '').trim();
+            document.getElementById('card-input-headline').value = firstLine || "บิ๊กแมตช์ลิเวอร์พูล";
+            document.getElementById('card-input-category').value = "📊 MATCH PREVIEW";
+            document.getElementById('card-input-theme').value = "lfc";
+            openModal('modal-card');
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }

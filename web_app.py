@@ -45,6 +45,13 @@ from news_fetcher import fetch_all_new_articles, download_image
 from ai_rewriter import rewrite_article
 from fb_poster import post_to_facebook
 from card_generator import generate_social_card
+from match_center import (
+    get_liverpool_schedule,
+    get_premier_league_standings,
+    generate_ai_match_preview,
+    generate_ai_player_ratings,
+    generate_ai_postmatch_report
+)
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -557,6 +564,90 @@ def api_generate_card(article_id):
     except Exception as e:
         add_log(f"❌ ไม่สามารถสร้าง Social Card ได้: {e}", "error")
         return jsonify({"success": False, "error": str(e)}), 500
+
+# -------------------------------------------------------------
+# API: MATCH CENTER (SCHEDULE, STANDINGS, PREVIEW & RATINGS)
+# -------------------------------------------------------------
+@app.route("/api/match_center/schedule")
+def api_match_center_schedule():
+    """ดึงตารางแข่งและผลการแข่งขันล่าสุดของลิเวอร์พูล"""
+    data = get_liverpool_schedule()
+    return jsonify(data)
+
+@app.route("/api/match_center/standings")
+def api_match_center_standings():
+    """ดึงตารางคะแนนพรีเมียร์ลีกแบบเรียลไทม์"""
+    standings = get_premier_league_standings()
+    return jsonify(standings)
+
+@app.route("/api/match_center/preview", methods=["POST"])
+def api_generate_match_preview():
+    """สร้างบทความพรีวิวแมตช์ด้วย AI"""
+    data = request.json or {}
+    opponent = data.get("opponent", "คู่แข่ง")
+    competition = data.get("competition", "พรีเมียร์ลีก")
+    venue = data.get("venue", "แอนฟิลด์ (เหย้า)")
+    date_str = data.get("date_str", "สุดสัปดาห์นี้")
+    focus_player = data.get("focus_player")
+    extra_notes = data.get("extra_notes")
+
+    add_log(f"⚽ สั่ง AI วิเคราะห์พรีวิวก่อนเกม: ลิเวอร์พูล พบ {opponent}...", "info")
+    content = generate_ai_match_preview(
+        opponent=opponent,
+        competition=competition,
+        venue=venue,
+        date_str=date_str,
+        focus_player=focus_player,
+        extra_notes=extra_notes
+    )
+    if content:
+        add_log(f"🎉 สร้างบทความพรีวิวคู่ {opponent} สำเร็จ!", "success")
+        return jsonify({"success": True, "content": content})
+    return jsonify({"success": False, "error": "AI ไม่สามารถสร้างพรีวิวได้"}), 500
+
+@app.route("/api/match_center/ratings", methods=["POST"])
+def api_generate_match_ratings():
+    """สร้างบทความตัดเกรดคะแนนผู้เล่นหลังเกมด้วย AI"""
+    data = request.json or {}
+    opponent = data.get("opponent", "คู่แข่ง")
+    score = data.get("score", "2-1")
+    competition = data.get("competition", "พรีเมียร์ลีก")
+    match_highlight = data.get("match_highlight")
+    extra_notes = data.get("extra_notes")
+
+    add_log(f"⭐ สั่ง AI ตัดเกรดคะแนนผู้เล่นหลังเกม: ลิเวอร์พูล {score} {opponent}...", "info")
+    content = generate_ai_player_ratings(
+        opponent=opponent,
+        score=score,
+        competition=competition,
+        match_highlight=match_highlight,
+        extra_notes=extra_notes
+    )
+    if content:
+        add_log(f"🎉 ตัดเกรดคะแนนผู้เล่นคู่ {opponent} สำเร็จ!", "success")
+        return jsonify({"success": True, "content": content})
+    return jsonify({"success": False, "error": "AI ไม่สามารถตัดเกรดได้"}), 500
+
+@app.route("/api/match_center/report", methods=["POST"])
+def api_generate_match_report():
+    """สร้างรายงานผลการแข่งขันฉบับเต็มหลังเกมด้วย AI"""
+    data = request.json or {}
+    opponent = data.get("opponent", "คู่แข่ง")
+    score = data.get("score", "2-0")
+    competition = data.get("competition", "พรีเมียร์ลีก")
+    goals = data.get("goals")
+
+    add_log(f"📝 สั่ง AI เขียนรายงานผลการแข่งขัน: ลิเวอร์พูล {score} {opponent}...", "info")
+    content = generate_ai_postmatch_report(
+        opponent=opponent,
+        score=score,
+        competition=competition,
+        goals=goals
+    )
+    if content:
+        add_log(f"🎉 สร้างรายงานผลคู่ {opponent} สำเร็จ!", "success")
+        return jsonify({"success": True, "content": content})
+    return jsonify({"success": False, "error": "AI ไม่สามารถสร้างรายงานผลได้"}), 500
 
 @app.route("/api/news/post", methods=["POST"])
 def post_single_news():
