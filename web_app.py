@@ -787,6 +787,7 @@ def api_generate_video(article_id):
 def api_post_reel(article_id):
     """โพสต์วิดีโอสั้นที่สร้างขึ้นไปยัง Facebook Reels"""
     data = request.json or {}
+    caption = str(data.get("caption", "")).strip()
     filename = str(data.get("filename", "")).strip()
     if "?" in filename:
         filename = filename.split("?")[0]

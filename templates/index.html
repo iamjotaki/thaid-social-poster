@@ -1367,7 +1367,14 @@
                         page_id: activePageId
                     })
                 });
-                const data = await res.json();
+                const resText = await res.text();
+                let data = {};
+                try {
+                    data = JSON.parse(resText);
+                } catch (pe) {
+                    throw new Error(`เซิร์ฟเวอร์ตอบกลับรหัส ${res.status}`);
+                }
+
                 if (data.success) {
                     showToast("🎉 โพสต์ลง Facebook Reels เรียบร้อยแล้ว!");
                     reelsBtn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> โพสต์ Reels สำเร็จแล้ว!`;
