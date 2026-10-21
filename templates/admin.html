@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ SaaS Admin Super Dashboard - LFC Auto News</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        lfc: {
+                            red: '#C8102E',
+                            darkred: '#9B0014',
+                            gold: '#F6EB61',
+                            teal: '#00B2A9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #18181b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col">
+
+    <!-- TOP NAVBAR -->
+    <header class="bg-zinc-900/95 backdrop-blur border-b border-zinc-800 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand -->
+            <div class="flex items-center space-x-3">
+                <a href="/" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center font-black text-white text-lg shadow-lg shadow-purple-600/30 shrink-0 group-hover:scale-105 transition">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight flex items-center gap-2">
+                            <span>SaaS Admin Portal</span>
+                            <span class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold">SUPERADMIN</span>
+                        </h1>
+                        <p class="text-[11px] text-zinc-400">ระบบควบคุมส่วนกลาง · สมาชิก · การเงิน · คลัง AI</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center space-x-3">
+                <a href="/" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition border border-zinc-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>กลับหน้าเว็บหลัก</span>
+                </a>
+
+                <div id="admin-user-profile" class="flex items-center gap-2.5 bg-zinc-800/80 border border-zinc-700/80 rounded-xl px-3 py-1.5">
+                    <img id="admin-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss" alt="Admin" class="w-7 h-7 rounded-full bg-zinc-700">
+                    <div class="text-left hidden sm:block">
+                        <div id="admin-name" class="text-xs font-bold leading-tight">Admin Boss</div>
+                        <div id="admin-email" class="text-[10px] text-zinc-400 leading-tight">admin@lfcautonews.com</div>
+                    </div>
+                    <button onclick="logoutAdmin()" class="text-zinc-400 hover:text-red-400 ml-1 p-1 transition" title="ออกจากระบบ">
+                        <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ADMIN NAVIGATION TABS -->
+    <nav class="bg-zinc-900 border-b border-zinc-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-2 py-2 overflow-x-auto">
+            <button onclick="switchAdminTab('users')" id="tab-btn-users" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 bg-purple-600 text-white transition">
+                <i class="fa-solid fa-users"></i> จัดการสมาชิก
+                <span id="badge-total-users" class="bg-white/20 text-white text-[10px] px-1.5 py-0.2 rounded-full">0</span>
+            </button>
+            <button onclick="switchAdminTab('finance')" id="tab-btn-finance" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
+                <i class="fa-solid fa-receipt text-emerald-400"></i> สลิป & รายได้
+                <span id="badge-pending-slips" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] px-1.5 py-0.2 rounded-full">2 รอตรวจ</span>
+            </button>
+            <button onclick="switchAdminTab('plans')" id="tab-btn-plans" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
+                <i class="fa-solid fa-tags text-cyan-400"></i> จัดการแพ็กเกจ (Plans)
+            </button>
+            <button onclick="switchAdminTab('ai-pool')" id="tab-btn-ai-pool" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
+                <i class="fa-solid fa-microchip text-yellow-400"></i> คลังคีย์ AI & โมเดล
+            </button>
+            <button onclick="switchAdminTab('audit')" id="tab-btn-audit" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
+                <i class="fa-solid fa-shield-check text-rose-400"></i> Audit Logs
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN BODY -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+        <!-- METRICS CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div>
+                    <div id="stat-total-users" class="text-xl sm:text-2xl font-black">0</div>
+                    <div class="text-[11px] text-zinc-400">สมาชิกทั้งหมด (คน)</div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+                <div>
+                    <div id="stat-mrr" class="text-xl sm:text-2xl font-black text-emerald-400">฿0</div>
+                    <div class="text-[11px] text-zinc-400">ประมาณการ MRR/เดือน</div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-brands fa-facebook"></i>
+                </div>
+                <div>
+                    <div id="stat-total-pages" class="text-xl sm:text-2xl font-black">0</div>
+                    <div class="text-[11px] text-zinc-400">เพจในระบบทั้งหมด</div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div>
+                    <div id="stat-total-scheduled" class="text-xl sm:text-2xl font-black">0</div>
+                    <div class="text-[11px] text-zinc-400">โพสต์ในคิวตั้งเวลา</div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-clapperboard"></i>
+                </div>
+                <div>
+                    <div id="stat-total-credits" class="text-xl sm:text-2xl font-black text-rose-400">0</div>
+                    <div class="text-[11px] text-zinc-400">เครดิตวิดีโอคงเหลือรวม</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- TAB 1: จัดการสมาชิก (USERS MANAGEMENT) -->
+        <!-- ======================================================== -->
+        <section id="pane-users" class="admin-pane space-y-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h2 class="text-base font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-users text-purple-400"></i>
+                            <span>รายชื่อสมาชิกและสิทธิ์การใช้งาน (User Directory)</span>
+                        </h2>
+                        <p class="text-xs text-zinc-400">ค้นหา, ปรับแพ็กเกจ, เติมเครดิตสร้างคลิปวิดีโอ, และสลับหน้าจอ (Impersonate)</p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-zinc-500 text-xs"></i>
+                            <input type="text" id="user-search-input" onkeyup="filterUsersTable()" placeholder="ค้นหาชื่อ, อีเมล, แพ็กเกจ..." class="bg-zinc-950 border border-zinc-700/80 rounded-xl pl-8 pr-3 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-500 w-48 sm:w-64">
+                        </div>
+                        <button onclick="openAddUserModal()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-purple-600/20">
+                            <i class="fa-solid fa-user-plus"></i> เพิ่มสมาชิก
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="overflow-x-auto rounded-xl border border-zinc-800">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-zinc-950/80 text-zinc-400 border-b border-zinc-800 uppercase font-semibold">
+                                <th class="py-3 px-4">สมาชิก</th>
+                                <th class="py-3 px-3">สิทธิ์ (Role)</th>
+                                <th class="py-3 px-3">แพ็กเกจ (Plan)</th>
+                                <th class="py-3 px-3">เครดิตวิดีโอ</th>
+                                <th class="py-3 px-3 text-center">เพจที่เชื่อม</th>
+                                <th class="py-3 px-3">สถานะ</th>
+                                <th class="py-3 px-3">วันหมดอายุ</th>
+                                <th class="py-3 px-4 text-right">การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body" class="divide-y divide-zinc-800">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 2: สลิป & การเงิน (FINANCE & SLIPS) -->
+        <!-- ======================================================== -->
+        <section id="pane-finance" class="admin-pane hidden space-y-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-base font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-emerald-400"></i>
+                            <span>รายการสลิปโอนเงินรอตรวจสอบ (Pending Payment Slips)</span>
+                        </h2>
+                        <p class="text-xs text-zinc-400">ตรวจสอบความถูกต้องของสลิปโอนเงิน PromptPay เพื่ออนุมัติแพ็กเกจและเติมเครดิต</p>
+                    </div>
+                    <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-xl font-semibold">
+                        PromptPay Slip Verifier Mockup
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Slip 1 -->
+                    <div id="slip-card-1" class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-16 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xl font-bold">
+                                    <i class="fa-solid fa-file-invoice-dollar text-emerald-400"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-zinc-100">คุณกฤต (thekop@fanpage.com)</div>
+                                    <div class="text-xs text-zinc-400">สมัครแพ็กเกจ: <span class="text-purple-400 font-semibold">Pro Plan (รายเดือน)</span></div>
+                                    <div class="text-xs text-emerald-400 font-bold mt-1">ยอดโอน: ฿490.00 บาท</div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">รอตรวจสอบ</span>
+                        </div>
+                        <div class="text-[11px] text-zinc-400 bg-zinc-900 p-2.5 rounded-lg border border-zinc-800 flex justify-between">
+                            <span>ธนาคารกสิกรไทย · Ref: 2026102198421</span>
+                            <span>เวลา: วันนี้ 12:15 น.</span>
+                        </div>
+                        <div class="flex items-center gap-2 pt-1">
+                            <button onclick="approveSlip('slip-card-1', 'thekop@fanpage.com', 'Pro', 30)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-check"></i> อนุมัติสลิป & เติมเครดิต
+                            </button>
+                            <button onclick="rejectSlip('slip-card-1')" class="bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 text-zinc-400 font-semibold py-1.5 px-3 rounded-xl text-xs transition border border-zinc-700">
+                                ปฏิเสธ
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Slip 2 -->
+                    <div id="slip-card-2" class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-16 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xl font-bold">
+                                    <i class="fa-solid fa-file-invoice-dollar text-emerald-400"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-zinc-100">บอลเต็ง แฟนคลับ (newbie@gmail.com)</div>
+                                    <div class="text-xs text-zinc-400">อัปเกรดเป็น: <span class="text-yellow-400 font-semibold">VIP Agency Plan</span></div>
+                                    <div class="text-xs text-emerald-400 font-bold mt-1">ยอดโอน: ฿990.00 บาท</div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">รอตรวจสอบ</span>
+                        </div>
+                        <div class="text-[11px] text-zinc-400 bg-zinc-900 p-2.5 rounded-lg border border-zinc-800 flex justify-between">
+                            <span>ธนาคารไทยพาณิชย์ · Ref: 2026102100412</span>
+                            <span>เวลา: วันนี้ 12:28 น.</span>
+                        </div>
+                        <div class="flex items-center gap-2 pt-1">
+                            <button onclick="approveSlip('slip-card-2', 'newbie@gmail.com', 'VIP Agency', 100)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-check"></i> อนุมัติสลิป & เติมเครดิต
+                            </button>
+                            <button onclick="rejectSlip('slip-card-2')" class="bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 text-zinc-400 font-semibold py-1.5 px-3 rounded-xl text-xs transition border border-zinc-700">
+                                ปฏิเสธ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 3: จัดการแพ็กเกจ (PLANS) -->
+        <!-- ======================================================== -->
+        <section id="pane-plans" class="admin-pane hidden space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Free Plan -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] bg-zinc-800 text-zinc-300 font-bold px-2 py-0.5 rounded-full">ทดลองใช้</span>
+                        <h3 class="text-lg font-bold mt-2">Free Trial</h3>
+                        <div class="text-2xl font-black mt-1">฿0 <span class="text-xs font-normal text-zinc-400">/ 14 วัน</span></div>
+                        <ul class="mt-4 space-y-2 text-xs text-zinc-300">
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เชื่อมได้ 1 เพจ Facebook</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>ดึงข่าว AI ไม่จำกัด</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เครดิตคลิปวิดีโอ 5 คลิป</li>
+                            <li><i class="fa-solid fa-xmark text-zinc-600 mr-2"></i>ระบบตรวจผลบอลสด (Match Center)</li>
+                        </ul>
+                    </div>
+                    <button class="mt-5 w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold py-2 rounded-xl transition">
+                        แก้ไขเงื่อนไขแพ็กเกจ
+                    </button>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="bg-zinc-900 border-2 border-purple-500/50 rounded-2xl p-5 flex flex-col justify-between relative shadow-xl shadow-purple-500/10">
+                    <span class="absolute -top-3 right-4 text-[10px] bg-purple-600 text-white font-bold px-2.5 py-0.5 rounded-full shadow">ยอดนิยม</span>
+                    <div>
+                        <span class="text-[10px] bg-purple-500/20 text-purple-400 font-bold px-2 py-0.5 rounded-full">สายเพจจริงจัง</span>
+                        <h3 class="text-lg font-bold mt-2 text-purple-300">Pro Creator</h3>
+                        <div class="text-2xl font-black mt-1 text-purple-400">฿490 <span class="text-xs font-normal text-zinc-400">/ เดือน</span></div>
+                        <ul class="mt-4 space-y-2 text-xs text-zinc-300">
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เชื่อมได้ 3 เพจ Facebook</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เครดิตคลิปวิดีโอ 30 คลิป/เดือน</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เสียงพากย์ Google AI Studio TTS</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>ระบบ Social Graphic Card</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>ระบบ Affiliate แทรกอัตโนมัติ</li>
+                        </ul>
+                    </div>
+                    <button class="mt-5 w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2 rounded-xl transition">
+                        แก้ไขเงื่อนไขแพ็กเกจ
+                    </button>
+                </div>
+
+                <!-- VIP Plan -->
+                <div class="bg-zinc-900 border border-amber-500/30 rounded-2xl p-5 flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-full">เอเจนซี่ & หลายเพจ</span>
+                        <h3 class="text-lg font-bold mt-2 text-amber-300">VIP Agency</h3>
+                        <div class="text-2xl font-black mt-1 text-amber-400">฿990 <span class="text-xs font-normal text-zinc-400">/ เดือน</span></div>
+                        <ul class="mt-4 space-y-2 text-xs text-zinc-300">
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เชื่อมได้ 10 เพจ Facebook</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เครดิตคลิปวิดีโอ 100 คลิป/เดือน</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>Match Center & วิเคราะห์ก่อนเกม</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>Community Manager ตอบคอมเมนต์ AI</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>คิวประมวลผลด่วนพิเศษ (Priority Queue)</li>
+                        </ul>
+                    </div>
+                    <button class="mt-5 w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold py-2 rounded-xl transition">
+                        แก้ไขเงื่อนไขแพ็กเกจ
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 4: AI KEY POOL -->
+        <!-- ======================================================== -->
+        <section id="pane-ai-pool" class="admin-pane hidden space-y-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-base font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-microchip text-yellow-400"></i>
+                            <span>คลัง Google Gemini API Keys (Load Balancer & Auto-Failover)</span>
+                        </h2>
+                        <p class="text-xs text-zinc-400">กระจายการเรียกใช้งาน AI หลายคีย์ เพื่อป้องกัน Rate Limit 429 และเพิ่มความเสถียร</p>
+                    </div>
+                    <button onclick="alert('ฟังก์ชันเพิ่ม API Key จำลอง')" class="bg-yellow-500 hover:bg-yellow-600 text-zinc-950 font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> เพิ่ม API Key สำรอง
+                    </button>
+                </div>
+
+                <div class="space-y-2.5">
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xs">#1</div>
+                            <div>
+                                <div class="text-xs font-bold text-zinc-100 font-mono">AIzaSyB9...W842X (Primary Production Key)</div>
+                                <div class="text-[10px] text-zinc-400">โมเดล: gemini-3.8-flash, gemini-3.8-flash-tts · เรียกใช้งานแล้ว: 1,420 ครั้ง</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">ทำงานปกติ (Active)</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold text-xs">#2</div>
+                            <div>
+                                <div class="text-xs font-bold text-zinc-100 font-mono">AIzaSyD7...K190P (Failover Backup Key 1)</div>
+                                <div class="text-[10px] text-zinc-400">โมเดล: gemini-2.5-flash-preview-tts · สำรองพร้อมใช้งาน</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full font-bold">สแตนด์บาย (Standby)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 5: AUDIT LOGS -->
+        <!-- ======================================================== -->
+        <section id="pane-audit" class="admin-pane hidden space-y-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5">
+                <h2 class="text-base font-bold flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-shield-check text-rose-400"></i>
+                    <span>บันทึกความปลอดภัย & กิจกรรมแอดมิน (Admin Audit Trail)</span>
+                </h2>
+                <div class="space-y-2 text-xs font-mono">
+                    <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 text-zinc-300 flex items-center justify-between">
+                        <span><span class="text-purple-400 font-bold">[12:35:10]</span> Admin เข้าสู่ระบบผ่าน Google Account Mockup</span>
+                        <span class="text-zinc-500">IP: 127.0.0.1</span>
+                    </div>
+                    <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 text-zinc-300 flex items-center justify-between">
+                        <span><span class="text-emerald-400 font-bold">[12:30:00]</span> ระบบตรวจสอบสถานะ Facebook Page Access Token ทั้งหมด: ผ่าน 100%</span>
+                        <span class="text-zinc-500">System Bot</span>
+                    </div>
+                    <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 text-zinc-300 flex items-center justify-between">
+                        <span><span class="text-yellow-400 font-bold">[12:25:48]</span> สมาชิก thekop@fanpage.com สร้างคลิปวิดีโอสั้นสำเร็จ (หัก 1 เครดิต)</span>
+                        <span class="text-zinc-500">Worker #1</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- EDIT USER MODAL -->
+    <div id="modal-edit-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-zinc-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+                <h3 class="text-base font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-purple-400"></i>
+                    <span>แก้ไขข้อมูลสมาชิก & สิทธิ์</span>
+                </h3>
+                <button onclick="closeEditUserModal()" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <input type="hidden" id="edit-user-id">
+
+            <div>
+                <label class="block text-xs font-semibold text-zinc-300 mb-1">อีเมลสมาชิก:</label>
+                <input type="text" id="edit-user-email" readonly class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-400 cursor-not-allowed">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-zinc-300 mb-1">ชื่อสมาชิก:</label>
+                <input type="text" id="edit-user-name" readonly class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-400 cursor-not-allowed">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">สิทธิ์ (Role):</label>
+                    <select id="edit-user-role" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                        <option value="member">Member (สมาชิกทั่วไป)</option>
+                        <option value="admin">Admin (ผู้ดูแลระบบ)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">แพ็กเกจ (Plan):</label>
+                    <select id="edit-user-plan" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                        <option value="Free Trial">Free Trial</option>
+                        <option value="Pro">Pro Creator</option>
+                        <option value="VIP Agency">VIP Agency</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">เครดิตสร้างคลิปวิดีโอ:</label>
+                    <input type="number" id="edit-user-credits" min="0" max="9999" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">สถานะบัญชี:</label>
+                    <select id="edit-user-status" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                        <option value="active">Active (ใช้งานได้ปกติ)</option>
+                        <option value="suspended">Suspended (ระงับชั่วคราว)</option>
+                        <option value="banned">Banned (แบนถาวร)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-3 border-t border-zinc-800">
+                <button onclick="saveUserEdit()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-xl text-xs transition">
+                    บันทึกการเปลี่ยนแปลง
+                </button>
+                <button onclick="closeEditUserModal()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-2 px-4 rounded-xl text-xs transition">
+                    ยกเลิก
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        let allUsersData = [];
+
+        async function initAdminDashboard() {
+            await loadAdminMetrics();
+            await loadUsersTable();
+        }
+
+        async function loadAdminMetrics() {
+            try {
+                const res = await fetch('/api/admin/metrics');
+                const data = await res.json();
+                if (data.success) {
+                    const m = data.metrics;
+                    document.getElementById('stat-total-users').innerText = m.total_users;
+                    document.getElementById('badge-total-users').innerText = m.total_users;
+                    document.getElementById('stat-mrr').innerText = '฿' + (m.estimated_mrr || 0).toLocaleString();
+                    document.getElementById('stat-total-pages').innerText = m.total_pages;
+                    document.getElementById('stat-total-scheduled').innerText = m.total_scheduled;
+                    document.getElementById('stat-total-credits').innerText = m.total_credits;
+                }
+            } catch (err) {
+                console.error("Error loading metrics:", err);
+            }
+        }
+
+        async function loadUsersTable() {
+            try {
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                if (data.success) {
+                    allUsersData = data.users;
+                    renderUsersTable(allUsersData);
+                }
+            } catch (err) {
+                console.error("Error loading users:", err);
+            }
+        }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-zinc-900/60 transition';
+
+                const roleBadge = u.role === 'admin' 
+                    ? `<span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]"><i class="fa-solid fa-crown mr-1 text-[9px]"></i>Admin</span>`
+                    : `<span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded-full text-[10px]">Member</span>`;
+
+                let planBadge = `<span class="bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full text-[10px]">${u.plan_name || 'Free Trial'}</span>`;
+                if (u.plan_name === 'Pro') {
+                    planBadge = `<span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">Pro</span>`;
+                } else if (u.plan_name === 'VIP Agency') {
+                    planBadge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">VIP Agency</span>`;
+                }
+
+                const statusBadge = u.status === 'active'
+                    ? `<span class="text-emerald-400 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> ปกติ</span>`
+                    : `<span class="text-red-400 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> ${u.status}</span>`;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-2.5">
+                            <img src="${u.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + u.id}" class="w-8 h-8 rounded-full bg-zinc-800 shrink-0">
+                            <div>
+                                <div class="font-bold text-zinc-200">${u.name}</div>
+                                <div class="text-[11px] text-zinc-400">${u.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-3">${roleBadge}</td>
+                    <td class="py-3 px-3">${planBadge}</td>
+                    <td class="py-3 px-3 font-bold text-rose-400">${u.video_credits} คลิป</td>
+                    <td class="py-3 px-3 text-center font-bold text-blue-400">${u.pages_count || 0}</td>
+                    <td class="py-3 px-3">${statusBadge}</td>
+                    <td class="py-3 px-3 text-zinc-400 text-[11px]">${(u.plan_expires_at || '').substring(0, 10) || 'ไม่มี'}</td>
+                    <td class="py-3 px-4 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button onclick="impersonateUser(${u.id}, '${u.name}')" class="bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border border-blue-500/30" title="เข้าสู่ระบบในนามสมาชิกนี้ (Impersonate)">
+                                <i class="fa-solid fa-eye mr-1"></i> ดูหน้า User
+                            </button>
+                            <button onclick="openEditUserModal(${u.id})" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border border-zinc-700" title="แก้ไขสิทธิ์/เติมเครดิต">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            ${u.role !== 'admin' ? `
+                            <button onclick="deleteUser(${u.id}, '${u.name}')" class="bg-zinc-800 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border border-zinc-700" title="ลบสมาชิก">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterUsersTable() {
+            const query = document.getElementById('user-search-input').value.toLowerCase().trim();
+            if (!query) {
+                renderUsersTable(allUsersData);
+                return;
+            }
+            const filtered = allUsersData.filter(u => 
+                u.name.toLowerCase().includes(query) || 
+                u.email.toLowerCase().includes(query) || 
+                (u.plan_name && u.plan_name.toLowerCase().includes(query)) ||
+                (u.role && u.role.toLowerCase().includes(query))
+            );
+            renderUsersTable(filtered);
+        }
+
+        function switchAdminTab(tabKey) {
+            document.querySelectorAll('.admin-pane').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('bg-purple-600', 'text-white');
+                el.classList.add('text-zinc-400');
+            });
+
+            document.getElementById(`pane-${tabKey}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabKey}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-zinc-400');
+                activeBtn.classList.add('bg-purple-600', 'text-white');
+            }
+        }
+
+        function openEditUserModal(userId) {
+            const user = allUsersData.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById('edit-user-id').value = user.id;
+            document.getElementById('edit-user-email').value = user.email;
+            document.getElementById('edit-user-name').value = user.name;
+            document.getElementById('edit-user-role').value = user.role || 'member';
+            document.getElementById('edit-user-plan').value = user.plan_name || 'Free Trial';
+            document.getElementById('edit-user-credits').value = user.video_credits || 0;
+            document.getElementById('edit-user-status').value = user.status || 'active';
+
+            document.getElementById('modal-edit-user').classList.remove('hidden');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('modal-edit-user').classList.add('hidden');
+        }
+
+        async function saveUserEdit() {
+            const userId = document.getElementById('edit-user-id').value;
+            const role = document.getElementById('edit-user-role').value;
+            const plan_name = document.getElementById('edit-user-plan').value;
+            const video_credits = parseInt(document.getElementById('edit-user-credits').value) || 0;
+            const status = document.getElementById('edit-user-status').value;
+
+            try {
+                const res = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role, plan_name, video_credits, status })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('บันทึกข้อมูลสมาชิกเรียบร้อยแล้ว!');
+                    closeEditUserModal();
+                    await initAdminDashboard();
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                }
+            } catch (err) {
+                alert('เกิดข้อผิดพลาด: ' + err.message);
+            }
+        }
+
+        async function deleteUser(userId, userName) {
+            if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบสมาชิก "${userName}" ออกจากระบบ?`)) return;
+            try {
+                const res = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    alert('ลบสมาชิกเรียบร้อยแล้ว');
+                    await initAdminDashboard();
+                }
+            } catch (err) {
+                alert('เกิดข้อผิดพลาด: ' + err.message);
+            }
+        }
+
+        async function impersonateUser(userId, userName) {
+            if (!confirm(`คุณต้องการเข้าสู่ระบบในนามสมาชิก "${userName}" หรือไม่?\n\n(คุณจะสามารถดูหน้า Dashboard เหมือนกับที่สมาชิกมองเห็นได้)`)) return;
+            try {
+                const res = await fetch(`/api/auth/impersonate/${userId}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = '/';
+                }
+            } catch (err) {
+                alert('เกิดข้อผิดพลาด: ' + err.message);
+            }
+        }
+
+        function approveSlip(cardId, email, plan, credits) {
+            alert(`✅ อนุมัติสลิปของ ${email} สำเร็จ!\nระบบได้ปรับสถานะเป็น ${plan} และเพิ่มเครดิตวิดีโอให้อัตโนมัติ`);
+            const el = document.getElementById(cardId);
+            if (el) {
+                el.innerHTML = `
+                    <div class="p-6 text-center text-emerald-400 font-bold">
+                        <i class="fa-solid fa-circle-check text-3xl mb-2"></i>
+                        <div>อนุมัติสลิปสำเร็จเรียบร้อยแล้ว</div>
+                    </div>
+                `;
+            }
+        }
+
+        function rejectSlip(cardId) {
+            const reason = prompt('กรุณาระบุเหตุผลในการปฏิเสธสลิป: (เช่น ยอดเงินไม่ถูกต้อง)', 'ยอดเงินไม่ตรงตามแพ็กเกจ');
+            if (reason) {
+                alert('ส่งแจ้งเตือนปฏิเสธสลิปไปยังผู้ใช้เรียบร้อยแล้ว');
+                const el = document.getElementById(cardId);
+                if (el) el.remove();
+            }
+        }
+
+        function openAddUserModal() {
+            const email = prompt('กรอกอีเมลสมาชิกใหม่ (Google Account):');
+            if (!email) return;
+            const name = prompt('กรอกชื่อสมาชิก:', 'สมาชิกใหม่');
+            if (!name) return;
+            fetch('/api/auth/google/mock_login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, name, role: 'member', plan_name: 'Free Trial' })
+            }).then(() => {
+                alert('เพิ่มสมาชิกใหม่สำเร็จ!');
+                initAdminDashboard();
+            });
+        }
+
+        async function logoutAdmin() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/';
+        }
+
+        document.addEventListener('DOMContentLoaded', initAdminDashboard);
+    </script>
+</body>
+</html>

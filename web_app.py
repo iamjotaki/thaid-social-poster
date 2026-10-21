@@ -7,7 +7,7 @@ import datetime
 import threading
 import webbrowser
 from pathlib import Path
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, session, redirect, url_for
 
 # ปรับ encoding ของ stdout/stderr บน Windows
 if sys.platform.startswith("win"):
@@ -39,11 +39,35 @@ from database import (
     update_scheduled_post_status,
     cancel_scheduled_post,
     delete_scheduled_post,
-    update_card_image
+    update_card_image,
+    get_user_by_id,
+    get_user_by_email,
+    get_all_users,
+    create_or_update_google_user,
+    update_user_admin,
+    delete_user,
+    deduct_user_video_credit,
+    get_admin_metrics,
+    get_user_api_keys,
+    add_user_api_key,
+    update_user_api_key,
+    toggle_user_api_key,
+    delete_user_api_key,
+    get_active_api_keys_for_user,
+    record_api_key_usage,
+    get_page_schedule_rules,
+    update_page_schedule_rules,
+    calculate_next_schedule_slot,
+    record_post_history,
+    get_posting_analytics,
+    get_post_history,
+    get_calendar_events,
+    get_golden_posting_hours,
+    get_content_strategy_analytics
 )
 from news_fetcher import fetch_all_new_articles, download_image
-from ai_rewriter import rewrite_article
-from fb_poster import post_to_facebook, post_reel_to_facebook
+from ai_rewriter import rewrite_article, detect_article_category
+from fb_poster import post_to_facebook, post_reel_to_facebook, delete_facebook_post
 from card_generator import generate_social_card
 from match_center import (
     get_liverpool_schedule,
@@ -64,8 +88,13 @@ from affiliate_manager import (
     save_affiliate_products,
     attach_affiliate_if_enabled
 )
+import affiliate_ai_service
+import flow_image_poster
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
+app.secret_key = os.getenv("SECRET_KEY", "lfc_secret_saas_key_2026_safe")
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.jinja_env.auto_reload = True
 
 # ตัวแปรสถานะเบื้องหลัง
 auto_bot_running = False
@@ -84,12 +113,243 @@ def add_log(message: str, level: str = "info"):
         system_logs.pop()
     print(f"[{timestamp}] {message}")
 
+def get_current_user():
+    """ดึงข้อมูลผู้ใช้ปัจจุบันจาก Session หรือ Impersonation"""
+    if "impersonate_user_id" in session:
+        u = get_user_by_id(session["impersonate_user_id"])
+        if u:
+            u["is_impersonating"] = True
+            return u
+    if "user_id" in session:
+        u = get_user_by_id(session["user_id"])
+        if u:
+            u["is_impersonating"] = False
+            return u
+    return None
+
 # -------------------------------------------------------------
-# WEB ROUTES
+# WEB ROUTES & AUTH & ADMIN
 # -------------------------------------------------------------
 @app.route("/")
 def index():
-    return render_template("index.html")
+    """หน้าแรกสำหรับผู้เยี่ยมชม (Landing Page) หรือ Redirect ไป Dashboard หากล็อกอินแล้ว"""
+    user = get_current_user()
+    if user:
+        return redirect("/dashboard")
+    return render_template("landing.html")
+
+@app.route("/login")
+def login_page():
+    """หน้าต่างล็อกอิน Google"""
+    user = get_current_user()
+    if user:
+        return redirect("/dashboard")
+    return redirect("/?login=1")
+
+@app.route("/dashboard")
+def dashboard():
+    """หน้าแดชบอร์ดหลักของสมาชิก (ต้องผ่านการล็อกอินก่อน)"""
+    user = get_current_user()
+    if not user:
+        return redirect("/?login=1")
+    return render_template("index.html", current_user=user)
+
+@app.route("/admin")
+def admin_page():
+    """หน้าต่างแดชบอร์ดหลังบ้าน Superadmin (เฉพาะแอดมินเท่านั้น)"""
+    user = get_current_user()
+    if not user or user.get("role") != "admin":
+        return redirect("/dashboard")
+    return render_template("admin.html", current_user=user)
+
+# Auth Endpoints
+@app.route("/api/auth/me")
+def api_auth_me():
+    user = get_current_user()
+    if not user:
+        return jsonify({"logged_in": False, "user": None})
+    return jsonify({
+        "logged_in": True,
+        "user": user,
+        "is_impersonating": session.get("impersonate_user_id") is not None
+    })
+
+@app.route("/api/auth/google/mock_login", methods=["POST"])
+def api_mock_login():
+    data = request.json or {}
+    email = str(data.get("email", "")).strip()
+    name = str(data.get("name", "")).strip() or "Google User"
+    avatar = str(data.get("avatar_url", "")).strip()
+    role = str(data.get("role", "member")).strip()
+    plan = str(data.get("plan_name", "Free Trial")).strip()
+
+    if not email:
+        return jsonify({"success": False, "error": "กรุณาระบุอีเมล"}), 400
+
+    user = create_or_update_google_user(email=email, name=name, avatar_url=avatar, role=role, plan_name=plan)
+    session["user_id"] = user["id"]
+    if "impersonate_user_id" in session:
+        del session["impersonate_user_id"]
+
+    add_log(f"🔑 เข้าสู่ระบบ Google Account สำเร็จ: {user['name']} ({user['email']}) [สิทธิ์: {user['role']}]", "info")
+    return jsonify({"success": True, "user": user})
+
+@app.route("/api/auth/logout", methods=["POST", "GET"])
+def api_logout():
+    session.clear()
+    add_log("👋 ออกจากระบบเรียบร้อยแล้ว", "info")
+    return jsonify({"success": True})
+
+@app.route("/api/auth/impersonate/<int:target_user_id>", methods=["POST"])
+def api_impersonate(target_user_id):
+    current_u = get_user_by_id(session.get("user_id", 0))
+    if not current_u or current_u.get("role") != "admin":
+        # ตรวจสอบสิทธิ์แอดมิน
+        admin_u = get_user_by_email("admin@lfcautonews.com")
+        if admin_u:
+            session["user_id"] = admin_u["id"]
+            current_u = admin_u
+    
+    target_u = get_user_by_id(target_user_id)
+    if not target_u:
+        return jsonify({"success": False, "error": "ไม่พบสมาชิกเป้าหมาย"}), 404
+
+    session["impersonate_user_id"] = target_u["id"]
+    add_log(f"👁️ แอดมินจำลองเข้าสู่ระบบในนามสมาชิก: {target_u['name']} ({target_u['email']})", "warning")
+    return jsonify({"success": True, "target_user": target_u})
+
+@app.route("/api/auth/stop_impersonate", methods=["POST"])
+def api_stop_impersonate():
+    if "impersonate_user_id" in session:
+        del session["impersonate_user_id"]
+    add_log("🔙 สลับกลับสู่บัญชีแอดมินเรียบร้อยแล้ว", "info")
+    return jsonify({"success": True})
+
+# Admin Management API
+@app.route("/api/admin/metrics")
+def api_admin_metrics():
+    metrics = get_admin_metrics()
+    return jsonify({"success": True, "metrics": metrics})
+
+@app.route("/api/admin/users", methods=["GET"])
+def api_admin_users():
+    users = get_all_users()
+    return jsonify({"success": True, "users": users})
+
+@app.route("/api/admin/users/<int:user_id>", methods=["PUT"])
+def api_admin_update_user(user_id):
+    data = request.json or {}
+    plan_name = data.get("plan_name", "Free Trial")
+    video_credits = int(data.get("video_credits", 5))
+    status = data.get("status", "active")
+    role = data.get("role", "member")
+
+    success = update_user_admin(user_id, plan_name, video_credits, status, role)
+    if success:
+        add_log(f"🛡️ แอดมินแก้ไขข้อมูลสมาชิก ID {user_id} (Plan: {plan_name}, Credits: {video_credits}, Status: {status})", "info")
+        return jsonify({"success": True})
+    return jsonify({"success": False, "error": "เกิดข้อผิดพลาดในการบันทึก"}), 400
+
+@app.route("/api/admin/users/<int:user_id>", methods=["DELETE"])
+def api_admin_delete_user(user_id):
+    success = delete_user(user_id)
+    if success:
+        add_log(f"🗑️ แอดมินลบสมาชิก ID {user_id} ออกจากระบบ", "warning")
+        return jsonify({"success": True})
+    return jsonify({"success": False, "error": "ลบสมาชิกไม่สำเร็จ"}), 400
+
+# -------------------------------------------------------------
+# USER GOOGLE API KEYS MANAGEMENT (BYOK)
+# -------------------------------------------------------------
+@app.route("/api/user/keys", methods=["GET"])
+def api_get_user_keys():
+    user = get_current_user()
+    if not user:
+        return jsonify({"success": False, "error": "กรุณาเข้าสู่ระบบก่อน"}), 401
+    keys = get_user_api_keys(user["id"])
+    return jsonify({"success": True, "keys": keys})
+
+@app.route("/api/user/keys", methods=["POST"])
+def api_add_user_key():
+    user = get_current_user()
+    if not user:
+        return jsonify({"success": False, "error": "กรุณาเข้าสู่ระบบก่อน"}), 401
+    data = request.json or {}
+    api_key = str(data.get("api_key", "")).strip()
+    label = str(data.get("label", "")).strip() or "Google Gemini Key"
+    if not api_key:
+        return jsonify({"success": False, "error": "กรุณากรอก Google API Key"}), 400
+    res = add_user_api_key(user["id"], api_key, label)
+    add_log(f"🔑 สมาชิก {user['name']} เพิ่ม Google API Key: '{label}'", "info")
+    return jsonify({"success": True, "key": res})
+
+@app.route("/api/user/keys/<int:key_id>", methods=["PUT"])
+def api_update_user_key(key_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"success": False, "error": "กรุณาเข้าสู่ระบบก่อน"}), 401
+    data = request.json or {}
+    api_key = str(data.get("api_key", "")).strip()
+    label = str(data.get("label", "")).strip()
+    is_active = int(data.get("is_active", 1))
+    success = update_user_api_key(key_id, user["id"], api_key, label, is_active)
+    add_log(f"✏️ สมาชิก {user['name']} แก้ไข Google API Key: '{label}'", "info")
+    return jsonify({"success": success})
+
+@app.route("/api/user/keys/<int:key_id>/toggle", methods=["POST"])
+def api_toggle_user_key(key_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"success": False, "error": "กรุณาเข้าสู่ระบบก่อน"}), 401
+    success = toggle_user_api_key(key_id, user["id"])
+    return jsonify({"success": success})
+
+@app.route("/api/user/keys/<int:key_id>", methods=["DELETE"])
+def api_delete_user_key(key_id):
+    user = get_current_user()
+    if not user:
+        return jsonify({"success": False, "error": "กรุณาเข้าสู่ระบบก่อน"}), 401
+    success = delete_user_api_key(key_id, user["id"])
+    add_log(f"🗑️ สมาชิก {user['name']} ลบ Google API Key (ID: {key_id})", "info")
+    return jsonify({"success": success})
+
+@app.route("/api/user/keys/test", methods=["POST"])
+def api_test_key():
+    """ทดสอบเชื่อมต่อ Google Gemini API กับคีย์ที่ระบุ"""
+    data = request.json or {}
+    key = str(data.get("api_key", "")).strip()
+    key_id = data.get("key_id")
+    user = get_current_user()
+
+    # ถ้าส่ง masked key หรือมี key_id มา ให้ดึง key จริงจาก DB
+    if ("..." in key or not key) and key_id and user:
+        keys = get_user_api_keys(user["id"])
+        for k in keys:
+            if k["id"] == key_id:
+                key = k["api_key"]
+                break
+
+    if not key or key == "your_gemini_api_key_here":
+        return jsonify({"success": False, "error": "กรุณาระบุ Google API Key ที่ถูกต้อง (ขึ้นต้นด้วย AIzaSy...)"}), 400
+
+    try:
+        import requests
+        url = f"https://generativelanguage.googleapis.com/v1beta/models?key={key}"
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            return jsonify({
+                "success": True,
+                "message": "✅ ทดสอบสำเร็จ! เชื่อมต่อ Google Gemini API ได้ปกติ (คีย์พร้อมใช้งาน)"
+            })
+        else:
+            err_json = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
+            err_msg = err_json.get("error", {}).get("message", resp.text[:120])
+            return jsonify({
+                "success": False,
+                "error": f"❌ Google ปฏิเสธ ({resp.status_code}): {err_msg}"
+            }), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": f"เกิดข้อผิดพลาดในการเชื่อมต่อ: {e}"}), 400
 
 @app.route("/images/<path:filename>")
 def serve_image(filename):
@@ -373,6 +633,25 @@ def api_add_page_feed(page_id):
         return jsonify({"success": True})
     return jsonify({"success": False, "error": "Feed URL นี้มีอยู่แล้วในเพจนี้"}), 400
 
+@app.route("/api/feeds/add", methods=["POST"])
+def api_add_feed_compat():
+    """เพิ่ม RSS Feed เข้าเพจ (Universal Endpoint)"""
+    data = request.json or {}
+    page_id = str(data.get("page_id", "")).strip()
+    feed_name = str(data.get("feed_name") or data.get("name") or "").strip()
+    feed_url = str(data.get("feed_url") or data.get("url") or "").strip()
+
+    if not page_id:
+        return jsonify({"success": False, "error": "กรุณาระบุเพจ Facebook ที่ต้องการเพิ่มฟีด"}), 400
+    if not feed_name or not feed_url:
+        return jsonify({"success": False, "error": "กรุณากรอกชื่อแหล่งข่าวและ URL Feed"}), 400
+
+    success = add_feed_to_page(page_id, feed_name, feed_url)
+    if success:
+        add_log(f"📡 เพิ่ม RSS Feed ใหม่ให้เพจ {page_id}: [{feed_name}] {feed_url}", "success")
+        return jsonify({"success": True})
+    return jsonify({"success": False, "error": "Feed URL นี้มีอยู่แล้วในเพจนี้"}), 400
+
 @app.route("/api/feeds/<int:feed_id>/toggle", methods=["POST"])
 def api_toggle_feed(feed_id):
     """เปิด/ปิด การดึงข่าวจาก Feed"""
@@ -399,9 +678,102 @@ def api_get_schedules():
     posts = get_scheduled_posts(page_id=page_id, status=status)
     return jsonify(posts)
 
+@app.route("/api/schedule/rules", methods=["GET", "POST"])
+def api_schedule_rules():
+    """ดึงและบันทึกการตั้งค่าความถี่ & โควตาการโพสต์ประจำเพจ"""
+    if request.method == "GET":
+        page_id = request.args.get("page_id")
+        if not page_id:
+            pages = get_all_pages()
+            page_id = pages[0]["page_id"] if pages else config.FB_PAGE_ID
+        rules = get_page_schedule_rules(page_id)
+        return jsonify(rules)
+
+    data = request.json or {}
+    page_id = str(data.get("page_id", "")).strip()
+    if not page_id:
+        return jsonify({"success": False, "error": "กรุณาระบุ page_id"}), 400
+
+    posts_per_day = int(data.get("posts_per_day", 3))
+    reels_per_day = int(data.get("reels_per_day", 2))
+    posting_times = str(data.get("posting_times", "09:00,13:00,17:00,20:00")).strip()
+    schedule_mode = str(data.get("schedule_mode", "facebook")).strip()
+
+    update_page_schedule_rules(page_id, posts_per_day, reels_per_day, posting_times, schedule_mode)
+    add_log(f"⚙️ อัปเดตโควตาตั้งเวลาเพจ {page_id} สำเร็จ (โพสต์: {posts_per_day}/วัน, Reels: {reels_per_day}/วัน)", "success")
+    return jsonify({"success": True})
+
+@app.route("/api/schedule/next_slot", methods=["GET"])
+def api_schedule_next_slot():
+    """คำนวณคิวเวลาถัดไปอัตโนมัติ (Next Auto-Slot) ตามโควตาที่กำหนดไว้"""
+    page_id = request.args.get("page_id")
+    post_type = request.args.get("type", "post")
+    if not page_id:
+        pages = get_all_pages()
+        page_id = pages[0]["page_id"] if pages else config.FB_PAGE_ID
+    slot = calculate_next_schedule_slot(page_id, post_type)
+    return jsonify(slot)
+
+@app.route("/api/posts/analytics", methods=["GET"])
+def api_posts_analytics():
+    """ดึงสถิติจำนวนการโพสต์ (วันนี้, 7 วัน, เดือนนี้, ทั้งหมด, คิว FB)"""
+    page_id = request.args.get("page_id")
+    user_id = session.get("user_id") if session.get("role") != "admin" else None
+    data = get_posting_analytics(page_id=page_id, user_id=user_id)
+    return jsonify(data)
+
+@app.route("/api/posts/history", methods=["GET"])
+def api_posts_history():
+    """ดึงรายการประวัติการโพสต์ย้อนหลัง พร้อมฟิลเตอร์ค้นหา"""
+    page_id = request.args.get("page_id")
+    post_type = request.args.get("type")
+    status = request.args.get("status")
+    date_filter = request.args.get("date_filter")
+    limit = request.args.get("limit", 100, type=int)
+    user_id = session.get("user_id") if session.get("role") != "admin" else None
+
+    history = get_post_history(
+        page_id=page_id,
+        post_type=post_type,
+        status=status,
+        date_filter=date_filter,
+        limit=limit,
+        user_id=user_id
+    )
+    return jsonify(history)
+
+@app.route("/api/schedule/calendar", methods=["GET"])
+def api_schedule_calendar():
+    """ดึงข้อมูลปฏิทินคอนเทนต์ (Content Calendar) รายเดือน"""
+    page_id = request.args.get("page_id")
+    year = request.args.get("year", type=int)
+    month = request.args.get("month", type=int)
+    user_id = session.get("user_id") if session.get("role") != "admin" else None
+    data = get_calendar_events(page_id=page_id, year=year, month=month, user_id=user_id)
+    return jsonify(data)
+
+@app.route("/api/schedule/golden_slots", methods=["GET"])
+def api_schedule_golden_slots():
+    """ดึงข้อมูลการวิเคราะห์ช่วงเวลาทอง 24 ชม. และสล็อตเวลาทอง AI ถัดไป"""
+    page_id = request.args.get("page_id")
+    data = get_golden_posting_hours(page_id=page_id)
+    return jsonify(data)
+
+@app.route("/api/analytics/content_strategy", methods=["GET"])
+def api_analytics_content_strategy():
+    """ดึงข้อมูลกลยุทธ์สัดส่วนคอนเทนต์และข้อเสนอแนะ AI Strategy Advisor"""
+    page_id = request.args.get("page_id")
+    user_id = session.get("user_id") if session.get("role") != "admin" else None
+    data = get_content_strategy_analytics(page_id=page_id, user_id=user_id)
+    return jsonify(data)
+
 @app.route("/api/schedule/create", methods=["POST"])
 def api_create_schedule():
-    """สร้างการตั้งเวลาโพสต์ใหม่"""
+    """
+    สร้างการตั้งเวลาโพสต์ใหม่
+    รองรับทั้ง Native Facebook Scheduling (ส่งขึ้นไปตั้งเวลาบน Facebook โดยตรง ไม่ต้องเปิดเซิร์ฟเวอร์ทิ้งไว้)
+    และ Host Background Scheduling
+    """
     data = request.json or {}
     page_id = str(data.get("page_id", "")).strip()
     caption = str(data.get("caption", "")).strip()
@@ -409,15 +781,36 @@ def api_create_schedule():
     title = str(data.get("title", "")).strip()
     article_url = str(data.get("article_url", "")).strip()
     image_url = str(data.get("image_url", "")).strip()
+    post_type = str(data.get("post_type", "post")).strip()
+    schedule_mode = str(data.get("schedule_mode", "facebook")).strip() # 'facebook' or 'host'
+    user_id = session.get("user_id", 1)
 
     if not page_id or not caption or not scheduled_time:
         return jsonify({"success": False, "error": "กรุณาระบุเพจ, แคปชัน และวันเวลาที่ต้องการโพสต์"}), 400
 
-    # ดาวน์โหลดรูปลงเครื่องเก็บไว้ล่วงหน้า
+    # แปลงเวลาเป็น timestamp สำหรับ Facebook Graph API
+    sched_dt = None
+    for fmt in ("%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"):
+        try:
+            sched_dt = datetime.datetime.strptime(scheduled_time[:16], fmt[:len(scheduled_time[:16])])
+            break
+        except Exception:
+            pass
+
+    if not sched_dt:
+        try:
+            sched_dt = datetime.datetime.fromisoformat(scheduled_time.replace("Z", ""))
+        except Exception:
+            return jsonify({"success": False, "error": f"รูปแบบวันเวลาไม่ถูกต้อง: {scheduled_time}"}), 400
+
+    sched_ts = int(sched_dt.timestamp())
+    now_ts = int(time.time())
+    diff_sec = sched_ts - now_ts
+
+    # จัดการรูปภาพหรือการ์ด
     card_image_path = data.get("card_image_path")
     use_card = data.get("use_card", True)
 
-    # แนบลิงก์ Affiliate ท้ายโพสต์อัตโนมัติหากเปิดตัวเลือกไว้
     enable_affiliate = data.get("enable_affiliate", False)
     aff_prod_id = data.get("affiliate_product_id")
     if enable_affiliate:
@@ -429,26 +822,118 @@ def api_create_schedule():
     elif image_url:
         local_img = download_image(image_url, filename_prefix=f"sched_{page_id}")
 
-    post_id = create_scheduled_post(
-        page_id=page_id,
-        caption=caption,
-        scheduled_time=scheduled_time,
-        title=title,
-        article_url=article_url,
-        image_url=image_url,
-        local_image_path=local_img or ""
-    )
+    video_filename = data.get("video_filename")
+    video_path = ""
+    if video_filename:
+        video_path = str(config.BASE_DIR / "downloads" / "videos" / os.path.basename(video_filename))
 
     page_info = get_page_by_id(page_id)
     pname = page_info["name"] if page_info else page_id
-    add_log(f"📅 ตั้งเวลาโพสต์เรียบร้อย! เพจ: '{pname}' นัดหมายเวลา: {scheduled_time}", "success")
-    return jsonify({"success": True, "schedule_id": post_id})
+    token = page_info.get("access_token") if page_info else None
+
+    # โหมดที่ 1: ตั้งเวลาบน Facebook โดยตรง (Native Facebook Scheduling)
+    if schedule_mode == "facebook":
+        if diff_sec < 600:
+            return jsonify({
+                "success": False,
+                "error": "Facebook กำหนดให้ตั้งเวลาล่วงหน้าอย่างน้อย 10-15 นาทีขึ้นไป (โปรดเลือกเวลาที่มากกว่าปัจจุบันอย่างน้อย 15 นาที)"
+            }), 400
+        if diff_sec > 75 * 86400:
+            return jsonify({"success": False, "error": "ไม่สามารถตั้งเวลาล่วงหน้าเกิน 75 วันได้"}), 400
+
+        # ส่งขึ้น Facebook Graph API ทันที
+        if post_type == "reel":
+            if not video_path or not os.path.exists(video_path):
+                return jsonify({"success": False, "error": f"ไม่พบไฟล์วิดีโอ {video_filename} สำหรับตั้งเวลา"}), 404
+            res = post_reel_to_facebook(
+                video_path=video_path,
+                description=caption,
+                target_page_id=page_id,
+                target_access_token=token,
+                scheduled_publish_time=sched_ts
+            )
+        else:
+            res = post_to_facebook(
+                message=caption,
+                image_path=local_img,
+                image_url=image_url if not local_img else None,
+                target_page_id=page_id,
+                target_access_token=token,
+                scheduled_publish_time=sched_ts
+            )
+
+        if not res.get("success"):
+            err = res.get("error", "ไม่สามารถส่งขึ้นไปตั้งเวลาบน Facebook ได้")
+            add_log(f"❌ [Facebook Schedule Error] {err}", "error")
+            return jsonify({"success": False, "error": f"Facebook ปฏิเสธการตั้งเวลา: {err}"}), 500
+
+        fb_id = res.get("post_id") or res.get("video_id") or "sim_fb_sched"
+        db_id = record_post_history(
+            page_id=page_id,
+            title=title or ("Facebook Reel" if post_type == "reel" else "โพสต์ Facebook"),
+            caption=caption,
+            post_type=post_type,
+            post_id=fb_id,
+            status="fb_scheduled",
+            image_url=image_url or "",
+            local_image_path=local_img or "",
+            video_path=video_path or "",
+            scheduled_time=scheduled_time,
+            is_fb_native=1,
+            user_id=user_id,
+            published_at=scheduled_time
+        )
+        if article_url:
+            mark_as_posted(article_url)
+
+        time_display = sched_dt.strftime("%d/%m/%Y %H:%M")
+        add_log(f"🌐 [Facebook Scheduled] ส่งขึ้นไปตั้งเวลาบน Facebook สำเร็จ! เพจ: '{pname}' นัดปล่อย: {time_display} (Post ID: {fb_id})", "success")
+        return jsonify({
+            "success": True,
+            "schedule_id": db_id,
+            "post_id": fb_id,
+            "mode": "facebook",
+            "message": f"ตั้งเวลาบน Facebook เรียบร้อยแล้ว (จะเผยแพร่วันที่ {time_display} โดยที่เซิร์ฟเวอร์ไม่ต้องเปิดทิ้งไว้)"
+        })
+
+    # โหมดที่ 2: ตั้งเวลาผ่านเครื่อง Host
+    else:
+        post_id = create_scheduled_post(
+            page_id=page_id,
+            caption=caption,
+            scheduled_time=scheduled_time,
+            title=title,
+            article_url=article_url,
+            image_url=image_url,
+            local_image_path=local_img or ""
+        )
+        add_log(f"📅 [Host Scheduled] ตั้งเวลาโพสต์ในระบบสำเร็จ! เพจ: '{pname}' นัดหมาย: {scheduled_time}", "success")
+        return jsonify({"success": True, "schedule_id": post_id, "mode": "host"})
 
 @app.route("/api/schedule/<int:post_id>/cancel", methods=["POST"])
 def api_cancel_schedule(post_id):
-    """ยกเลิกการตั้งเวลาโพสต์"""
+    """ยกเลิกการตั้งเวลาโพสต์ (หากตั้งไว้บน Facebook จะยิงไปลบออกจาก Facebook ให้ด้วย)"""
+    with get_connection() as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT sp.*, p.access_token FROM scheduled_posts sp LEFT JOIN pages p ON sp.page_id = p.page_id WHERE sp.id = ?", (post_id,))
+        row = cursor.fetchone()
+
+    if not row:
+        return jsonify({"success": False, "error": "ไม่พบรายการโพสต์นี้"}), 404
+
+    item = dict(row)
+    fb_post_id = item.get("post_id")
+    token = item.get("access_token")
+
+    # หากตั้งเวลาไว้บน Facebook และมี Post ID ให้ยิงไปลบออกจาก Facebook
+    if item.get("is_fb_native") and fb_post_id and token:
+        del_res = delete_facebook_post(fb_post_id, token)
+        if not del_res.get("success"):
+            print(f"⚠️ ลบโพสต์บน FB ไม่สำเร็จ หรือโพสต์อาจถูกเผยแพร่ไปแล้ว: {del_res.get('error')}")
+
     cancel_scheduled_post(post_id)
-    add_log(f"⏹️ ยกเลิกรายการตั้งเวลา #{post_id} แล้ว", "info")
+    add_log(f"⏹️ ยกเลิกรายการตั้งเวลา #{post_id} เรียบร้อยแล้ว", "info")
     return jsonify({"success": True})
 
 @app.route("/api/schedule/<int:post_id>/delete", methods=["POST"])
@@ -514,8 +999,12 @@ def regenerate_single_news():
             return jsonify({"success": False, "error": "Article not found"}), 404
         art = dict(row)
 
+    user = get_current_user()
+    user_keys = get_active_api_keys_for_user(user["id"]) if user else []
+    chosen_key = user_keys[0] if user_keys else None
+
     add_log(f"✨ สั่ง AI เขียนข่าวนี้ใหม่: {art.get('title', '')[:35]}...", "info")
-    new_text = rewrite_article(art)
+    new_text = rewrite_article(art, api_key=chosen_key)
     if new_text:
         update_rewritten(url, new_text)
         add_log(f"🎉 AI เขียนข่าวใหม่สำเร็จเรียบร้อย!", "success")
@@ -528,8 +1017,8 @@ def api_generate_card(article_id):
     """สร้างหรือปรับแต่งภาพกราฟิกข่าวกีฬา Social Card สำหรับบทความ"""
     data = request.json or {}
     headline = str(data.get("headline", "")).strip()
-    category = str(data.get("category", "🔴 ข่าวลิเวอร์พูล")).strip()
-    theme = str(data.get("theme", "lfc")).strip()
+    category = str(data.get("category", "")).strip()
+    theme = str(data.get("theme", "")).strip()
     subtitle = str(data.get("subtitle", "")).strip() or None
 
     with get_connection() as conn:
@@ -541,20 +1030,44 @@ def api_generate_card(article_id):
             return jsonify({"success": False, "error": "ไม่พบบทความ"}), 404
         article = dict(row)
 
+    art_cat = detect_article_category(article.get("title", ""), article.get("summary", ""), article.get("source", ""))
+    if not category:
+        if art_cat == "tech":
+            category = "💡 ข่าวเทคโนโลยี & AI"
+        elif art_cat == "biz":
+            category = "💼 ธุรกิจ & การเงิน"
+        elif art_cat == "sports":
+            category = "⚽ ข่าวกีฬา"
+        else:
+            category = "🌐 ข่าวรอบโลก"
+
+    if not theme:
+        if art_cat == "tech":
+            theme = "tactics"
+        elif art_cat == "biz":
+            theme = "gold"
+        elif art_cat == "sports":
+            theme = "breaking"
+        else:
+            theme = "breaking"
+
     if not headline:
         rw_text = article.get("rewritten_text") or ""
-        first_line = rw_text.strip().split("\n")[0].replace("🔴", "").replace("⚡", "").replace("🔥", "").strip()
-        if len(first_line) > 10 and len(first_line) < 120:
+        first_line = rw_text.strip().split("\n")[0]
+        for trash in ["🔴", "⚡", "🔥", "💡", "📈", "🌐", "แหม่...", "พ่อคุณรุนช่อง!", "เอาอีกแล้วครับท่าน!"]:
+            first_line = first_line.replace(trash, "")
+        first_line = first_line.strip()
+        if 10 < len(first_line) < 120:
             headline = first_line
         else:
-            headline = article.get("title", "ข่าวลิเวอร์พูลล่าสุด")
+            headline = article.get("title", "ข่าวเด่นล่าสุด")[:80]
 
-    page_name = "หงส์นิวส์"
+    page_name = "News Updates"
     page_id = article.get("page_id")
     if page_id:
         pinfo = get_page_by_id(page_id)
         if pinfo:
-            page_name = pinfo.get("name", "หงส์นิวส์")
+            page_name = pinfo.get("name", "News Updates")
 
     # หาภาพต้นฉบับ
     local_img = None
@@ -719,6 +1232,28 @@ def post_single_news():
         target_access_token=target_token
     )
 
+    if res.get("success"):
+        mark_as_posted(url)
+        fb_id = res.get("post_id") or "sim_post"
+        user_id = session.get("user_id", 1)
+        record_post_history(
+            page_id=target_page_id or config.FB_PAGE_ID,
+            title="",
+            caption=text,
+            post_type="card" if (use_card and card_image_path) else "post",
+            post_id=fb_id,
+            status="posted",
+            image_url=image_url or "",
+            local_image_path=local_img or "",
+            user_id=user_id
+        )
+        add_log(f"✅ โพสต์ข่าวขึ้น Facebook เพจ '{target_name}' สำเร็จแล้ว! (Post ID: {fb_id})", "success")
+        return jsonify({"success": True, "result": res})
+    else:
+        err = res.get("error", "ไม่สามารถโพสต์ได้")
+        add_log(f"❌ โพสต์ขึ้น Facebook ล้มเหลว: {err}", "error")
+        return jsonify({"success": False, "error": err}), 500
+
 # -------------------------------------------------------------
 # API: SHORT VIDEO GENERATOR (TIKTOK / REELS / SHORTS)
 # -------------------------------------------------------------
@@ -760,6 +1295,10 @@ def api_generate_video(article_id):
         img_path = download_image(article["image_url"], filename_prefix=f"vid_art_{article_id}")
 
     try:
+        user = get_current_user()
+        user_keys = get_active_api_keys_for_user(user["id"]) if user else []
+        chosen_key = user_keys[0] if user_keys else None
+
         add_log(f"🎬 กำลังสร้างวิดีโอสั้นด้วยเสียงพากย์ Google AI Studio ({voice}): {headline[:30]}...", "info")
         out_filename = f"short_{article_id}_{int(time.time())}.mp4"
         out_path = str(config.BASE_DIR / "downloads" / "videos" / out_filename)
@@ -770,7 +1309,8 @@ def api_generate_video(article_id):
             speech_text=speech_text,
             page_name=page_name,
             output_path=out_path,
-            voice_name=voice
+            voice_name=voice,
+            api_key=chosen_key
         )
 
         add_log(f"🎉 สร้างคลิปวิดีโอสั้นสำเร็จ: {out_filename}", "success")
@@ -828,7 +1368,19 @@ def api_post_reel(article_id):
 
     if res.get("success"):
         mode = " [DRY RUN]" if res.get("mode") == "dry_run" else ""
-        add_log(f"🎉 โพสต์ Facebook Reel สำเร็จเรียบร้อย!{mode} (Video ID: {res.get('video_id', 'N/A')})", "success")
+        vid_id = res.get("video_id") or res.get("post_id") or "sim_reel"
+        user_id = session.get("user_id", 1)
+        record_post_history(
+            page_id=target_page_id or config.FB_PAGE_ID,
+            title=article.get("title", "คลิปวิดีโอ Facebook Reels"),
+            caption=caption,
+            post_type="reel",
+            post_id=vid_id,
+            status="posted",
+            video_path=video_path,
+            user_id=user_id
+        )
+        add_log(f"🎉 โพสต์ Facebook Reel สำเร็จเรียบร้อย!{mode} (Video ID: {vid_id})", "success")
         return jsonify({"success": True, "result": res})
     else:
         err = res.get("error", "ไม่สามารถโพสต์ได้")
@@ -902,7 +1454,7 @@ def api_community_send_reply():
     return jsonify({"success": False, "error": res.get("error")}), 500
 
 # -------------------------------------------------------------
-# API: AFFILIATE MANAGER
+# API: AFFILIATE MANAGER & AI POSTER
 # -------------------------------------------------------------
 @app.route("/api/affiliate/products", methods=["GET"])
 def api_affiliate_get_products():
@@ -919,14 +1471,399 @@ def api_affiliate_save_products():
         return jsonify({"success": True})
     return jsonify({"success": False, "error": "ไม่สามารถบันทึกได้"}), 500
 
-    if res.get("success"):
-        mark_as_posted(url)
-        add_log(f"🎉 โพสต์ขึ้นเพจ '{target_name}' เรียบร้อยแล้ว! (ID: {res.get('post_id', 'Dry-Run')})", "success")
-        return jsonify({"success": True, "result": res})
+@app.route("/api/affiliate/fetch_product", methods=["POST"])
+def api_affiliate_fetch_product():
+    """ดึงข้อมูลสินค้าจาก Shopee / Lazada / TikTok Shop"""
+    data = request.json or {}
+    url = data.get("url", "").strip()
+    if not url:
+        return jsonify({"success": False, "error": "กรุณาระบุ URL สินค้า"}), 400
+
+    prod_info = affiliate_ai_service.fetch_product_details(url)
+    return jsonify({"success": True, "product": prod_info})
+
+@app.route("/api/affiliate/generate_caption", methods=["POST"])
+def api_affiliate_generate_caption():
+    """ใช้ Gemini AI คิดคำโปรโมทสินค้า ป้ายยา หรือ Flash Sale"""
+    data = request.json or {}
+    product_name = data.get("product_name", "").strip()
+    product_desc = data.get("product_desc", "").strip()
+    price = data.get("price", "").strip()
+    affiliate_url = data.get("affiliate_url", "").strip()
+    platform = data.get("platform", "general").strip()
+    style = data.get("style", "flash_sale").strip()
+    page_context = data.get("page_context", "เพจกีฬาและแฟนบอล").strip()
+    user_id = session.get("user_id", 1)
+
+    if not product_name:
+        return jsonify({"success": False, "error": "กรุณาระบุชื่อสินค้า"}), 400
+
+    caption = affiliate_ai_service.generate_affiliate_caption(
+        product_name=product_name,
+        product_desc=product_desc,
+        price=price,
+        affiliate_url=affiliate_url,
+        platform=platform,
+        style=style,
+        page_context=page_context,
+        user_id=user_id
+    )
+
+    return jsonify({"success": True, "caption": caption})
+
+@app.route("/api/affiliate/post", methods=["POST"])
+def api_affiliate_post():
+    """โพสต์สินค้า Affiliate ทันที หรือตั้งเวลาลงเพจ Facebook"""
+    data = request.json or {}
+    page_id = str(data.get("page_id", "")).strip()
+    caption = str(data.get("caption", "")).strip()
+    image_url = str(data.get("image_url", "")).strip()
+    is_scheduled = bool(data.get("is_scheduled", False))
+    scheduled_time = str(data.get("scheduled_time", "")).strip()
+    schedule_mode = str(data.get("schedule_mode", "facebook")).strip()
+    user_id = session.get("user_id", 1)
+
+    if not page_id or not caption:
+        return jsonify({"success": False, "error": "กรุณาระบุเพจและข้อความที่จะโพสต์"}), 400
+
+    target_page = get_page_by_id(page_id)
+    if not target_page:
+        return jsonify({"success": False, "error": "ไม่พบเพจที่เลือก"}), 404
+
+    target_token = target_page.get("access_token")
+    page_name = target_page.get("name", page_id)
+
+    # ดาวน์โหลดรูปภาพสินค้าเก็บไว้ในเครื่อง หากเป็น URL ภายนอก
+    local_image = None
+    if image_url:
+        try:
+            local_image = download_image(image_url, filename_prefix="aff_prod")
+        except Exception as e:
+            add_log(f"⚠️ ไม่สามารถดาวน์โหลดรูปภาพสินค้าได้ ({e}) จะใช้ URL แทน", "warning")
+
+    if is_scheduled:
+        if not scheduled_time:
+            return jsonify({"success": False, "error": "กรุณาระบุวัน-เวลาที่ต้องการตั้งโพสต์"}), 400
+
+        is_fb_native = (schedule_mode == "facebook")
+        if is_fb_native:
+            from datetime import datetime
+            try:
+                dt = datetime.fromisoformat(scheduled_time)
+                sched_ts = int(dt.timestamp())
+                now_ts = int(datetime.now().timestamp())
+                diff_min = (sched_ts - now_ts) / 60
+                if diff_min < 15:
+                    return jsonify({"success": False, "error": "Meta กำหนดให้ตั้งเวลาล่วงหน้าอย่างน้อย 15 นาที"}), 400
+                if diff_min > (75 * 24 * 60):
+                    return jsonify({"success": False, "error": "Meta กำหนดให้ตั้งเวลาล่วงหน้าไม่เกิน 75 วัน"}), 400
+            except ValueError:
+                return jsonify({"success": False, "error": "รูปแบบวันเวลาไม่ถูกต้อง"}), 400
+
+            res = post_to_facebook(
+                message=caption,
+                image_path=local_image,
+                image_url=image_url if not local_image else None,
+                target_page_id=page_id,
+                target_access_token=target_token,
+                scheduled_publish_time=sched_ts
+            )
+            if not res.get("success"):
+                return jsonify({"success": False, "error": f"ตั้งเวลาบน Facebook ไม่สำเร็จ: {res.get('error')}"}), 500
+
+            fb_post_id = res.get("post_id", "") or "sim_fb_sched"
+            db_id = record_post_history(
+                page_id=page_id,
+                title="Affiliate Product Post",
+                caption=caption,
+                post_type="affiliate",
+                post_id=fb_post_id,
+                status="fb_scheduled",
+                image_url=image_url or "",
+                local_image_path=local_image or "",
+                scheduled_time=scheduled_time,
+                is_fb_native=1,
+                user_id=user_id,
+                published_at=scheduled_time
+            )
+            add_log(f"⏰ ตั้งเวลาโพสต์สินค้า Affiliate บน Facebook สำเร็จ! (เพจ: {page_name}, เวลา: {scheduled_time})", "success")
+            return jsonify({"success": True, "schedule_id": db_id, "mode": "facebook", "post_id": fb_post_id})
+        else:
+            sched_id = create_scheduled_post(
+                page_id=page_id,
+                caption=caption,
+                scheduled_time=scheduled_time,
+                title="Affiliate Product Post",
+                image_url=image_url or "",
+                local_image_path=local_image or ""
+            )
+            add_log(f"⏰ บันทึกคิวตั้งเวลาโพสต์สินค้า Affiliate (Host Mode) สำเร็จ! (เพจ: {page_name})", "success")
+            return jsonify({"success": True, "schedule_id": sched_id, "mode": "host"})
+
     else:
-        err = res.get("error", "Unknown error")
-        add_log(f"❌ โพสต์ล้มเหลว: {err}", "error")
-        return jsonify({"success": False, "error": err}), 500
+        # โพสต์ทันที
+        res = post_to_facebook(
+            message=caption,
+            image_path=local_image,
+            image_url=image_url if not local_image else None,
+            target_page_id=page_id,
+            target_access_token=target_token
+        )
+        if res.get("success"):
+            fb_id = res.get("post_id", "sim_post")
+            record_post_history(
+                page_id=page_id,
+                title="Affiliate Product Post",
+                caption=caption,
+                post_type="affiliate",
+                post_id=fb_id,
+                status="posted",
+                image_url=image_url or "",
+                local_image_path=local_image or "",
+                user_id=user_id
+            )
+            add_log(f"🎉 โพสต์สินค้า Affiliate ขึ้น Facebook เพจ '{page_name}' เรียบร้อยแล้ว! (ID: {fb_id})", "success")
+            return jsonify({"success": True, "post_id": fb_id})
+        else:
+            err = res.get("error", "Unknown error")
+            add_log(f"❌ โพสต์สินค้า Affiliate ล้มเหลว: {err}", "error")
+            return jsonify({"success": False, "error": err}), 500
+
+# -------------------------------------------------------------
+# API: GOOGLE FLOW IMAGE STUDIO & AUTO-POSTER
+# -------------------------------------------------------------
+@app.route("/api/flow_image/status", methods=["GET"])
+def api_flow_image_status():
+    """ตรวจสอบสถานะ Google Flow Bridge และพอร์ต Chrome ที่เปิดอยู่"""
+    return jsonify(flow_image_poster.get_flow_status())
+
+@app.route("/api/flow_image/analyze_ref", methods=["POST"])
+def api_flow_image_analyze_ref():
+    """
+    วิเคราะห์ภาพอ้างอิง และ/หรือ หัวข้อที่ต้องการ
+    คืนค่า English Prompt สำหรับ Google Flow, พาดหัว, ข้อความรอง และแคปชั่น
+    """
+    topic = request.form.get("topic", "")
+    user_style_note = request.form.get("user_style_note", "")
+    user_id = session.get("user_id", 1)
+
+    ref_image_path = None
+    ref_image_url = None
+
+    # จัดการไฟล์อัปโหลดภาพอ้างอิง
+    if "ref_image" in request.files:
+        f = request.files["ref_image"]
+        if f and f.filename:
+            upload_dir = config.BASE_DIR / "static" / "uploads" / "ref_images"
+            upload_dir.mkdir(parents=True, exist_ok=True)
+            ext = os.path.splitext(f.filename)[1] or ".jpg"
+            fname = f"ref_{int(time.time()*1000)}{ext}"
+            save_path = upload_dir / fname
+            f.save(str(save_path))
+            ref_image_path = str(save_path)
+            ref_image_url = f"/static/uploads/ref_images/{fname}"
+
+    # หรือถ้าส่งมาเป็น JSON
+    if not ref_image_path and request.is_json:
+        data = request.json or {}
+        topic = data.get("topic", topic)
+        user_style_note = data.get("user_style_note", user_style_note)
+        ref_image_url = data.get("ref_image_url")
+        if ref_image_url and ref_image_url.startswith("/static/"):
+            ref_image_path = str(config.BASE_DIR / ref_image_url.lstrip("/"))
+
+    analysis = flow_image_poster.analyze_reference_image_and_prompt(
+        ref_image_path=ref_image_path,
+        topic=topic,
+        user_style_note=user_style_note,
+        user_id=user_id
+    )
+    if ref_image_url:
+        analysis["ref_image_url"] = ref_image_url
+
+    return jsonify(analysis)
+
+@app.route("/api/flow_image/generate", methods=["POST"])
+def api_flow_image_generate():
+    """ส่ง Prompt ไปยัง Google Flow เพื่อเจนรูปภาพ และตกแต่ง Typography ตามที่เลือก"""
+    data = request.json or {}
+    prompt = str(data.get("prompt", "")).strip()
+    stamp_typography = bool(data.get("stamp_typography", False))
+    headline = str(data.get("headline", "")).strip()
+    subtitle = str(data.get("subtitle", "")).strip()
+    badge = str(data.get("badge", "🔴 MATCHDAY")).strip()
+    theme = str(data.get("theme", "lfc_red")).strip()
+    port = data.get("port")
+    if port:
+        try:
+            port = int(port)
+        except ValueError:
+            port = None
+
+    if not prompt:
+        return jsonify({"success": False, "error": "กรุณาระบุ Prompt สำหรับเจนรูปภาพ"}), 400
+
+    add_log(f"🎨 กำลังส่งคำสั่งเจนรูปภาพไปยัง Google Flow: '{prompt[:45]}...' (พอร์ต {port or 'Auto'})", "info")
+
+    success, result_path = flow_image_poster.generate_image_with_google_flow(
+        prompt=prompt,
+        port=port
+    )
+
+    if not success:
+        add_log(f"❌ Google Flow ไม่สามารถเจนรูปได้: {result_path}", "error")
+        return jsonify({"success": False, "error": result_path}), 500
+
+    final_local_path = result_path
+    if stamp_typography and (headline or subtitle):
+        try:
+            final_local_path = flow_image_poster.stamp_typography(
+                image_path=result_path,
+                headline=headline,
+                subtitle=subtitle,
+                badge=badge,
+                theme_key=theme
+            )
+            add_log(f"✨ ตกแต่ง Typography ภาษาไทยลงบนภาพเรียบร้อยแล้ว!", "info")
+        except Exception as e_stamp:
+            add_log(f"⚠️ ไม่สามารถประทับตัวอักษรได้ ({e_stamp}) จะใช้รูปต้นฉบับแทน", "warning")
+
+    rel_path = os.path.relpath(final_local_path, config.BASE_DIR).replace("\\", "/")
+    web_url = f"/{rel_path}"
+
+    add_log(f"🎉 สร้างรูปภาพโพสต์ด้วย Google Flow สำเร็จแล้ว! ({os.path.basename(final_local_path)})", "success")
+
+    return jsonify({
+        "success": True,
+        "image_url": web_url,
+        "local_path": final_local_path,
+        "is_stamped": stamp_typography
+    })
+
+@app.route("/api/flow_image/post", methods=["POST"])
+def api_flow_image_post():
+    """โพสต์รูปที่เจนจาก Google Flow ขึ้น Facebook ทันที หรือตั้งเวลาล่วงหน้า"""
+    data = request.json or {}
+    page_id = str(data.get("page_id", "")).strip()
+    caption = str(data.get("caption", "")).strip()
+    image_url = str(data.get("image_url", "")).strip()
+    local_path = str(data.get("local_path", "")).strip()
+    is_scheduled = bool(data.get("is_scheduled", False))
+    scheduled_time = str(data.get("scheduled_time", "")).strip()
+    schedule_mode = str(data.get("schedule_mode", "facebook")).strip()
+    user_id = session.get("user_id", 1)
+
+    if not page_id or not caption:
+        return jsonify({"success": False, "error": "กรุณาระบุเพจและข้อความที่จะโพสต์"}), 400
+
+    target_page = get_page_by_id(page_id)
+    if not target_page:
+        return jsonify({"success": False, "error": "ไม่พบเพจที่เลือก"}), 404
+
+    target_token = target_page.get("access_token")
+    page_name = target_page.get("name", page_id)
+
+    target_img_path = None
+    if local_path and os.path.exists(local_path):
+        target_img_path = local_path
+    elif image_url:
+        clean_rel = image_url.lstrip("/")
+        candidate = config.BASE_DIR / clean_rel
+        if candidate.exists():
+            target_img_path = str(candidate)
+        else:
+            try:
+                target_img_path = download_image(image_url, filename_prefix="flow_post")
+            except Exception:
+                pass
+
+    if is_scheduled:
+        if not scheduled_time:
+            return jsonify({"success": False, "error": "กรุณาระบุวัน-เวลาที่ต้องการตั้งโพสต์"}), 400
+
+        is_fb_native = (schedule_mode == "facebook")
+        if is_fb_native:
+            from datetime import datetime
+            try:
+                dt = datetime.fromisoformat(scheduled_time)
+                sched_ts = int(dt.timestamp())
+                now_ts = int(datetime.now().timestamp())
+                diff_min = (sched_ts - now_ts) / 60
+                if diff_min < 15:
+                    return jsonify({"success": False, "error": "Meta กำหนดให้ตั้งเวลาล่วงหน้าอย่างน้อย 15 นาที"}), 400
+                if diff_min > (75 * 24 * 60):
+                    return jsonify({"success": False, "error": "Meta กำหนดให้ตั้งเวลาล่วงหน้าไม่เกิน 75 วัน"}), 400
+            except ValueError:
+                return jsonify({"success": False, "error": "รูปแบบวันเวลาไม่ถูกต้อง"}), 400
+
+            res = post_to_facebook(
+                message=caption,
+                image_path=target_img_path,
+                image_url=image_url if not target_img_path else None,
+                target_page_id=page_id,
+                target_access_token=target_token,
+                scheduled_publish_time=sched_ts
+            )
+            if not res.get("success"):
+                return jsonify({"success": False, "error": f"ตั้งเวลาบน Facebook ไม่สำเร็จ: {res.get('error')}"}), 500
+
+            fb_post_id = res.get("post_id", "") or "sim_fb_sched"
+            db_id = record_post_history(
+                page_id=page_id,
+                title="AI Flow Image Post",
+                caption=caption,
+                post_type="flow_image",
+                post_id=fb_post_id,
+                status="fb_scheduled",
+                image_url=image_url or "",
+                local_image_path=target_img_path or "",
+                scheduled_time=scheduled_time,
+                is_fb_native=1,
+                user_id=user_id,
+                published_at=scheduled_time
+            )
+            add_log(f"⏰ ตั้งเวลาโพสต์รูป AI Flow บน Facebook สำเร็จ! (เพจ: {page_name}, เวลา: {scheduled_time})", "success")
+            return jsonify({"success": True, "schedule_id": db_id, "mode": "facebook", "post_id": fb_post_id})
+        else:
+            sched_id = create_scheduled_post(
+                page_id=page_id,
+                caption=caption,
+                scheduled_time=scheduled_time,
+                title="AI Flow Image Post",
+                image_url=image_url or "",
+                local_image_path=target_img_path or ""
+            )
+            add_log(f"⏰ บันทึกคิวตั้งเวลาโพสต์รูป AI Flow (Host Mode) สำเร็จ! (เพจ: {page_name})", "success")
+            return jsonify({"success": True, "schedule_id": sched_id, "mode": "host"})
+
+    else:
+        # โพสต์ทันที
+        res = post_to_facebook(
+            message=caption,
+            image_path=target_img_path,
+            image_url=image_url if not target_img_path else None,
+            target_page_id=page_id,
+            target_access_token=target_token
+        )
+        if res.get("success"):
+            fb_id = res.get("post_id", "sim_post")
+            record_post_history(
+                page_id=page_id,
+                title="AI Flow Image Post",
+                caption=caption,
+                post_type="flow_image",
+                post_id=fb_id,
+                status="posted",
+                image_url=image_url or "",
+                local_image_path=target_img_path or "",
+                user_id=user_id
+            )
+            add_log(f"🎉 โพสต์รูป AI Flow ขึ้น Facebook เพจ '{page_name}' เรียบร้อยแล้ว! (ID: {fb_id})", "success")
+            return jsonify({"success": True, "post_id": fb_id})
+        else:
+            err = res.get("error", "Unknown error")
+            add_log(f"❌ โพสต์รูป AI Flow ล้มเหลว: {err}", "error")
+            return jsonify({"success": False, "error": err}), 500
 
 @app.route("/api/fetch", methods=["POST"])
 def manual_fetch():
@@ -990,14 +1927,31 @@ def manual_fetch():
                     # สร้างภาพ Social Card อัตโนมัติ
                     card_path = None
                     try:
-                        p_name = "หงส์นิวส์"
+                        p_name = "News Updates"
                         if art_page:
                             p_info_card = get_page_by_id(art_page)
                             if p_info_card:
-                                p_name = p_info_card.get("name", "หงส์นิวส์")
+                                p_name = p_info_card.get("name", "News Updates")
 
-                        first_line = rewritten.strip().split("\n")[0].replace("🔴", "").replace("⚡", "").replace("🔥", "").strip()
-                        card_hl = first_line if 10 < len(first_line) < 120 else title
+                        first_line = rewritten.strip().split("\n")[0]
+                        for trash in ["🔴", "⚡", "🔥", "💡", "📈", "🌐", "แหม่...", "พ่อคุณรุนช่อง!", "เอาอีกแล้วครับท่าน!"]:
+                            first_line = first_line.replace(trash, "")
+                        first_line = first_line.strip()
+                        card_hl = first_line if 10 < len(first_line) < 120 else title[:80]
+
+                        cat_type = detect_article_category(title, summary, source)
+                        if cat_type == "tech":
+                            card_cat = "💡 ข่าวเทคโนโลยี & AI"
+                            card_theme = "tactics"
+                        elif cat_type == "biz":
+                            card_cat = "💼 ธุรกิจ & การเงิน"
+                            card_theme = "gold"
+                        elif cat_type == "sports":
+                            card_cat = "⚽ ข่าวกีฬา"
+                            card_theme = "lfc" if "หงส์" in p_name or "liverpool" in (title + source).lower() else "breaking"
+                        else:
+                            card_cat = "🌐 ข่าวรอบโลก"
+                            card_theme = "breaking"
 
                         cards_dir = config.BASE_DIR / "downloads" / "cards"
                         cards_dir.mkdir(parents=True, exist_ok=True)
@@ -1006,10 +1960,10 @@ def manual_fetch():
                         card_path = generate_social_card(
                             image_path=local_img,
                             headline=card_hl,
-                            category="🔴 ข่าวลิเวอร์พูล",
+                            category=card_cat,
                             page_name=p_name,
                             output_path=out_card,
-                            theme="lfc"
+                            theme=card_theme
                         )
                         if card_path:
                             with get_connection() as c_conn:

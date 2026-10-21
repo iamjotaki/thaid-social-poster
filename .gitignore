@@ -48,3 +48,7 @@ Desktop.ini
 
 # Logs
 *.log
+
+# Generated user assets
+static/generated_posts/*
+!static/generated_posts/.gitkeep

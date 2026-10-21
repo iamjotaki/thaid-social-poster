@@ -60,7 +60,7 @@ def clean_text_for_speech(text: str) -> str:
     cleaned = re.sub(r'\s+', ' ', cleaned).strip()
     return cleaned
 
-def generate_voiceover_google_ai_studio(text: str, output_path: str = None, voice_name: str = "Charon") -> tuple[str, str]:
+def generate_voiceover_google_ai_studio(text: str, output_path: str = None, voice_name: str = "Charon", api_key: str = None) -> tuple[str, str]:
     """
     สร้างไฟล์เสียงพากย์ภาษาไทยด้วย Google AI Studio Gemini TTS API
     (เช่น โมเดล gemini-2.5-flash-preview-tts / gemini-3.8-flash-tts)
@@ -72,7 +72,8 @@ def generate_voiceover_google_ai_studio(text: str, output_path: str = None, voic
     if not clean_speech:
         clean_speech = "ข่าวด่วนล่าสุดจากสโมสรลิเวอร์พูล"
 
-    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        api_key = os.getenv("GEMINI_API_KEY")
 
     # 1. พยายามเรียกใช้ Google AI Studio Gemini TTS
     if api_key:
@@ -296,14 +297,15 @@ def generate_short_video(
     speech_text: str,
     page_name: str = "หงส์นิวส์",
     output_path: str = None,
-    voice_name: str = "Charon"
+    voice_name: str = "Charon",
+    api_key: str = None
 ) -> str:
     """
     สร้างไฟล์วิดีโอแนวตั้ง 9:16 (MP4) พร้อมเสียงพากย์ภาษาไทยจาก Google AI Studio Gemini TTS
     :return: ที่อยู่ไฟล์ MP4 ที่สร้างสำเร็จ
     """
     # 1. สร้างเสียงพากย์ Google AI Studio Gemini TTS (หรือ gTTS สำรอง)
-    voice_file, engine = generate_voiceover_google_ai_studio(speech_text, voice_name=voice_name)
+    voice_file, engine = generate_voiceover_google_ai_studio(speech_text, voice_name=voice_name, api_key=api_key)
 
     # 2. วัดความยาวของเสียง
     audio_clip = AudioFileClip(voice_file)
