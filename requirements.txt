@@ -10,3 +10,5 @@ customtkinter>=6.0.0
 pythainlp>=5.0.0
 gTTS>=2.5.0
 moviepy>=2.0.0
+
+gunicorn>=21.2.0

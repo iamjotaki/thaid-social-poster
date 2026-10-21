@@ -2103,11 +2103,15 @@ def start_scheduler_worker():
 # -------------------------------------------------------------
 # START SERVER
 # -------------------------------------------------------------
+# เริ่มต้นตัวเช็คคิวโพสต์อัตโนมัติ (รองรับทั้ง direct python และ Gunicorn บน Render)
+start_scheduler_worker()
+
 def start_app():
-    start_scheduler_worker()
-    add_log("🚀 เริ่มต้นระบบ Multi-Page Auto News & Scheduler Web App ที่ http://localhost:5000", "info")
-    threading.Timer(1.5, lambda: webbrowser.open("http://localhost:5000")).start()
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    add_log(f"🚀 เริ่มต้นระบบ Multi-Page Auto News & Scheduler Web App ที่ port {port}", "info")
+    if not os.environ.get("RENDER"):
+        threading.Timer(1.5, lambda: webbrowser.open(f"http://localhost:{port}")).start()
+    app.run(host="0.0.0.0", port=port, debug=False)
 
 if __name__ == "__main__":
     start_app()
