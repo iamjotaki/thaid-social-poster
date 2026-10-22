@@ -120,11 +120,77 @@ def get_active_api_key(passed_key: str = None) -> Optional[str]:
 
     return None
 
+def _fallback_thai_headline(fallback_title: str, category: str) -> str:
+    """สร้างพาดหัวภาษาไทยสำรองเมื่อไม่มีพาดหัว เพื่อไม่ให้การ์ดแสดงภาษาอังกฤษล้วน"""
+    clean_en = re.sub(r'\s*-\s*[A-Za-z0-9\s.]+$', '', fallback_title).strip() if fallback_title else ""
+    if category == 'tech':
+        return "เปิดตัวยิ่งใหญ่! นวัตกรรมเทคโนโลยีและ AI ตัวใหม่ สั่นสะเทือนวงการ"
+    elif category == 'biz':
+        return "จับตาความเคลื่อนไหวธุรกิจและการเงินโลก ส่อเค้ากระทบตลาดทุน"
+    elif category == 'sports':
+        return "ประเด็นร้อนวงการลูกหนัง ดราม่าเดือดสะเทือนลีกใหญ่"
+    else:
+        return "เกาะติดสถานการณ์สำคัญรอบโลก ประเด็นร้อนที่ทุกคนต้องจับตา"
+
+def extract_thai_card_headline(rewritten_text: str, fallback_title: str = "", category: str = "general") -> str:
+    """
+    ดึงพาดหัวภาษาไทยที่กระชับ โดนใจ สำหรับใส่ในรูปภาพ Social Card
+    รับประกันว่าจะเป็นภาษาไทยเสมอ ไม่เอาภาษาอังกฤษล้วน
+    """
+    if not rewritten_text:
+        return _fallback_thai_headline(fallback_title, category)
+
+    # 1. ค้นหาจากแท็กเฉพาะ [HEADLINE_TH]...[END_HEADLINE]
+    match = re.search(r'\[HEADLINE_TH\](.*?)\[END_HEADLINE\]', rewritten_text, re.DOTALL | re.IGNORECASE)
+    if match:
+        hl = match.group(1).strip()
+        hl = sanitize_forbidden_words(hl)
+        hl = re.sub(r'[*#"`]', '', hl).strip()
+        thai_count = len(re.findall(r'[\u0E00-\u0E7F]', hl))
+        if thai_count >= 5 and len(hl) >= 10:
+            return hl
+
+    # 2. ค้นหาจากบรรทัดแรกๆ ที่เป็นภาษาไทย
+    lines = [l.strip() for l in rewritten_text.split("\n") if l.strip()]
+    for line in lines:
+        clean_l = re.sub(r'\[\/?HEADLINE_TH\]', '', line, flags=re.IGNORECASE)
+        clean_l = re.sub(r'\[\/?END_HEADLINE\]', '', clean_l, flags=re.IGNORECASE)
+        clean_l = re.sub(r'[*#"`]', '', clean_l).strip()
+
+        # ข้ามบรรทัดที่เป็นเครดิตหรือแฮชแท็ก
+        if clean_l.startswith(('#', '📌', 'ที่มา', 'แหล่งที่มา', 'Credit', 'ข่าวด่วน')):
+            continue
+
+        thai_chars = len(re.findall(r'[\u0E00-\u0E7F]', clean_l))
+        if thai_chars >= 8 and 15 <= len(clean_l) <= 95:
+            return clean_l
+
+    # 3. ถ้าไม่มีบรรทัดที่เข้าเกณฑ์ ให้ใช้พาดหัวภาษาไทยสำรอง
+    return _fallback_thai_headline(fallback_title, category)
+
+def clean_post_for_facebook(rewritten_text: str) -> str:
+    """ทำความสะอาดเนื้อหาโพสต์ก่อนส่งขึ้น Facebook เพื่อให้แสดงผลอย่างมืออาชีพ"""
+    if not rewritten_text:
+        return ""
+
+    match = re.search(r'\[HEADLINE_TH\](.*?)\[END_HEADLINE\]', rewritten_text, re.DOTALL | re.IGNORECASE)
+    if match:
+        hl = match.group(1).strip()
+        # ตัดแท็กหัวข้อออก เพื่อนำมาเรียงเป็นบรรทัดแรกสวยๆ
+        body = re.sub(r'\[HEADLINE_TH\].*?\[END_HEADLINE\]', '', rewritten_text, flags=re.DOTALL | re.IGNORECASE).strip()
+        cleaned = f"🚨 {hl}\n\n{body}"
+    else:
+        cleaned = rewritten_text
+
+    # ลบแท็กตกค้าง
+    cleaned = re.sub(r'\[\/?HEADLINE_TH\]', '', cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r'\[\/?END_HEADLINE\]', '', cleaned, flags=re.IGNORECASE)
+    return cleaned.strip()
+
 def generate_mock_rewrite(title: str, summary: str, source_name: str) -> str:
     """ฟังก์ชันจำลองอัจฉริยะ ปรับตามหมวดหมู่อัตโนมัติเมื่อยังไม่มี Gemini API Key หรือเกิดข้อผิดพลาด"""
     category = detect_article_category(title, summary, source_name)
     clean_summary = summary.strip() if summary else ""
-    # กำจัดแท็กหรือรายชื่อสำนักข่าวที่ติดมาจาก Google News RSS
     clean_summary = re.sub(r'<\/?(ol|li|font|a|b|i)[^>]*>', ' ', clean_summary)
     clean_summary = re.sub(r'\b(Bloomberg|Ars Technica|Deadline|Yahoo Finance|The New York Times|Reuters|Associated Press|Forbes|TechCrunch|Engadget|The Verge|MacRumors)\b(\.com)?', '', clean_summary, flags=re.IGNORECASE)
     clean_summary = re.sub(r'\s+', ' ', clean_summary).strip()
@@ -132,7 +198,12 @@ def generate_mock_rewrite(title: str, summary: str, source_name: str) -> str:
         clean_summary = f"รายงานความเคลื่อนไหวล่าสุดเกี่ยวกับ '{title}' ซึ่งกำลังเป็นประเด็นน่าจับตามองในระดับสากลขณะนี้"
 
     if category == 'tech':
-        text = f"""💡 เกาะติดกระแสเทคโนโลยี & AI ระดับโลก! 🚀
+        headline = "เปิดตัวนวัตกรรมเทคโนโลยี & AI สุดล้ำ สะเทือนวงการระดับโลก!"
+        text = f"""[HEADLINE_TH]
+{headline}
+[END_HEADLINE]
+
+💡 เกาะติดกระแสเทคโนโลยี & AI ระดับโลก! 🚀
 
 เปิดประเด็นร้อนน่าจับตา: "{title}"
 
@@ -143,10 +214,15 @@ def generate_mock_rewrite(title: str, summary: str, source_name: str) -> str:
 คุณคิดเห็นอย่างไรกับเรื่องนี้ มาร่วมพูดคุยกันได้ในคอมเมนต์เลยครับ 👇
 
 #เทคโนโลยี #AI #นวัตกรรม #ปัญญาประดิษฐ์ #TechNews
-📰 แหล่งที่มา: {source_name}"""
+📌 ที่มา: {source_name}"""
 
     elif category == 'biz':
-        text = f"""📈 สรุปสถานการณ์ธุรกิจ & การเงินโลก 💼
+        headline = "จับตาสถานการณ์ธุรกิจและการเงินโลก ความเคลื่อนไหวสะเทือนตลาด!"
+        text = f"""[HEADLINE_TH]
+{headline}
+[END_HEADLINE]
+
+📈 สรุปสถานการณ์ธุรกิจ & การเงินโลก 💼
 
 รายงานประเด็นเด่น: "{title}"
 
@@ -157,10 +233,15 @@ def generate_mock_rewrite(title: str, summary: str, source_name: str) -> str:
 ชาวเพจคิดว่าทิศทางหลังจากนี้จะเป็นอย่างไรบ้าง คอมเมนต์แลกเปลี่ยนมุมมองกันได้ครับ 👇
 
 #ธุรกิจ #การเงิน #เศรษฐกิจโลก #การลงทุน #หุ้นต่างประเทศ
-📰 แหล่งที่มา: {source_name}"""
+📌 ที่มา: {source_name}"""
 
     elif category == 'sports':
-        text = f"""🔥 ประเด็นร้อนวงการลูกหนัง! จัดจ้านตามสไตล์คอลัมนิสต์เก๋า!
+        headline = "ดราม่าเดือดลูกหนัง! สรุปประเด็นร้อนวงการกีฬาที่แฟนบอลห้ามพลาด"
+        text = f"""[HEADLINE_TH]
+{headline}
+[END_HEADLINE]
+
+🔥 ประเด็นร้อนวงการลูกหนัง! จัดจ้านตามสไตล์คอลัมนิสต์เก๋า!
 
 เจาะลึกข่าวล่าสุด: "{title}"
 
@@ -171,10 +252,15 @@ def generate_mock_rewrite(title: str, summary: str, source_name: str) -> str:
 แฟนบอลมีความเห็นอย่างไรกับประเด็นนี้ คอมเมนต์กันมาได้เลย! 👇
 
 #ข่าวกีฬา #ฟุตบอล #พรีเมียร์ลีก #ข่าวบอล
-📰 แหล่งที่มา: {source_name}"""
+📌 ที่มา: {source_name}"""
 
     else:
-        text = f"""🌐 เกาะติดสถานการณ์สำคัญรอบโลก 📌
+        headline = "เกาะติดสถานการณ์สำคัญรอบโลก รายงานความเคลื่อนไหวล่าสุด!"
+        text = f"""[HEADLINE_TH]
+{headline}
+[END_HEADLINE]
+
+🌐 เกาะติดสถานการณ์สำคัญรอบโลก 📌
 
 รายงานข่าวเด่นล่าสุด: "{title}"
 
@@ -185,7 +271,7 @@ def generate_mock_rewrite(title: str, summary: str, source_name: str) -> str:
 ผู้อ่านมองประเด็นนี้อย่างไร มาร่วมแสดงความคิดเห็นกันได้ครับ 👇
 
 #ข่าวรอบโลก #สถานการณ์โลก #ข่าวเด่น #สาระความรู้
-📰 แหล่งที่มา: {source_name}"""
+📌 ที่มา: {source_name}"""
 
     return sanitize_forbidden_words(text)
 
@@ -198,13 +284,12 @@ def rewrite_with_gemini(title: str, summary: str, source_name: str, api_key: str
         print(f"⚠️ ยังไม่ได้ตั้งค่า GEMINI_API_KEY (ใช้เทมเพลตตัวอย่างหมวด {category} แทน)")
         return generate_mock_rewrite(title, summary, source_name)
 
-    # รายชื่อโมเดลที่จะลองตามลำดับ
     candidate_models = [
-        'gemini-3.5-flash',
-        'gemini-3.5-flash-lite',
-        'gemini-3.8-flash',
         'gemini-flash-latest',
-        'gemini-2.5-flash'
+        'gemini-3.5-flash',
+        'gemini-2.5-flash-lite',
+        'gemini-3.5-flash-lite',
+        'gemini-flash-lite-latest'
     ]
 
     system_instruction = get_niche_system_instruction(category, source_name)
@@ -220,12 +305,20 @@ def rewrite_with_gemini(title: str, summary: str, source_name: str, api_key: str
 หมวดหมู่ตรวจพบ: {category}
 
 กฎเหล็กสำคัญที่สุด (CRITICAL RULES):
-1. เขียนเนื้อหาให้ครบถ้วนสมบูรณ์ มีรายละเอียดและสาระแน่น 3-5 ย่อหน้า (อธิบายความเป็นมา รายละเอียดการเปลี่ยนแปลง และผลกระทบต่อผู้ใช้งานหรืออุตสาหกรรม)
-2. *** ห้ามเขียนเป็นเพียงแค่รายชื่อสำนักข่าวเด็ดขาด เช่น 1. Bloomberg 2. Deadline *** ให้เน้นเนื้อหาของตัวข่าวจริงๆ เท่านั้น
-3. จัดวรรคตอนให้อ่านสบายตาบนสมาร์ทโฟน สอดแทรกอีโมจิที่เข้ากับเนื้อหาอย่างมีระดับ
-4. ปิดท้ายด้วยประเด็นหรือคำถามชวนผู้อ่านแสดงความคิดเห็นเพื่อสร้าง Engagement
-5. ติดแฮชแท็ก 3-5 อันที่ตรงกับเนื้อหาข่าว
-6. ระบุเครดิตแหล่งข่าวท้ายโพสต์: 📌 ที่มา: {source_name}
+1. ให้ขึ้นต้นผลลัพธ์ด้วยแท็ก [HEADLINE_TH] และ [END_HEADLINE] เสมอ โดยภายในแท็กนี้ให้เขียน "พาดหัวข่าวภาษาไทยตัวโตๆ สั้นกระชับ คมคาย ได้ใจความ ชวนติดตาม ความยาว 35-65 ตัวอักษร" สำหรับนำไปพิมพ์ลงบนภาพกราฟิก Social Card (ห้ามมีอีโมจิ ดอกจัน หรือเครื่องหมายคำพูดในบรรทัดพาดหัวนี้เด็ดขาด)
+2. ถัดจาก [END_HEADLINE] ให้เขียนเนื้อหาโพสต์ Facebook ภาษาไทยอย่างสมบูรณ์ 3-5 ย่อหน้า (อธิบายความเป็นมา รายละเอียดการเปลี่ยนแปลง และผลกระทบต่อผู้ใช้งานหรืออุตสาหกรรม)
+3. *** ห้ามเขียนเป็นเพียงแค่รายชื่อสำนักข่าวเด็ดขาด เช่น 1. Bloomberg 2. Deadline *** ให้เน้นเนื้อหาของตัวข่าวจริงๆ เท่านั้น
+4. จัดวรรคตอนให้อ่านสบายตาบนสมาร์ทโฟน สอดแทรกอีโมจิที่เข้ากับเนื้อหาอย่างมีระดับ
+5. ปิดท้ายด้วยประเด็นหรือคำถามชวนผู้อ่านแสดงความคิดเห็นเพื่อสร้าง Engagement
+6. ติดแฮชแท็ก 3-5 อันที่ตรงกับเนื้อหาข่าว
+7. ระบุเครดิตแหล่งข่าวท้ายโพสต์: 📌 ที่มา: {source_name}
+
+รูปแบบผลลัพธ์ที่ต้องการ (STRICT FORMAT):
+[HEADLINE_TH]
+<พาดหัวภาษาไทยสั้นกระชับ คมคาย 35-65 ตัวอักษร ไม่มีอีโมจิ>
+[END_HEADLINE]
+
+<เนื้อหาโพสต์ Facebook ภาษาไทย พร้อมอีโมจิ แฮชแท็ก และเครดิต>
 """
 
     try:
@@ -244,7 +337,6 @@ def rewrite_with_gemini(title: str, summary: str, source_name: str, api_key: str
                 )
                 if response and response.text:
                     rewritten_text = response.text.strip()
-                    # กรองคำต้องห้ามรอบสุดท้ายเพื่อความปลอดภัย 100%
                     return sanitize_forbidden_words(rewritten_text)
             except Exception as em:
                 print(f"⚠️ โมเดล {model_name} ใช้งานไม่ได้ ({str(em)[:60]}...), กำลังสลับไปโมเดลถัดไป...")
@@ -253,7 +345,6 @@ def rewrite_with_gemini(title: str, summary: str, source_name: str, api_key: str
     except Exception as e:
         print(f"❌ เกิดข้อผิดพลาดในการเชื่อมต่อ SDK: {e}")
 
-    # หากทุกโมเดลล้มเหลว ใช้เทมเพลตสำรองเฉพาะหมวด
     print(f"⚠️ ทุกโมเดลไม่ตอบสนอง ใช้เทมเพลตสำรองหมวด {category}")
     return generate_mock_rewrite(title, summary, source_name)
 
@@ -270,7 +361,6 @@ def rewrite_article(article: Dict, api_key: str = None) -> Optional[str]:
 
     rewritten = rewrite_with_gemini(title, summary, source, api_key=api_key)
     
-    # ดับเบิ้ลเช็คอีกครั้ง
     if rewritten:
         rewritten = sanitize_forbidden_words(rewritten)
     return rewritten

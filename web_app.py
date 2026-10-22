@@ -66,7 +66,7 @@ from database import (
     get_content_strategy_analytics
 )
 from news_fetcher import fetch_all_new_articles, download_image
-from ai_rewriter import rewrite_article, detect_article_category
+from ai_rewriter import rewrite_article, detect_article_category, extract_thai_card_headline, clean_post_for_facebook
 from fb_poster import post_to_facebook, post_reel_to_facebook, delete_facebook_post
 from card_generator import generate_social_card
 from match_center import (
@@ -1151,34 +1151,30 @@ def api_generate_card(article_id):
     art_cat = detect_article_category(article.get("title", ""), article.get("summary", ""), article.get("source", ""))
     if not category:
         if art_cat == "tech":
-            category = "💡 ข่าวเทคโนโลยี & AI"
+            category = "ข่าวเทคโนโลยี & AI"
         elif art_cat == "biz":
-            category = "💼 ธุรกิจ & การเงิน"
+            category = "ธุรกิจ & การเงิน"
         elif art_cat == "sports":
-            category = "⚽ ข่าวกีฬา"
+            category = "ข่าวกีฬา"
         else:
-            category = "🌐 ข่าวรอบโลก"
+            category = "ข่าวรอบโลก"
 
     if not theme:
         if art_cat == "tech":
-            theme = "tactics"
+            theme = "tech"
         elif art_cat == "biz":
-            theme = "gold"
+            theme = "biz"
         elif art_cat == "sports":
-            theme = "breaking"
+            theme = "sports"
         else:
             theme = "breaking"
 
     if not headline:
-        rw_text = article.get("rewritten_text") or ""
-        first_line = rw_text.strip().split("\n")[0]
-        for trash in ["🔴", "⚡", "🔥", "💡", "📈", "🌐", "แหม่...", "พ่อคุณรุนช่อง!", "เอาอีกแล้วครับท่าน!"]:
-            first_line = first_line.replace(trash, "")
-        first_line = first_line.strip()
-        if 10 < len(first_line) < 120:
-            headline = first_line
-        else:
-            headline = article.get("title", "ข่าวเด่นล่าสุด")[:80]
+        headline = extract_thai_card_headline(
+            article.get("rewritten_text") or "",
+            fallback_title=article.get("title", ""),
+            category=art_cat
+        )
 
     page_name = "News Updates"
     page_id = article.get("page_id")
@@ -1343,7 +1339,7 @@ def post_single_news():
         text = attach_affiliate_if_enabled(text, True, aff_prod_id)
 
     res = post_to_facebook(
-        message=text,
+        message=clean_post_for_facebook(text),
         image_path=local_img,
         image_url=image_url if not local_img else None,
         target_page_id=target_page_id,
@@ -2055,24 +2051,20 @@ def manual_fetch():
                             if p_info_card:
                                 p_name = p_info_card.get("name", "News Updates")
 
-                        first_line = rewritten.strip().split("\n")[0]
-                        for trash in ["🔴", "⚡", "🔥", "💡", "📈", "🌐", "แหม่...", "พ่อคุณรุนช่อง!", "เอาอีกแล้วครับท่าน!"]:
-                            first_line = first_line.replace(trash, "")
-                        first_line = first_line.strip()
-                        card_hl = first_line if 10 < len(first_line) < 120 else title[:80]
-
                         cat_type = detect_article_category(title, summary, source)
+                        card_hl = extract_thai_card_headline(rewritten, fallback_title=title, category=cat_type)
+
                         if cat_type == "tech":
-                            card_cat = "💡 ข่าวเทคโนโลยี & AI"
-                            card_theme = "tactics"
+                            card_cat = "ข่าวเทคโนโลยี & AI"
+                            card_theme = "tech"
                         elif cat_type == "biz":
-                            card_cat = "💼 ธุรกิจ & การเงิน"
-                            card_theme = "gold"
+                            card_cat = "ธุรกิจ & การเงิน"
+                            card_theme = "biz"
                         elif cat_type == "sports":
-                            card_cat = "⚽ ข่าวกีฬา"
-                            card_theme = "lfc" if "หงส์" in p_name or "liverpool" in (title + source).lower() else "breaking"
+                            card_cat = "ข่าวกีฬา"
+                            card_theme = "lfc" if "หงส์" in p_name or "liverpool" in (title + source).lower() else "sports"
                         else:
-                            card_cat = "🌐 ข่าวรอบโลก"
+                            card_cat = "ข่าวรอบโลก"
                             card_theme = "breaking"
 
                         cards_dir = config.BASE_DIR / "downloads" / "cards"
@@ -2101,7 +2093,7 @@ def manual_fetch():
                         if p_info:
                             post_img = card_path if (card_path and os.path.exists(card_path)) else local_img
                             res = post_to_facebook(
-                                message=rewritten,
+                                message=clean_post_for_facebook(rewritten),
                                 image_path=post_img,
                                 image_url=img if not post_img else None,
                                 target_page_id=art_page,
@@ -2158,7 +2150,28 @@ def toggle_auto():
                             rewritten = rewrite_article(art)
                             if rewritten:
                                 update_rewritten(art["url"], rewritten)
-                                res_auto = post_to_facebook(rewritten, local_img, art.get("image_url"), target_page_id=pid, target_access_token=token)
+                                card_path = None
+                                try:
+                                    cat_type = detect_article_category(art["title"], art.get("summary", ""), art.get("source", ""))
+                                    card_hl = extract_thai_card_headline(rewritten, fallback_title=art["title"], category=cat_type)
+                                    card_cat = "ข่าวเทคโนโลยี & AI" if cat_type == "tech" else ("ธุรกิจ & การเงิน" if cat_type == "biz" else ("ข่าวกีฬา" if cat_type == "sports" else "ข่าวรอบโลก"))
+                                    card_theme = "tech" if cat_type == "tech" else ("biz" if cat_type == "biz" else ("sports" if cat_type == "sports" else "breaking"))
+                                    cards_dir = config.BASE_DIR / "downloads" / "cards"
+                                    cards_dir.mkdir(parents=True, exist_ok=True)
+                                    out_card = str(cards_dir / f"card_{int(time.time()*1000)}.jpg")
+                                    card_path = generate_social_card(
+                                        image_path=local_img,
+                                        headline=card_hl,
+                                        category=card_cat,
+                                        page_name=p["name"],
+                                        output_path=out_card,
+                                        theme=card_theme
+                                    )
+                                except Exception as e_card:
+                                    print(f"Auto card error: {e_card}")
+
+                                post_img = card_path if (card_path and os.path.exists(card_path)) else local_img
+                                res_auto = post_to_facebook(clean_post_for_facebook(rewritten), post_img, art.get("image_url") if not post_img else None, target_page_id=pid, target_access_token=token)
                                 mark_as_posted(art["url"])
                                 if res_auto.get("mode") == "dry_run":
                                     add_log(f"🟡 [Auto-Bot (DRY-RUN)] จำลองโพสต์ข่าวขึ้นเพจ '{p['name']}': {art['title'][:30]}... (โหมดทดสอบ)", "warning")
