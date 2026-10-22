@@ -752,6 +752,51 @@ def api_add_page_feed(page_id):
         return jsonify({"success": True})
     return jsonify({"success": False, "error": "Feed URL นี้มีอยู่แล้วในเพจนี้"}), 400
 
+@app.route("/api/feeds/discover", methods=["POST"])
+def api_discover_feeds():
+    """ใช้ AI วิเคราะห์หัวข้อภาษาไทยและค้นหา 10 แหล่ง RSS Feeds ต่างประเทศที่ตรงที่สุด"""
+    data = request.json or {}
+    topic = str(data.get("topic", "")).strip()
+    if not topic:
+        return jsonify({"success": False, "error": "กรุณาระบุหัวข้อที่ต้องการค้นหา"}), 400
+
+    from feed_finder import discover_niche_feeds
+    feeds = discover_niche_feeds(topic)
+    add_log(f"🔮 [AI Discovery] ค้นหา 10 แหล่งฟีดต่างประเทศสำหรับหัวข้อ: '{topic}' สำเร็จ", "success")
+    return jsonify({
+        "success": True,
+        "topic": topic,
+        "count": len(feeds),
+        "feeds": feeds
+    })
+
+@app.route("/api/feeds/add_batch", methods=["POST"])
+def api_add_feeds_batch():
+    """เพิ่ม RSS Feeds หลายรายการพร้อมกันใน 1 คลิก"""
+    data = request.json or {}
+    page_id = str(data.get("page_id", "")).strip()
+    feeds = data.get("feeds", [])
+
+    if not page_id:
+        return jsonify({"success": False, "error": "กรุณาระบุเพจ Facebook ที่ต้องการเพิ่มฟีด"}), 400
+    if not feeds or not isinstance(feeds, list):
+        return jsonify({"success": False, "error": "ไม่พบรายการฟีดที่ต้องการเพิ่ม"}), 400
+
+    added_count = 0
+    for f in feeds:
+        name = str(f.get("name") or "").strip()
+        url = str(f.get("url") or "").strip()
+        if name and url:
+            if add_feed_to_page(page_id, name, url):
+                added_count += 1
+
+    add_log(f"🎉 [Feeds Batch] เพิ่ม RSS Feeds จำนวน {added_count} ฟีดเข้าสู่เพจ {page_id} สำเร็จ", "success")
+    return jsonify({
+        "success": True,
+        "added_count": added_count,
+        "message": f"เพิ่ม {added_count} ฟีดเข้าสู่เพจเรียบร้อยแล้ว!"
+    })
+
 @app.route("/api/feeds/add", methods=["POST"])
 def api_add_feed_compat():
     """เพิ่ม RSS Feed เข้าเพจ (Universal Endpoint)"""

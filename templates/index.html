@@ -1631,6 +1631,47 @@
                     </div>
                 </form>
 
+                <!-- AI NICHE FEED DISCOVERY HUB (ค้นหา 10 ฟีดต่างประเทศด้วย AI) -->
+                <div class="pt-4 border-t border-zinc-800 space-y-3 bg-gradient-to-r from-purple-950/25 via-zinc-950/60 to-pink-950/25 p-4 rounded-2xl border border-purple-500/25">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="text-xs font-bold text-zinc-100 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-gradient-to-tr from-purple-600 to-pink-500 text-white flex items-center justify-center text-xs shadow-md">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </span>
+                            <span class="text-sm font-bold bg-gradient-to-r from-purple-300 via-pink-200 to-amber-200 bg-clip-text text-transparent">AI Niche Feed Discovery (ค้นหา 10 แหล่งฟีดต่างประเทศอัตโนมัติ)</span>
+                            <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-0.5 rounded-full font-bold">พิมพ์ไทย ➔ ได้ฟีดสากล</span>
+                        </div>
+                        <span class="text-[11px] text-zinc-400">พิมพ์หัวข้อที่อยากทำเพจ ระบบจะค้นหา 10 แหล่งข่าวต่างประเทศที่ตรงที่สุดให้ทันที:</span>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-zinc-500 text-xs"></i>
+                            <input type="text" id="ai-feed-topic" placeholder="พิมพ์หัวข้อภาษาไทย เช่น เรื่องลึกลับ, ดาราศาสตร์, คริปโต, รถคลาสสิก, หมาแมว, การทำอาหาร..." onkeydown="if(event.key==='Enter'){event.preventDefault();searchNicheFeeds();}" class="w-full bg-zinc-950/90 border border-zinc-700/80 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-500 transition shadow-inner">
+                        </div>
+                        <button type="button" id="btn-discover-feeds" onclick="searchNicheFeeds()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 shrink-0">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> ค้นหา 10 ฟีด (AI)
+                        </button>
+                    </div>
+
+                    <!-- QUICK TOPIC CHIPS -->
+                    <div class="flex items-center gap-1.5 flex-wrap pt-1 text-[11px] text-zinc-400">
+                        <span class="text-[10px] text-zinc-500"><i class="fa-regular fa-lightbulb"></i> แตะเพื่อลอง:</span>
+                        <button type="button" onclick="setAndSearchTopic('เรื่องลึกลับ')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🔮 เรื่องลึกลับ</button>
+                        <button type="button" onclick="setAndSearchTopic('ดาราศาสตร์และอวกาศ')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🚀 ดาราศาสตร์ & อวกาศ</button>
+                        <button type="button" onclick="setAndSearchTopic('รถยนต์และยานยนต์ไฟฟ้า')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🏎️ ยานยนต์ & EV</button>
+                        <button type="button" onclick="setAndSearchTopic('การเงินและการลงทุน')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">💰 ลงทุน & คริปโต</button>
+                        <button type="button" onclick="setAndSearchTopic('เกมและอีสปอร์ต')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🎮 เกม & Esports</button>
+                        <button type="button" onclick="setAndSearchTopic('สัตว์เลี้ยง สุนัขและแมว')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🐱 สัตว์เลี้ยง & แมว</button>
+                        <button type="button" onclick="setAndSearchTopic('ประวัติศาสตร์โลก')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">📜 ประวัติศาสตร์โลก</button>
+                    </div>
+
+                    <!-- RESULTS CONTAINER (HIDDEN UNTIL SEARCHED) -->
+                    <div id="ai-feed-results" class="hidden space-y-3 pt-3 border-t border-purple-500/20">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
                 <!-- DIRECT PREMIUM NEWS FEEDS HUB (GUARANTEED IMAGES) -->
                 <div class="pt-4 border-t border-zinc-800 space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-2">
@@ -4613,6 +4654,201 @@
             } catch (e) {
                 console.error("quickAddGoogleNews error:", e);
                 showToast("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์", false);
+            }
+        }
+
+        // ==========================================
+        // AI NICHE FEED DISCOVERY LOGIC
+        // ==========================================
+        let lastDiscoveredFeeds = [];
+
+        function setAndSearchTopic(topic) {
+            const input = document.getElementById('ai-feed-topic');
+            if (input) input.value = topic;
+            searchNicheFeeds();
+        }
+
+        async function searchNicheFeeds() {
+            const topicInput = document.getElementById('ai-feed-topic');
+            const topic = (topicInput?.value || "").trim();
+            if (!topic) {
+                showToast("กรุณาพิมพ์หัวข้อที่ต้องการค้นหาก่อนครับ", false);
+                topicInput?.focus();
+                return;
+            }
+
+            const btn = document.getElementById('btn-discover-feeds');
+            const resContainer = document.getElementById('ai-feed-results');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังค้นหา...`;
+            }
+            if (resContainer) {
+                resContainer.classList.remove('hidden');
+                resContainer.innerHTML = `
+                    <div class="py-8 text-center space-y-2 text-zinc-400">
+                        <i class="fa-solid fa-wand-magic-sparkles text-3xl text-purple-400 animate-pulse"></i>
+                        <p class="text-xs font-semibold text-zinc-200">กำลังให้ AI วิเคราะห์หัวข้อ '${topic}' และค้นหา 10 แหล่งข่าวต่างประเทศ...</p>
+                        <p class="text-[11px] text-zinc-500">คัดกรองเฉพาะเว็บไซต์ที่มีชื่อเสียงระดับโลก และอัปเดตสม่ำเสมอ</p>
+                    </div>
+                `;
+            }
+
+            try {
+                const res = await fetch('/api/feeds/discover', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic: topic })
+                });
+                const data = await res.json();
+                if (data.success && data.feeds && data.feeds.length > 0) {
+                    lastDiscoveredFeeds = data.feeds;
+                    renderDiscoveredFeeds(topic, data.feeds);
+                } else {
+                    if (resContainer) resContainer.innerHTML = `<div class="p-4 text-center text-xs text-rose-400">ไม่พบฟีดสำหรับหัวข้อนี้: ${data.error || 'เกิดข้อผิดพลาด'}</div>`;
+                }
+            } catch (err) {
+                if (resContainer) resContainer.innerHTML = `<div class="p-4 text-center text-xs text-rose-400">เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์</div>`;
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> ค้นหา 10 ฟีด (AI)`;
+                }
+            }
+        }
+
+        function renderDiscoveredFeeds(topic, feeds) {
+            const resContainer = document.getElementById('ai-feed-results');
+            if (!resContainer) return;
+            resContainer.classList.remove('hidden');
+
+            const cardsHtml = feeds.map((f, idx) => `
+                <div class="bg-zinc-950/80 border border-zinc-800 hover:border-purple-500/40 rounded-xl p-3 flex flex-col justify-between space-y-2 transition group">
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-md font-bold truncate max-w-[150px]">
+                                ${f.category || topic}
+                            </span>
+                            <span class="text-[10px] text-zinc-500 font-mono flex items-center gap-1">
+                                <i class="fa-solid fa-globe text-zinc-600"></i> ${f.site || 'website'}
+                            </span>
+                        </div>
+                        <h4 class="text-xs font-bold text-zinc-100 group-hover:text-purple-300 transition line-clamp-1" title="${f.name}">
+                            ${f.name}
+                        </h4>
+                        <p class="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed" title="${f.description}">
+                            ${f.description}
+                        </p>
+                    </div>
+
+                    <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+                        <span class="text-[9px] text-zinc-500 font-mono truncate max-w-[140px]" title="${f.url}">${f.url}</span>
+                        <button type="button" id="btn-add-disc-${idx}" onclick="addDiscoveredFeed(${idx})" class="text-[11px] bg-purple-600/30 hover:bg-purple-600 text-purple-200 hover:text-white px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1 shrink-0">
+                            <i class="fa-solid fa-plus"></i> เพิ่มฟีดนี้
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            resContainer.innerHTML = `
+                <div class="flex items-center justify-between flex-wrap gap-2 pb-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        <span class="text-xs font-bold text-zinc-200">พบ ${feeds.length} ฟีดคุณภาพตรงกับหัวข้อ "${topic}"</span>
+                    </div>
+                    <button type="button" onclick="addAllDiscoveredFeeds()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20">
+                        <i class="fa-solid fa-layer-group"></i> ⚡ เพิ่มทั้งหมด 10 ฟีดใน 1 คลิก
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    ${cardsHtml}
+                </div>
+            `;
+        }
+
+        async function addDiscoveredFeed(idx) {
+            const feed = lastDiscoveredFeeds[idx];
+            if (!feed) return;
+            const btn = document.getElementById(`btn-add-disc-${idx}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> เพิ่ม...`;
+            }
+
+            let pageId = document.getElementById('feed-target-page')?.value || currentActivePageId;
+            if (!pageId && allPages?.length > 0) pageId = allPages[0].page_id;
+
+            if (!pageId) {
+                showToast("กรุณาเลือกเพจ Facebook ก่อนเพิ่มฟีดครับ", false);
+                if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-plus"></i> เพิ่มฟีดนี้`; }
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/pages/${pageId}/feeds/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        feed_name: feed.name,
+                        feed_url: feed.url
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`✅ เพิ่มฟีด "${feed.name}" เข้าสู่เพจเรียบร้อยแล้ว!`);
+                    if (btn) {
+                        btn.className = "text-[11px] bg-emerald-600/30 text-emerald-300 px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 shrink-0";
+                        btn.innerHTML = `<i class="fa-solid fa-check"></i> เพิ่มแล้ว`;
+                    }
+                    loadPageFeeds();
+                } else {
+                    showToast(data.error || "เพิ่มฟีดไม่สำเร็จ", false);
+                    if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-plus"></i> เพิ่มฟีดนี้`; }
+                }
+            } catch (e) {
+                showToast("เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ", false);
+                if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-plus"></i> เพิ่มฟีดนี้`; }
+            }
+        }
+
+        async function addAllDiscoveredFeeds() {
+            if (!lastDiscoveredFeeds || lastDiscoveredFeeds.length === 0) return;
+
+            let pageId = document.getElementById('feed-target-page')?.value || currentActivePageId;
+            if (!pageId && allPages?.length > 0) pageId = allPages[0].page_id;
+
+            if (!pageId) {
+                showToast("กรุณาเลือกเพจ Facebook ก่อนเพิ่มฟีดครับ", false);
+                return;
+            }
+
+            showToast(`กำลังเพิ่ม ${lastDiscoveredFeeds.length} ฟีดเข้าสู่เพจ...`);
+
+            try {
+                const res = await fetch('/api/feeds/add_batch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        page_id: pageId,
+                        feeds: lastDiscoveredFeeds
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`🎉 ${data.message || `เพิ่ม ${data.added_count} ฟีดเข้าสู่เพจเรียบร้อยแล้ว!`}`);
+                    loadPageFeeds();
+                    lastDiscoveredFeeds.forEach((_, idx) => {
+                        const btn = document.getElementById(`btn-add-disc-${idx}`);
+                        if (btn) {
+                            btn.className = "text-[11px] bg-emerald-600/30 text-emerald-300 px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 shrink-0";
+                            btn.innerHTML = `<i class="fa-solid fa-check"></i> เพิ่มแล้ว`;
+                        }
+                    });
+                } else {
+                    showToast(data.error || "เกิดข้อผิดพลาดในการเพิ่มฟีด", false);
+                }
+            } catch (e) {
+                showToast("เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ", false);
             }
         }
 
