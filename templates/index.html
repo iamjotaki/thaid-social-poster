@@ -5974,13 +5974,15 @@
         // SETTINGS MODAL
         // ==========================================
         async function openSettingsModal() {
+            openModal('modal-settings');
             try {
                 const res = await fetch('/api/settings');
-                const data = await res.json();
-                document.getElementById('cfg-gemini-key').value = data.gemini_api_key || '';
-                document.getElementById('cfg-dry-run').value = data.dry_run ? "true" : "false";
-                document.getElementById('cfg-interval').value = String(data.interval || 30);
-                openModal('modal-settings');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('cfg-gemini-key').value = data.gemini_api_key || '';
+                    document.getElementById('cfg-dry-run').value = data.dry_run ? "true" : "false";
+                    document.getElementById('cfg-interval').value = String(data.interval || 30);
+                }
             } catch (e) {
                 console.error(e);
             }

@@ -448,6 +448,95 @@ def get_status():
     })
 
 # -------------------------------------------------------------
+# API: GENERAL SETTINGS (GEMINI KEY, DRY RUN, INTERVAL)
+# -------------------------------------------------------------
+@app.route("/api/settings", methods=["GET"])
+def api_get_settings():
+    """ดึงการตั้งค่าระบบปัจจุบัน"""
+    config.reload_config()
+    active_key = config.GEMINI_API_KEY
+    if not active_key or active_key == "your_gemini_api_key_here":
+        try:
+            with get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT api_key FROM user_api_keys WHERE is_active = 1 AND LENGTH(api_key) > 15 ORDER BY id ASC LIMIT 1")
+                row = cursor.fetchone()
+                if row and row[0]:
+                    active_key = row[0]
+        except Exception:
+            pass
+
+    return jsonify({
+        "success": True,
+        "gemini_api_key": active_key if active_key != "your_gemini_api_key_here" else "",
+        "dry_run": config.DRY_RUN,
+        "interval": config.CHECK_INTERVAL_MINUTES
+    })
+
+@app.route("/api/settings", methods=["POST"])
+def api_save_settings():
+    """บันทึกการตั้งค่าระบบ"""
+    data = request.json or {}
+    gemini_key = str(data.get("gemini_api_key", "")).strip()
+    dry_run = bool(data.get("dry_run", True))
+    interval = int(data.get("interval", 30))
+    
+    config.GEMINI_API_KEY = gemini_key
+    config.DRY_RUN = dry_run
+    config.CHECK_INTERVAL_MINUTES = interval
+
+    # บันทึก .env ถ้ามี
+    try:
+        env_file = config.BASE_DIR / ".env"
+        lines = []
+        if env_file.exists():
+            with open(env_file, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+        
+        updated_keys = set()
+        new_lines = []
+        for line in lines:
+            if line.strip().startswith("GEMINI_API_KEY="):
+                new_lines.append(f"GEMINI_API_KEY={gemini_key}\n")
+                updated_keys.add("GEMINI_API_KEY")
+            elif line.strip().startswith("DRY_RUN="):
+                new_lines.append(f"DRY_RUN={'true' if dry_run else 'false'}\n")
+                updated_keys.add("DRY_RUN")
+            elif line.strip().startswith("CHECK_INTERVAL_MINUTES="):
+                new_lines.append(f"CHECK_INTERVAL_MINUTES={interval}\n")
+                updated_keys.add("CHECK_INTERVAL_MINUTES")
+            else:
+                new_lines.append(line)
+        
+        if "GEMINI_API_KEY" not in updated_keys and gemini_key:
+            new_lines.append(f"GEMINI_API_KEY={gemini_key}\n")
+        if "DRY_RUN" not in updated_keys:
+            new_lines.append(f"DRY_RUN={'true' if dry_run else 'false'}\n")
+        if "CHECK_INTERVAL_MINUTES" not in updated_keys:
+            new_lines.append(f"CHECK_INTERVAL_MINUTES={interval}\n")
+
+        with open(env_file, "w", encoding="utf-8") as f:
+            f.writelines(new_lines)
+    except Exception as e:
+        print(f"Error saving .env: {e}")
+
+    # บันทึก GEMINI_API_KEY ลง user_api_keys ตารางฐานข้อมูลด้วย
+    if gemini_key and len(gemini_key) > 15:
+        try:
+            with get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    INSERT OR REPLACE INTO user_api_keys (id, user_id, api_key, label, is_active)
+                    VALUES (1, 1, ?, 'Main Google Gemini Key', 1)
+                """, (gemini_key,))
+                conn.commit()
+        except Exception as e:
+            print(f"Error saving user_api_keys: {e}")
+
+    add_log(f"⚙️ บันทึกการตั้งค่าระบบเรียบร้อย (โหมด: {'🟡 DRY-RUN (ทดสอบ)' if dry_run else '🟢 LIVE (โพสต์จริง)'}, รอบตรวจ: {interval} นาที)", "info")
+    return jsonify({"success": True})
+
+# -------------------------------------------------------------
 # API: ANALYTICS & INSIGHTS (สถิติวิว, คลิก, การมีส่วนร่วม)
 # -------------------------------------------------------------
 @app.route("/api/analytics", methods=["GET"])
