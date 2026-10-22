@@ -30,18 +30,24 @@ def post_to_facebook(
     page_id = target_page_id or config.FB_PAGE_ID
     access_token = target_access_token or config.FB_PAGE_ACCESS_TOKEN
 
-    # โหมดจำลองการโพสต์ (Dry Run)
-    if config.DRY_RUN or not page_id or not access_token:
+    # ตรวจสอบโหมดทดสอบ (Dry Run) หรือกรณีไม่มี Token จริง
+    is_dummy_creds = (
+        not page_id or page_id == "your_page_id_here" or
+        not access_token or access_token == "your_page_access_token_here"
+    )
+    if config.DRY_RUN or is_dummy_creds:
+        reason = "เปิดโหมดทดสอบ DRY-RUN" if config.DRY_RUN else "ยังไม่ได้ระบุ Page ID หรือ Access Token จริง"
         time_tag = f" ⏰ [ตั้งเวลาบน FB: {time.strftime('%Y-%m-%d %H:%M', time.localtime(scheduled_publish_time))}]" if scheduled_publish_time else ""
-        print(f"📢 [DRY RUN] โหมดทดสอบสำหรับเพจ {page_id}: บันทึกตัวอย่างโพสต์ลงไฟล์พรีวิว{time_tag}")
+        print(f"📢 [DRY RUN ({reason})] สำหรับเพจ {page_id}: บันทึกตัวอย่างโพสต์ลงไฟล์พรีวิว{time_tag}")
         save_to_html_preview(f"{message}{time_tag}", image_path or image_url)
         return {
             "success": True,
             "mode": "dry_run",
+            "reason": reason,
             "post_id": f"sim_fb_post_{int(time.time())}",
             "scheduled_publish_time": scheduled_publish_time,
             "is_fb_scheduled": bool(scheduled_publish_time),
-            "message": "จำลองการตั้งเวลาบน Facebook สำเร็จ (DRY RUN)" if scheduled_publish_time else "บันทึกตัวอย่างลง preview_posts.html เรียบร้อยแล้ว"
+            "message": f"จำลองการโพสต์สำเร็จ ({reason} - ยังไม่ได้ส่งขึ้น Facebook จริง)"
         }
 
     # โหมดโพสต์จริงขึ้น Facebook Page ผ่าน Graph API

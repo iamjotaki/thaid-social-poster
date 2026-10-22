@@ -571,9 +571,12 @@ def api_save_page():
         # หากยังไม่มีฟีดในเพจนี้ ให้เพิ่มฟีดมาตรฐาน 3 แหล่ง
         feeds = get_feeds_by_page(page_id)
         if not feeds:
-            add_feed_to_page(page_id, "This Is Anfield", "https://www.thisisanfield.com/feed/")
-            add_feed_to_page(page_id, "DaveOCKOP", "https://www.daveockop.com/feed/")
-            add_feed_to_page(page_id, "Anfield Watch", "https://www.anfieldwatch.co.uk/feed")
+            if any(w in name.lower() for w in ["หงส์", "liverpool"]):
+                add_feed_to_page(page_id, "This Is Anfield", "https://www.thisisanfield.com/feed/")
+                add_feed_to_page(page_id, "DaveOCKOP", "https://www.daveockop.com/feed/")
+            else:
+                add_feed_to_page(page_id, "Google News - Technology", "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-US&gl=US&ceid=US:en")
+                add_feed_to_page(page_id, "Google News - Artificial Intelligence", "https://news.google.com/rss/search?q=Artificial+Intelligence+when:2d&hl=en-US&gl=US&ceid=US:en")
 
         add_log(f"💾 บันทึกและอัปเดตเพจสำเร็จ: '{name}' (ID: {page_id})", "success")
 
@@ -1273,7 +1276,11 @@ def post_single_news():
             local_image_path=local_img or "",
             user_id=user_id
         )
-        add_log(f"✅ โพสต์ข่าวขึ้น Facebook เพจ '{target_name}' สำเร็จแล้ว! (Post ID: {fb_id})", "success")
+        if res.get("mode") == "dry_run":
+            reason = res.get("reason", "โหมดทดสอบ DRY-RUN")
+            add_log(f"🟡 [DRY-RUN] จำลองโพสต์ขึ้นเพจ '{target_name}' สำเร็จ ({reason} - ยังไม่ได้ยิงขึ้น Facebook จริง)", "warning")
+        else:
+            add_log(f"🎉 [LIVE] โพสต์ข่าวขึ้น Facebook เพจ '{target_name}' สำเร็จแล้ว! (Post ID: {fb_id})", "success")
         return jsonify({"success": True, "result": res})
     else:
         err = res.get("error", "ไม่สามารถโพสต์ได้")
@@ -2013,7 +2020,10 @@ def manual_fetch():
                             )
                             if res.get("success"):
                                 mark_as_posted(url)
-                                add_log(f"✅ โพสต์ขึ้นเพจ '{p_info['name']}' สำเร็จ: {title[:30]}...", "success")
+                                if res.get("mode") == "dry_run":
+                                    add_log(f"🟡 [DRY-RUN] จำลองโพสต์ขึ้นเพจ '{p_info['name']}' สำเร็จ: {title[:30]}... (โหมดทดสอบ)", "warning")
+                                else:
+                                    add_log(f"🎉 [LIVE] โพสต์ขึ้น Facebook เพจ '{p_info['name']}' สำเร็จ: {title[:30]}...", "success")
                     else:
                         add_log(f"✅ เขียนข่าวเสร็จแล้ว (รอให้คุณตรวจดูในหน้าเว็บ)", "success")
                 time.sleep(2)
@@ -2059,9 +2069,12 @@ def toggle_auto():
                             rewritten = rewrite_article(art)
                             if rewritten:
                                 update_rewritten(art["url"], rewritten)
-                                post_to_facebook(rewritten, local_img, art.get("image_url"), target_page_id=pid, target_access_token=token)
+                                res_auto = post_to_facebook(rewritten, local_img, art.get("image_url"), target_page_id=pid, target_access_token=token)
                                 mark_as_posted(art["url"])
-                                add_log(f"🎉 [Auto-Bot] โพสต์ข่าวใหม่ขึ้นเพจ '{p['name']}': {art['title'][:30]}...", "success")
+                                if res_auto.get("mode") == "dry_run":
+                                    add_log(f"🟡 [Auto-Bot (DRY-RUN)] จำลองโพสต์ข่าวขึ้นเพจ '{p['name']}': {art['title'][:30]}... (โหมดทดสอบ)", "warning")
+                                else:
+                                    add_log(f"🎉 [Auto-Bot (LIVE)] โพสต์ข่าวใหม่ขึ้น Facebook เพจ '{p['name']}': {art['title'][:30]}...", "success")
                             time.sleep(3)
                 except Exception as e:
                     add_log(f"⚠️ [Auto-Bot Error]: {e}", "error")
