@@ -200,11 +200,11 @@ def rewrite_with_gemini(title: str, summary: str, source_name: str, api_key: str
 
     # รายชื่อโมเดลที่จะลองตามลำดับ
     candidate_models = [
-        'gemini-2.5-flash',
-        'gemini-2.0-flash',
-        'gemini-1.5-flash',
-        'gemini-2.5-flash-lite',
-        'gemini-3.8-flash'
+        'gemini-3.5-flash',
+        'gemini-3.5-flash-lite',
+        'gemini-3.8-flash',
+        'gemini-flash-latest',
+        'gemini-2.5-flash'
     ]
 
     system_instruction = get_niche_system_instruction(category, source_name)
