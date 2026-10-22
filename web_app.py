@@ -162,6 +162,32 @@ def admin_page():
         return redirect("/dashboard")
     return render_template("admin.html", current_user=user)
 
+@app.route("/privacy")
+@app.route("/privacy-policy")
+def page_privacy_policy():
+    """หน้านโยบายความเป็นส่วนตัว (Privacy Policy) สำหรับผู้ใช้และ Meta App Review"""
+    return render_template("privacy.html")
+
+@app.route("/data-deletion", methods=["GET", "POST"])
+@app.route("/deletion", methods=["GET", "POST"])
+@app.route("/data-deletion-instructions", methods=["GET", "POST"])
+def page_data_deletion():
+    """
+    หน้าคำแนะนำการลบข้อมูลผู้ใช้งาน (User Data Deletion Callback / Instructions)
+    รองรับทั้ง Facebook Callback (POST) และหน้าเว็บสำหรับผู้ใช้ (GET)
+    """
+    if request.method == "POST":
+        confirmation_code = f"DEL-{int(time.time())}"
+        base_url = request.host_url.rstrip("/")
+        add_log(f"🛡️ ได้รับคำขอลบข้อมูลจาก Meta Platform (รหัสคำขอ: {confirmation_code})", "info")
+        return jsonify({
+            "url": f"{base_url}/data-deletion?code={confirmation_code}",
+            "confirmation_code": confirmation_code
+        })
+    
+    code = request.args.get("code")
+    return render_template("data_deletion.html", code=code)
+
 # Auth Endpoints
 @app.route("/api/auth/me")
 def api_auth_me():
