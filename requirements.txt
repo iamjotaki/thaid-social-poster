@@ -10,5 +10,7 @@ customtkinter>=6.0.0
 pythainlp>=5.0.0
 gTTS>=2.5.0
 moviepy>=2.0.0
+googlenewsdecoder>=0.2.2
+selectolax>=1.0.1
 
 gunicorn>=21.2.0

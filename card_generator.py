@@ -115,8 +115,8 @@ def wrap_thai_text(text: str, font, max_width: int, max_lines: int = 3) -> list:
 def generate_social_card(
     image_path: str,
     headline: str,
-    category: str = "🔴 ข่าวลิเวอร์พูล",
-    page_name: str = "หงส์นิวส์",
+    category: str = "🔴 ข่าวเด่น",
+    page_name: str = None,
     subtitle: str = None,
     logo_path: str = None,
     output_path: str = None,
@@ -206,7 +206,7 @@ def generate_social_card(
     font_brand = get_font(FONT_BODY_PATH, 24)
 
     # 3.1 Category Badge (มุมซ้ายบน)
-    cat_text = category.strip() if category else "🔴 ข่าวลิเวอร์พูล"
+    cat_text = category.strip() if category else "🔴 ข่าวเด่น"
     badge_bbox = font_badge.getbbox(cat_text)
     badge_tw = badge_bbox[2] - badge_bbox[0]
     badge_th = badge_bbox[3] - badge_bbox[1]
@@ -239,7 +239,8 @@ def generate_social_card(
             print(f"[CardGenerator] Logo load error: {e_logo}")
     else:
         # วาดป้ายชื่อเพจแบบเรียบหรู
-        brand_text = f"🦅 {page_name}"
+        p_display = page_name or os.getenv("DEFAULT_PAGE_NAME", "ทันข่าว")
+        brand_text = f"📰 {p_display}"
         b_bbox = font_brand.getbbox(brand_text)
         b_tw = b_bbox[2] - b_bbox[0]
         b_th = b_bbox[3] - b_bbox[1]
@@ -357,7 +358,7 @@ if __name__ == "__main__":
         image_path=test_img,
         headline=test_headline,
         category="⚡ ข่าวด่วนลิเวอร์พูล",
-        page_name="หงส์นิวส์",
+        page_name=os.getenv("DEFAULT_PAGE_NAME", "ทันข่าว"),
         subtitle="แหล่งข่าววงในเผยการเจรจาคืบหน้ากว่า 90% จ่อเปิดตัวสัปดาห์หน้า",
         theme="lfc"
     )

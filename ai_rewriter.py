@@ -123,7 +123,13 @@ def get_active_api_key(passed_key: str = None) -> Optional[str]:
 def generate_mock_rewrite(title: str, summary: str, source_name: str) -> str:
     """ฟังก์ชันจำลองอัจฉริยะ ปรับตามหมวดหมู่อัตโนมัติเมื่อยังไม่มี Gemini API Key หรือเกิดข้อผิดพลาด"""
     category = detect_article_category(title, summary, source_name)
-    clean_summary = summary[:250].strip() if summary else "ไม่มีรายละเอียดเพิ่มเติม"
+    clean_summary = summary.strip() if summary else ""
+    # กำจัดแท็กหรือรายชื่อสำนักข่าวที่ติดมาจาก Google News RSS
+    clean_summary = re.sub(r'<\/?(ol|li|font|a|b|i)[^>]*>', ' ', clean_summary)
+    clean_summary = re.sub(r'\b(Bloomberg|Ars Technica|Deadline|Yahoo Finance|The New York Times|Reuters|Associated Press|Forbes|TechCrunch|Engadget|The Verge|MacRumors)\b(\.com)?', '', clean_summary, flags=re.IGNORECASE)
+    clean_summary = re.sub(r'\s+', ' ', clean_summary).strip()
+    if not clean_summary or len(clean_summary) < 20:
+        clean_summary = f"รายงานความเคลื่อนไหวล่าสุดเกี่ยวกับ '{title}' ซึ่งกำลังเป็นประเด็นน่าจับตามองในระดับสากลขณะนี้"
 
     if category == 'tech':
         text = f"""💡 เกาะติดกระแสเทคโนโลยี & AI ระดับโลก! 🚀
@@ -213,18 +219,13 @@ def rewrite_with_gemini(title: str, summary: str, source_name: str, api_key: str
 
 หมวดหมู่ตรวจพบ: {category}
 
-แนวทางการเขียน:
-1. หากเป็นข่าวเทคโนโลยี / AI: สวมบทบาท 'กูรูไอที & Tech Influencer' เล่าเรื่องยากให้เข้าใจง่าย ตื่นเต้น ทันสมัย ชี้ประโยชน์และผลกระทบ ห้ามเขียนเรื่องฟุตบอลเด็ดขาด
-2. หากเป็นข่าวธุรกิจ / การเงิน: สำนวนนักวิเคราะห์เศรษฐกิจและการลงทุน สรุปตัวเลข ชัดเจน ห้ามเขียนเรื่องฟุตบอลเด็ดขาด
-3. หากเป็นข่าวฟุตบอล / กีฬา: สำนวนคอลัมนิสต์กีฬา เผ็ดร้อน จัดจ้าน (ห้ามเอ่ยชื่อ บอ.บู๋ หรือ บอบู๋ โดยเด็ดขาด 100%)
-4. หากเป็นข่าวทั่วไป / รอบโลก / วิทยาศาสตร์: เล่าเรื่องน่าติดตาม ทันโลก ทันเหตุการณ์
-
-โครงสร้างโพสต์ Facebook:
-- พาดหัวโพสต์ (Headline) ที่ดึงดูดสายตา ชวนหยุดนิ้วโป้ง
-- เนื้อหา 3-5 ย่อหน้า เล่าประเด็นหลักและรายละเอียดสำคัญอย่างครบถ้วน
-- สรุปทัศนะหรือประเด็นชวนผู้อ่านแสดงความคิดเห็นท้ายโพสต์
-- แฮชแท็ก 3-5 อันที่ตรงกับเนื้อหา
-- ระบุเครดิตแหล่งข่าวท้ายโพสต์: 📌 ที่มา: {source_name}
+กฎเหล็กสำคัญที่สุด (CRITICAL RULES):
+1. เขียนเนื้อหาให้ครบถ้วนสมบูรณ์ มีรายละเอียดและสาระแน่น 3-5 ย่อหน้า (อธิบายความเป็นมา รายละเอียดการเปลี่ยนแปลง และผลกระทบต่อผู้ใช้งานหรืออุตสาหกรรม)
+2. *** ห้ามเขียนเป็นเพียงแค่รายชื่อสำนักข่าวเด็ดขาด เช่น 1. Bloomberg 2. Deadline *** ให้เน้นเนื้อหาของตัวข่าวจริงๆ เท่านั้น
+3. จัดวรรคตอนให้อ่านสบายตาบนสมาร์ทโฟน สอดแทรกอีโมจิที่เข้ากับเนื้อหาอย่างมีระดับ
+4. ปิดท้ายด้วยประเด็นหรือคำถามชวนผู้อ่านแสดงความคิดเห็นเพื่อสร้าง Engagement
+5. ติดแฮชแท็ก 3-5 อันที่ตรงกับเนื้อหาข่าว
+6. ระบุเครดิตแหล่งข่าวท้ายโพสต์: 📌 ที่มา: {source_name}
 """
 
     try:

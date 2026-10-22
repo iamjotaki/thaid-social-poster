@@ -1301,17 +1301,17 @@ def api_generate_video(article_id):
         article = dict(row)
 
     if not headline:
-        headline = article.get("title", "ข่าวด่วนลิเวอร์พูล")
+        headline = article.get("title", "ข่าวด่วนล่าสุด")
 
     if not speech_text:
         speech_text = article.get("rewritten_text") or article.get("summary") or headline
 
-    page_name = "หงส์นิวส์"
+    page_name = getattr(config, "DEFAULT_PAGE_NAME", "ทันข่าว")
     page_id = article.get("page_id")
     if page_id:
         p_info = get_page_by_id(page_id)
         if p_info:
-            page_name = p_info.get("name", "หงส์นิวส์")
+            page_name = p_info.get("name", getattr(config, "DEFAULT_PAGE_NAME", "ทันข่าว"))
 
     # หาภาพที่คมชัดที่สุด (ใช้ Social Card ถ้ามี หรือภาพต้นฉบับ)
     img_path = None

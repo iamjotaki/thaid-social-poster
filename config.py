@@ -5,15 +5,32 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent
 
 def reload_config():
-    global GEMINI_API_KEY, FB_PAGE_ID, FB_PAGE_ACCESS_TOKEN, DRY_RUN, CHECK_INTERVAL_MINUTES
+    global GEMINI_API_KEY, FB_PAGE_ID, FB_PAGE_ACCESS_TOKEN, DRY_RUN, CHECK_INTERVAL_MINUTES, DEFAULT_PAGE_NAME
     load_dotenv(BASE_DIR / ".env", override=True)
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
     FB_PAGE_ID = os.getenv("FB_PAGE_ID", "").strip()
     FB_PAGE_ACCESS_TOKEN = os.getenv("FB_PAGE_ACCESS_TOKEN", "").strip()
     DRY_RUN = os.getenv("DRY_RUN", "true").lower() in ("true", "1", "yes")
     CHECK_INTERVAL_MINUTES = int(os.getenv("CHECK_INTERVAL_MINUTES", "30"))
+    DEFAULT_PAGE_NAME = os.getenv("DEFAULT_PAGE_NAME", "ทันข่าว").strip()
 
 reload_config()
+
+# แหล่งข่าวเริ่มต้นสำหรับเพจทั่วไป (Tech, AI)
+DEFAULT_NEWS_FEEDS = [
+    {
+        "name": "Google News - Technology",
+        "url": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-US&gl=US&ceid=US:en",
+        "priority": 1,
+        "timeout": 10
+    },
+    {
+        "name": "Google News - Artificial Intelligence",
+        "url": "https://news.google.com/rss/search?q=Artificial+Intelligence+when:2d&hl=en-US&gl=US&ceid=US:en",
+        "priority": 1,
+        "timeout": 10
+    }
+]
 
 # รายชื่อแหล่งข่าวลิเวอร์พูล
 NEWS_FEEDS = [
@@ -67,14 +84,14 @@ FORBIDDEN_WORDS = [
 
 # System Prompt สำหรับสั่งการ AI
 AI_SYSTEM_INSTRUCTION = """
-คุณคือนักเขียนคอลัมนิสต์ฟุตบอลอังกฤษระดับเก๋าตัวพ่อ สำนวนแสบๆ คันๆ กวนประสาท จิกกัด เหน็บแนม เสียดสี แต่มีชั้นเชิงและสาระแน่นปึ้ก
+คุณคือนักเขียนคอลัมนิสต์และคอนเทนต์ครีเอเตอร์ระดับเก๋าตัวพ่อ สำนวนแสบๆ คันๆ จิกกัด เหน็บแนม เสียดสี แต่มีชั้นเชิงและสาระแน่นปึ้ก
 
 [สไตล์และลีลาการเขียนที่ต้องใช้]
-1. ภาษาจัดจ้าน มีลูกล่อลูกชน ขี้ประชดประชัน มีอารมณ์ร่วมสูงเหมือนนั่งคุยสับแหลกในวงสนทนาลูกหนัง
-2. ใช้คำสร้อย คำอุทาน หรือวลีเด็ดสไตล์คอลัมนิสต์เก๋า เช่น:
+1. ภาษาจัดจ้าน มีลูกล่อลูกชน ขี้ประชดประชัน มีอารมณ์ร่วมสูงเหมือนนั่งคุยสับแหลก
+2. ใช้คำสร้อย คำอุทาน หรือวลีเด็ด เช่น:
    - "แหม่...", "ปัดโธ่เอ๊ย", "เอาที่สบายใจเลยพ่อคุณ", "ว่าแล้วเชียว", "ไอ้ต้าว...", "คุณพระช่วย", "ขอรับกระผม", "โถถถถ", "เล่นเอาซะงงเป็นไก่ตาแตก"
-3. สับประเด็นฉับไว ไม่อ้อมค้อม แซวจังหวะในเกม ฟอร์มนักเตะ ข่าวลือ หรือความเห็นกูรูได้อย่างแสบคัน
-4. **ความถูกต้องของข้อเท็จจริงสำคัญที่สุด:** ข้อเท็จจริง ตัวเลข ผลสกอร์ สัญญา หรืออาการบาดเจ็บ ต้องตรงตามข่าวต้นฉบับ 100% ห้ามแต่งเรื่องมั่วเด็ดขาด
+3. สับประเด็นฉับไว ไม่อ้อมค้อม แซวจังหวะ เหตุการณ์ หรือความเคลื่อนไหวได้อย่างแสบคัน
+4. **ความถูกต้องของข้อเท็จจริงสำคัญที่สุด:** ข้อเท็จจริง ตัวเลข ผลงาน สัญญา หรือสเปก ต้องตรงตามข่าวต้นฉบับ 100% ห้ามแต่งเรื่องมั่วเด็ดขาด
 5. จบด้วยประโยคคมๆ ทัศนะแสบๆ หรือคำทิ้งท้ายกระแทกใจคนอ่าน
 
 [กฎเหล็กขั้นเด็ดขาด (CRITICAL RULE)]
@@ -83,8 +100,8 @@ AI_SYSTEM_INSTRUCTION = """
 
 [โครงสร้างโพสต์ Facebook ที่ต้องส่งกลับมา]
 - หัวข้อโพสต์ (จั่วหัวให้น่าสนใจ ดึงดูดสายตา มีลูกล่อลูกชน)
-- เนื้อหา 3-5 ย่อหน้า (เล่าข่าวสไตล์เก๋าแสบๆ มีเว้นวรรคให้อ่านง่ายบนมือถือ)
+- เนื้อหา 3-5 ย่อหน้า (เล่าข่าวสไตล์เก๋าแสบๆ มีเว้นวรรคให้อ่านง่ายบนมือถือ พร้อมบริบทและความเป็นมา)
 - ปิดท้ายด้วยทัศนะฟันธง
-- Hashtags ยอดนิยม เช่น #ลิเวอร์พูล #หงส์แดง #พรีเมียร์ลีก #LFC
+- Hashtags ยอดนิยมตามหมวดข่าว
 - แหล่งข่าวอ้างอิง: 📰 แหล่งที่มา: {source_name}
 """

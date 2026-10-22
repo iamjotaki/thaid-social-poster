@@ -181,7 +181,7 @@ def wrap_thai(text: str, font, max_width: int, max_lines: int = 3) -> list:
 def create_vertical_frame(
     image_path: str,
     headline: str,
-    page_name: str = "หงส์นิวส์",
+    page_name: str = "ทันข่าว",
     width: int = 1080,
     height: int = 1920
 ) -> Image.Image:
@@ -295,7 +295,7 @@ def generate_short_video(
     image_path: str,
     headline: str,
     speech_text: str,
-    page_name: str = "หงส์นิวส์",
+    page_name: str = "ทันข่าว",
     output_path: str = None,
     voice_name: str = "Charon",
     api_key: str = None
@@ -353,6 +353,6 @@ if __name__ == "__main__":
         image_path=None,
         headline="คล็อปป์ส่งสัญญาณ! หงส์แดงเตรียมปิดดีลแข้งใหม่ค่าตัวสถิติสโมสร",
         speech_text="สวัสดีครับแฟนบอลลิเวอร์พูลทุกท่าน ล่าสุดมีรายงานว่าหงส์แดงใกล้จะบรรลุข้อตกลงคว้าตัวแข้งใหม่มาร่วมทัพแล้วครับ",
-        page_name="หงส์นิวส์"
+        page_name="ทันข่าว"
     )
     print("Generated short video:", test_out)

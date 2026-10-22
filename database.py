@@ -215,17 +215,50 @@ def _seed_default_users(cursor, conn):
         conn.commit()
 
 def _seed_default_page_and_feeds(cursor, conn):
-    """สร้างเพจเริ่มต้นหากยังไม่มีข้อมูลในระบบ"""
+    """สร้างเพจเริ่มต้นหากยังไม่มีข้อมูลในระบบ หรืออัปเดตชื่อเพจเริ่มต้น"""
+    default_name = getattr(config, "DEFAULT_PAGE_NAME", "ทันข่าว") or "ทันข่าว"
+    
+    # 1. ตรวจสอบหากมีเพจชื่อ "หงส์นิวส์" อยู่ ให้เปลี่ยนเป็น DEFAULT_PAGE_NAME อัตโนมัติ
+    cursor.execute("SELECT page_id, name FROM pages WHERE name = 'หงส์นิวส์'")
+    old_hong = cursor.fetchall()
+    if old_hong and default_name != "หงส์นิวส์":
+        for (old_pid, _) in old_hong:
+            cursor.execute("UPDATE pages SET name = ? WHERE page_id = ?", (default_name, old_pid))
+            # ลบ feed ลิเวอร์พูลเดิมออกจากเพจนี้
+            cursor.execute("""
+                DELETE FROM page_feeds 
+                WHERE page_id = ? AND feed_name IN ('DaveOCKOP', 'This Is Anfield', 'Anfield Watch', 'Empire of the Kop', 'Liverpool Echo', 'CaughtOffside (LFC)')
+            """, (old_pid,))
+            # เพิ่ม Google News Feeds ถ้าเพจนี้ไม่มีฟีดเหลือ
+            cursor.execute("SELECT COUNT(*) FROM page_feeds WHERE page_id = ?", (old_pid,))
+            if cursor.fetchone()[0] == 0:
+                feeds_to_add = getattr(config, "DEFAULT_NEWS_FEEDS", [])
+                for f in feeds_to_add:
+                    cursor.execute("""
+                        INSERT OR IGNORE INTO page_feeds (page_id, feed_name, feed_url, is_enabled)
+                        VALUES (?, ?, ?, 1)
+                    """, (old_pid, f["name"], f["url"]))
+        conn.commit()
+
+    # 2. กรณีตารางเพจว่างเปล่า (เช่น deploy ครั้งแรกบน Render)
     cursor.execute("SELECT COUNT(*) FROM pages")
     if cursor.fetchone()[0] == 0 and config.FB_PAGE_ID:
         cursor.execute("""
             INSERT OR IGNORE INTO pages (page_id, name, access_token, is_active)
             VALUES (?, ?, ?, 1)
-        """, (config.FB_PAGE_ID, "หงส์นิวส์", config.FB_PAGE_ACCESS_TOKEN))
+        """, (config.FB_PAGE_ID, default_name, config.FB_PAGE_ACCESS_TOKEN))
         conn.commit()
 
-        # ผูก feeds เริ่มต้นเข้ากับเพจนี้
-        for f in config.NEWS_FEEDS:
+        # ผูก feeds เริ่มต้นเข้ากับเพจนี้ (ถ้าเป็นลิเวอร์พูลให้ใส่ NEWS_FEEDS ถ้าเป็นเพจอื่นให้ใส่ DEFAULT_NEWS_FEEDS)
+        if any(w in default_name.lower() for w in ["หงส์", "liverpool"]):
+            feeds_to_seed = config.NEWS_FEEDS
+        else:
+            feeds_to_seed = getattr(config, "DEFAULT_NEWS_FEEDS", [
+                {"name": "Google News - Technology", "url": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-US&gl=US&ceid=US:en"},
+                {"name": "Google News - Artificial Intelligence", "url": "https://news.google.com/rss/search?q=Artificial+Intelligence+when:2d&hl=en-US&gl=US&ceid=US:en"}
+            ])
+
+        for f in feeds_to_seed:
             cursor.execute("""
                 INSERT OR IGNORE INTO page_feeds (page_id, feed_name, feed_url, is_enabled)
                 VALUES (?, ?, ?, 1)
@@ -234,6 +267,7 @@ def _seed_default_page_and_feeds(cursor, conn):
         # ปรับข่าวเดิมให้ผูกกับเพจนี้
         cursor.execute("UPDATE articles SET page_id = ? WHERE page_id = '' OR page_id IS NULL", (config.FB_PAGE_ID,))
         conn.commit()
+
 
 # -------------------------------------------------------------
 # จัดการเพจ (Pages Management)
