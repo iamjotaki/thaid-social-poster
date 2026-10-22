@@ -44,54 +44,54 @@
 
     <!-- TOP NAVBAR -->
     <header class="bg-zinc-900/95 backdrop-blur border-b border-zinc-800 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-1.5 sm:gap-3">
             <!-- Brand -->
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-lfc-red flex items-center justify-center font-black text-white text-xl shadow-lg shadow-lfc-red/30 shrink-0">
+            <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-lfc-red flex items-center justify-center font-black text-white text-sm sm:text-xl shadow-lg shadow-lfc-red/30 shrink-0">
                     LFC
                 </div>
                 <div>
-                    <h1 class="font-bold text-base sm:text-lg leading-tight flex items-center gap-2">
-                        <span>Auto-Poster Pro</span>
-                        <span class="text-[10px] bg-lfc-red/20 text-lfc-red border border-lfc-red/30 px-2 py-0.5 rounded-full font-semibold">Multi-Page & Schedule</span>
+                    <h1 class="font-bold text-xs sm:text-base lg:text-lg leading-tight flex items-center gap-1 sm:gap-2">
+                        <span class="whitespace-nowrap">Auto-Poster Pro</span>
+                        <span class="hidden md:inline-block text-[10px] bg-lfc-red/20 text-lfc-red border border-lfc-red/30 px-2 py-0.5 rounded-full font-semibold">Multi-Page</span>
                     </h1>
-                    <p class="text-[11px] text-zinc-400 hidden sm:block">ระบบจัดการหลายเพจ · เพิ่ม RSS อิสระ · ตั้งเวลาโพสต์อัตโนมัติ</p>
+                    <p class="text-[11px] text-zinc-400 hidden lg:block">ระบบจัดการหลายเพจ · เพิ่ม RSS อิสระ · ตั้งเวลาโพสต์อัตโนมัติ</p>
                 </div>
             </div>
 
             <!-- Page Selector & Controls -->
-            <div class="flex items-center space-x-2 sm:space-x-3">
+            <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
                 <!-- Page Selector Dropdown -->
-                <div class="flex items-center bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5">
-                    <i class="fa-brands fa-facebook text-blue-500 mr-2 text-sm"></i>
-                    <select id="active-page-select" onchange="onPageChange()" class="bg-transparent text-xs font-semibold text-zinc-200 focus:outline-none cursor-pointer pr-2">
+                <div class="flex items-center bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1 sm:px-2.5 sm:py-1.5 max-w-[115px] xs:max-w-[145px] sm:max-w-[200px] shrink-0">
+                    <i class="fa-brands fa-facebook text-blue-500 mr-1.5 text-xs sm:text-sm shrink-0"></i>
+                    <select id="active-page-select" onchange="onPageChange()" class="bg-transparent text-[11px] sm:text-xs font-semibold text-zinc-200 focus:outline-none cursor-pointer pr-1 truncate w-full">
                         <option value="">ทุกเพจ (All Pages)</option>
                     </select>
                 </div>
 
                 <!-- Quick Action Buttons -->
-                <button onclick="triggerFetch()" id="btn-fetch" class="bg-lfc-red hover:bg-lfc-darkred text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition shadow-lg shadow-lfc-red/20">
-                    <i class="fa-solid fa-bolt"></i>
+                <button onclick="triggerFetch()" id="btn-fetch" class="bg-lfc-red hover:bg-lfc-darkred text-white font-medium text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl flex items-center gap-1.5 transition shadow-lg shadow-lfc-red/20 shrink-0" title="ดึงข่าวทันที">
+                    <i class="fa-solid fa-bolt text-xs"></i>
                     <span class="hidden md:inline">ดึงข่าวทันที</span>
                 </button>
 
-                <button onclick="toggleAutoBot()" id="btn-auto" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-clock"></i>
+                <button onclick="toggleAutoBot()" id="btn-auto" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl flex items-center gap-1.5 transition shrink-0" title="เปิด/ปิด Auto-Bot">
+                    <i class="fa-solid fa-clock text-xs"></i>
                     <span id="auto-btn-text" class="hidden md:inline">เริ่ม Auto-Bot</span>
                 </button>
 
-                <button onclick="openSettingsModal()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm px-3 py-2 rounded-xl transition border border-zinc-700" title="ตั้งค่าระบบ">
+                <button onclick="openSettingsModal()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs p-2 sm:px-3 sm:py-2 rounded-xl transition border border-zinc-700 shrink-0" title="ตั้งค่าระบบ">
                     <i class="fa-solid fa-gear"></i>
                 </button>
 
                 <!-- Admin Portal Button (Visible only to Admin) -->
-                <a href="/admin" id="btn-admin-portal" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-purple-600/20 hidden" title="เข้าสู่ระบบหลังบ้าน Superadmin">
+                <a href="/admin" id="btn-admin-portal" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-purple-600/20 shrink-0 hidden" title="เข้าสู่ระบบหลังบ้าน Superadmin">
                     <i class="fa-solid fa-shield-halved"></i>
                     <span class="hidden lg:inline">หลังบ้าน Admin</span>
                 </a>
 
                 <!-- Google Account Login / Profile Indicator -->
-                <div id="auth-container">
+                <div id="auth-container" class="shrink-0">
                     <!-- Loading or Injected by JS -->
                 </div>
             </div>
@@ -111,53 +111,59 @@
     </div>
 
     <!-- NAVIGATION TABS -->
-    <nav class="bg-zinc-900 border-b border-zinc-800">
-        <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-2 flex flex-wrap lg:flex-nowrap items-center gap-1.5 sm:gap-2">
+    <nav class="bg-zinc-900 border-b border-zinc-800 sticky top-14 sm:top-16 z-30 shadow-md">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 py-1.5 flex items-center overflow-x-auto no-scrollbar scroll-smooth gap-1 sm:gap-1.5">
             <!-- กลุ่มที่ 1: สตูดิโอคอนเทนต์ (Content Studio) -->
             <div class="flex items-center gap-0.5 bg-zinc-950/40 p-0.5 rounded-xl border border-zinc-800/60 shrink-0">
-                <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 bg-lfc-red text-white transition shrink-0" title="รายการข่าวสาร & เตรียมโพสต์">
+                <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-lfc-red text-white transition shrink-0 whitespace-nowrap" title="รายการข่าวสาร & เตรียมโพสต์">
                     <i class="fa-solid fa-newspaper text-xs"></i> <span>ข่าวสาร</span>
                 </button>
-                <button onclick="switchTab('tab-match')" id="nav-tab-match" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="Match Center (พรีวิว & ตัดเกรดนักเตะ)">
+                <button onclick="switchTab('tab-match')" id="nav-tab-match" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="Match Center (พรีวิว & ตัดเกรดนักเตะ)">
                     <i class="fa-solid fa-futbol text-emerald-400 text-xs"></i> <span>Match Center</span>
                 </button>
-                <button onclick="switchTab('tab-community')" id="nav-tab-community" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="Community & ตอบคอมเมนต์เพจ">
+                <button onclick="switchTab('tab-community')" id="nav-tab-community" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="Community & ตอบคอมเมนต์เพจ">
                     <i class="fa-solid fa-comments text-violet-400 text-xs"></i> <span>Community</span>
                 </button>
-                <button onclick="switchTab('tab-affiliate')" id="nav-tab-affiliate" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="Affiliate โพสต์สินค้าสร้างรายได้">
+                <button onclick="switchTab('tab-affiliate')" id="nav-tab-affiliate" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="Affiliate โพสต์สินค้าสร้างรายได้">
                     <i class="fa-solid fa-bag-shopping text-amber-400 text-xs"></i> <span>Affiliate</span>
                 </button>
-                <button onclick="switchTab('tab-image-gen')" id="nav-tab-image-gen" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="สตูดิโอเจนรูป AI ด้วย Google Flow">
+                <button onclick="switchTab('tab-image-gen')" id="nav-tab-image-gen" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="สตูดิโอเจนรูป AI ด้วย Google Flow">
                     <i class="fa-solid fa-paintbrush text-pink-400 text-xs"></i> <span>เจนรูป AI</span>
                 </button>
             </div>
 
+            <!-- Divider -->
+            <div class="h-4 w-px bg-zinc-800 shrink-0 mx-0.5"></div>
+
             <!-- กลุ่มที่ 2: เผยแพร่ & วิเคราะห์ (Publishing & Analytics) -->
             <div class="flex items-center gap-0.5 bg-zinc-950/40 p-0.5 rounded-xl border border-zinc-800/60 shrink-0">
-                <button onclick="switchTab('tab-schedule')" id="nav-tab-schedule" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="ตั้งเวลาโพสต์ Facebook ล่วงหน้า & สถิติประวัติย้อนหลัง">
+                <button onclick="switchTab('tab-schedule')" id="nav-tab-schedule" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="ตั้งเวลาโพสต์ Facebook ล่วงหน้า & สถิติประวัติย้อนหลัง">
                     <i class="fa-solid fa-calendar-check text-amber-400 text-xs"></i> <span>ตั้งเวลา</span>
                     <span id="badge-sched-count" class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1 py-0.2 rounded-full font-bold">0</span>
                 </button>
-                <button onclick="switchTab('tab-analytics')" id="nav-tab-analytics" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="สถิติเพจ & ข้อมูลเชิงลึก">
-                    <i class="fa-solid fa-chart-line text-cyan-400 text-xs"></i> <span>สถิติ<span class="hidden xl:inline">เพจ</span></span>
+                <button onclick="switchTab('tab-analytics')" id="nav-tab-analytics" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="สถิติเพจ & ข้อมูลเชิงลึก">
+                    <i class="fa-solid fa-chart-line text-cyan-400 text-xs"></i> <span>สถิติ</span>
                 </button>
             </div>
 
+            <!-- Divider -->
+            <div class="h-4 w-px bg-zinc-800 shrink-0 mx-0.5"></div>
+
             <!-- กลุ่มที่ 3: ระบบ & ตั้งค่า (System & Config) -->
             <div class="flex items-center gap-0.5 bg-zinc-950/40 p-0.5 rounded-xl border border-zinc-800/60 shrink-0">
-                <button onclick="switchTab('tab-feeds')" id="nav-tab-feeds" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="จัดการ RSS Feeds">
-                    <i class="fa-solid fa-rss text-purple-400 text-xs"></i> <span><span class="hidden xl:inline">RSS </span>Feeds</span>
+                <button onclick="switchTab('tab-feeds')" id="nav-tab-feeds" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="จัดการ RSS Feeds">
+                    <i class="fa-solid fa-rss text-purple-400 text-xs"></i> <span>RSS Feeds</span>
                     <span id="badge-feed-count" class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1 py-0.2 rounded-full font-bold">0</span>
                 </button>
-                <button onclick="switchTab('tab-pages')" id="nav-tab-pages" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="จัดการเพจ Facebook">
+                <button onclick="switchTab('tab-pages')" id="nav-tab-pages" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="จัดการเพจ Facebook">
                     <i class="fa-brands fa-facebook text-blue-400 text-xs"></i> <span>เพจ FB</span>
                     <span id="badge-page-count" class="text-[10px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-1 py-0.2 rounded-full font-bold">0</span>
                 </button>
-                <button onclick="switchTab('tab-apikeys')" id="nav-tab-apikeys" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="จัดการ Google Gemini API Keys ของคุณ">
+                <button onclick="switchTab('tab-apikeys')" id="nav-tab-apikeys" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="จัดการ Google Gemini API Keys ของคุณ">
                     <i class="fa-solid fa-key text-yellow-400 text-xs"></i> <span>API Keys</span>
                     <span id="badge-user-keys-count" class="text-[10px] bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 px-1 py-0.2 rounded-full font-bold">0</span>
                 </button>
-                <button onclick="switchTab('tab-logs')" id="nav-tab-logs" class="nav-tab px-2 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0" title="Live Logs บันทึกระบบ">
+                <button onclick="switchTab('tab-logs')" id="nav-tab-logs" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="Live Logs บันทึกระบบ">
                     <i class="fa-solid fa-terminal text-emerald-400 text-xs"></i> <span>Logs</span>
                 </button>
             </div>
@@ -165,7 +171,7 @@
     </nav>
 
     <!-- MAIN CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full space-y-4 sm:space-y-6 pb-24 sm:pb-8">
 
         <!-- STATS BAR -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
@@ -2751,6 +2757,17 @@
             if (activeNav) {
                 activeNav.classList.remove('text-zinc-400');
                 activeNav.classList.add('bg-lfc-red', 'text-white');
+            }
+
+            // Sync Mobile Bottom Nav Highlight
+            document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+                btn.classList.remove('text-lfc-red', 'font-bold');
+                btn.classList.add('text-zinc-400');
+            });
+            const mobNav = document.getElementById('mob-nav-' + tabId);
+            if (mobNav) {
+                mobNav.classList.remove('text-zinc-400');
+                mobNav.classList.add('text-lfc-red', 'font-bold');
             }
 
             if (tabId === 'tab-match') loadMatchCenter();
@@ -5584,7 +5601,7 @@
                     const imgTag = displayImg 
                         ? `
                         <div class="relative group shrink-0 w-full sm:w-52">
-                            <img src="${displayImg}" alt="Cover" class="w-full sm:w-52 h-44 object-cover rounded-2xl border border-zinc-800 shadow-lg transition" onerror="this.style.display='none'">
+                            <img src="${displayImg}" alt="Cover" class="w-full sm:w-52 aspect-[16/9] sm:aspect-auto sm:h-44 object-cover rounded-2xl border border-zinc-800 shadow-lg transition" onerror="this.style.display='none'">
                             ${hasCard ? `<span class="absolute top-2 left-2 bg-lfc-red/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1"><i class="fa-solid fa-paintbrush"></i> Social Card</span>` : ''}
                             <button onclick="openCardModal(${idx})" class="absolute bottom-2 right-2 bg-black/85 hover:bg-lfc-red text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-xl backdrop-blur border border-white/20 transition flex items-center gap-1.5 shadow-lg" title="ปรับแต่งภาพกราฟิกข่าวกีฬา">
                                 <i class="fa-solid fa-wand-magic-sparkles text-lfc-gold"></i> ปรับแต่งการ์ด
@@ -5592,7 +5609,7 @@
                         </div>
                         `
                         : `
-                        <div class="shrink-0 w-full sm:w-52 h-40 bg-zinc-950 border border-dashed border-zinc-800 rounded-2xl flex flex-col items-center justify-center p-3 text-center">
+                        <div class="shrink-0 w-full sm:w-52 h-36 sm:h-40 bg-zinc-950 border border-dashed border-zinc-800 rounded-2xl flex flex-col items-center justify-center p-3 text-center">
                             <i class="fa-solid fa-image text-zinc-700 text-2xl mb-1"></i>
                             <button onclick="openCardModal(${idx})" class="text-[11px] text-lfc-red hover:underline font-semibold">
                                 + สร้าง Social Card
@@ -5659,14 +5676,14 @@
                                             </a>
                                         </div>
 
-                                        <div class="flex items-center space-x-2">
+                                        <div class="flex items-center space-x-2 w-full sm:w-auto justify-end pt-2 sm:pt-0">
                                             <!-- Button Schedule -->
-                                            <button onclick="openScheduleModal(${idx}, '${art.url}', '${art.image_url || ''}')" class="text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+                                            <button onclick="openScheduleModal(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
                                                 <i class="fa-solid fa-calendar-plus text-amber-400"></i> ตั้งเวลา
                                             </button>
 
                                             <!-- Button Post Now -->
-                                            <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="text-xs bg-lfc-red hover:bg-lfc-darkred text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-lfc-red/20">
+                                            <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-lfc-red hover:bg-lfc-darkred text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-lfc-red/20">
                                                 <i class="fa-solid fa-paper-plane"></i> โพสต์ทันที
                                             </button>
                                         </div>
@@ -6502,5 +6519,158 @@
             </div>
         </div>
     </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION (Google Stitch Thumb-Zone Dock for <640px) -->
+    <div class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800/90 px-3 py-1 flex items-center justify-around shadow-2xl">
+        <button onclick="switchTab('tab-news')" id="mob-nav-tab-news" class="mob-nav-btn flex flex-col items-center justify-center py-1 px-2 text-lfc-red font-bold transition">
+            <i class="fa-solid fa-newspaper text-base mb-0.5"></i>
+            <span class="text-[10px]">ข่าวสาร</span>
+        </button>
+        <button onclick="switchTab('tab-schedule')" id="mob-nav-tab-schedule" class="mob-nav-btn flex flex-col items-center justify-center py-1 px-2 text-zinc-400 transition">
+            <i class="fa-solid fa-calendar-check text-base mb-0.5"></i>
+            <span class="text-[10px]">ตั้งเวลา</span>
+        </button>
+        <!-- Center Floating Action Button -->
+        <button onclick="triggerFetch()" class="relative -top-2.5 w-11 h-11 rounded-full bg-gradient-to-tr from-lfc-red to-rose-600 text-white flex items-center justify-center shadow-lg shadow-lfc-red/50 hover:scale-105 active:scale-95 transition" title="ดึงข่าวทันที">
+            <i class="fa-solid fa-bolt text-lg"></i>
+        </button>
+        <button onclick="switchTab('tab-affiliate')" id="mob-nav-tab-affiliate" class="mob-nav-btn flex flex-col items-center justify-center py-1 px-2 text-zinc-400 transition">
+            <i class="fa-solid fa-bag-shopping text-base mb-0.5"></i>
+            <span class="text-[10px]">Affiliate</span>
+        </button>
+        <button onclick="openMobileMenuDrawer()" class="mob-nav-btn flex flex-col items-center justify-center py-1 px-2 text-zinc-400 transition">
+            <i class="fa-solid fa-bars-staggered text-base mb-0.5"></i>
+            <span class="text-[10px]">เมนู</span>
+        </button>
+    </div>
+
+    <!-- MOBILE MENU DRAWER (Bottom Sheet Modal) -->
+    <div id="modal-mobile-menu" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm transition">
+        <div onclick="closeMobileMenuDrawer()" class="absolute inset-0"></div>
+        <div class="relative w-full sm:max-w-md bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-2xl p-5 shadow-2xl z-10 max-h-[85vh] overflow-y-auto space-y-4">
+            <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-xl bg-lfc-red/20 text-lfc-red flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </span>
+                    <div>
+                        <h3 class="font-bold text-sm text-zinc-100">เมนูและฟังก์ชันทั้งหมด</h3>
+                        <p class="text-[10px] text-zinc-400">เข้าถึงทุกเครื่องมือได้รวดเร็ว</p>
+                    </div>
+                </div>
+                <button onclick="closeMobileMenuDrawer()" class="text-zinc-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Grid of All Tabs -->
+            <div class="grid grid-cols-2 gap-2 text-left">
+                <button onclick="selectMobileTab('tab-news')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-newspaper text-lfc-red text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">ข่าวสาร</div>
+                        <div class="text-[9px] text-zinc-500">ฟีด & เตรียมโพสต์</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-match')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-futbol text-emerald-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">Match Center</div>
+                        <div class="text-[9px] text-zinc-500">ผลบอล & ตัดเกรด</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-community')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-comments text-violet-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">Community</div>
+                        <div class="text-[9px] text-zinc-500">ตอบคอมเมนต์ AI</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-affiliate')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-bag-shopping text-amber-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">Affiliate</div>
+                        <div class="text-[9px] text-zinc-500">โพสต์สินค้ารับค่าคอม</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-image-gen')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-paintbrush text-pink-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">เจนรูป AI</div>
+                        <div class="text-[9px] text-zinc-500">Google Flow / Imagen</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-schedule')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-calendar-check text-amber-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">ตั้งเวลาโพสต์</div>
+                        <div class="text-[9px] text-zinc-500">ปฏิทิน & คิวล่วงหน้า</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-analytics')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-chart-line text-cyan-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">สถิติเพจ</div>
+                        <div class="text-[9px] text-zinc-500">Golden Hours & Mix</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-feeds')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-rss text-purple-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">RSS Feeds</div>
+                        <div class="text-[9px] text-zinc-500">Google News & แหล่งข่าว</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-pages')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-brands fa-facebook text-blue-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">เพจ Facebook</div>
+                        <div class="text-[9px] text-zinc-500">เชื่อมต่อหลายเพจ</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-apikeys')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-key text-yellow-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">API Keys</div>
+                        <div class="text-[9px] text-zinc-500">Google Gemini Keys</div>
+                    </div>
+                </button>
+                <button onclick="selectMobileTab('tab-logs')" class="col-span-2 bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
+                    <i class="fa-solid fa-terminal text-emerald-400 text-base w-5 text-center"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">Live Logs</div>
+                        <div class="text-[9px] text-zinc-500">บันทึกการทำงานของระบบแบบ Real-time</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Quick Utilities -->
+            <div class="pt-2 border-t border-zinc-800 flex items-center gap-2">
+                <button onclick="closeMobileMenuDrawer(); openSettingsModal();" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs py-2.5 rounded-xl border border-zinc-700 flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-gear"></i> ตั้งค่าระบบ
+                </button>
+                <button onclick="closeMobileMenuDrawer(); logoutUser();" class="flex-1 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openMobileMenuDrawer() {
+            const modal = document.getElementById('modal-mobile-menu');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeMobileMenuDrawer() {
+            const modal = document.getElementById('modal-mobile-menu');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function selectMobileTab(tabId) {
+            switchTab(tabId);
+            closeMobileMenuDrawer();
+        }
+    </script>
 </body>
 </html>
