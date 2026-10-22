@@ -14,3 +14,4 @@ googlenewsdecoder>=0.2.2
 selectolax>=1.0.1
 
 gunicorn>=21.2.0
+psycopg2-binary>=2.9.9

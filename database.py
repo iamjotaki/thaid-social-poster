@@ -1,3 +1,5 @@
+import os
+import re
 import sqlite3
 import datetime
 import calendar
@@ -5,9 +7,108 @@ from pathlib import Path
 from typing import Optional, Dict, List
 import config
 
+try:
+    import psycopg2
+    import psycopg2.extras
+    HAS_PSYCOPG2 = True
+except ImportError:
+    HAS_PSYCOPG2 = False
+
 DB_PATH = Path(__file__).resolve().parent / "news_history.db"
 
+class PostgresCursorWrapper:
+    def __init__(self, raw_cursor):
+        self._cur = raw_cursor
+
+    def _convert_sql(self, sql: str) -> str:
+        # 1. Convert INTEGER PRIMARY KEY AUTOINCREMENT -> SERIAL PRIMARY KEY
+        converted = re.sub(r'INTEGER\s+PRIMARY\s+KEY\s+AUTOINCREMENT', 'SERIAL PRIMARY KEY', sql, flags=re.IGNORECASE)
+        # 2. Convert INSERT OR IGNORE INTO -> INSERT INTO ... ON CONFLICT DO NOTHING
+        if re.search(r'INSERT\s+OR\s+IGNORE\s+INTO', converted, flags=re.IGNORECASE):
+            converted = re.sub(r'INSERT\s+OR\s+IGNORE\s+INTO', 'INSERT INTO', converted, flags=re.IGNORECASE)
+            if 'ON CONFLICT' not in converted.upper():
+                converted = converted.rstrip().rstrip(';') + ' ON CONFLICT DO NOTHING'
+        # 3. Convert ALTER TABLE ADD COLUMN ... -> ADD COLUMN IF NOT EXISTS ...
+        if re.search(r'ADD\s+COLUMN\s+(?!IF\s+NOT\s+EXISTS)', converted, flags=re.IGNORECASE):
+            converted = re.sub(r'ADD\s+COLUMN\s+', 'ADD COLUMN IF NOT EXISTS ', converted, flags=re.IGNORECASE)
+        # 4. Convert strftime('%Y-%m', 'now'...) -> to_char(NOW(), 'YYYY-MM')
+        converted = re.sub(r"strftime\('%Y-%m',\s*'now'[^)]*\)", "to_char(NOW(), 'YYYY-MM')", converted, flags=re.IGNORECASE)
+        converted = re.sub(r"strftime\('%Y-%m',\s*([^)]+)\)", r"to_char(\g<1>::timestamp, 'YYYY-MM')", converted, flags=re.IGNORECASE)
+        # 5. Convert ? to %s
+        converted = converted.replace('?', '%s')
+        return converted
+
+    def execute(self, query, params=None):
+        sql = self._convert_sql(query)
+        if params is not None:
+            return self._cur.execute(sql, params)
+        return self._cur.execute(sql)
+
+    def executemany(self, query, seq_of_params):
+        sql = self._convert_sql(query)
+        return self._cur.executemany(sql, seq_of_params)
+
+    def fetchone(self):
+        return self._cur.fetchone()
+
+    def fetchall(self):
+        return self._cur.fetchall()
+
+    def fetchmany(self, size=None):
+        return self._cur.fetchmany(size) if size else self._cur.fetchmany()
+
+    @property
+    def rowcount(self):
+        return self._cur.rowcount
+
+    @property
+    def lastrowid(self):
+        return getattr(self._cur, 'lastrowid', None)
+
+    def close(self):
+        self._cur.close()
+
+class PostgresConnectionWrapper:
+    def __init__(self, raw_conn):
+        self._conn = raw_conn
+        self._row_factory = None
+
+    @property
+    def row_factory(self):
+        return self._row_factory
+
+    @row_factory.setter
+    def row_factory(self, val):
+        self._row_factory = val
+
+    def cursor(self):
+        return PostgresCursorWrapper(self._conn.cursor(cursor_factory=psycopg2.extras.DictCursor))
+
+    def commit(self):
+        self._conn.commit()
+
+    def rollback(self):
+        self._conn.rollback()
+
+    def close(self):
+        self._conn.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            self._conn.rollback()
+        else:
+            self._conn.commit()
+
 def get_connection():
+    db_url = getattr(config, 'DATABASE_URL', '') or os.getenv('DATABASE_URL', '').strip()
+    if db_url and HAS_PSYCOPG2:
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql://", 1)
+        raw_conn = psycopg2.connect(db_url)
+        return PostgresConnectionWrapper(raw_conn)
     return sqlite3.connect(DB_PATH)
 
 def init_db():
@@ -60,13 +161,13 @@ def init_db():
         # เพิ่มคอลัมน์ page_id ในตาราง articles หากยังไม่มี
         try:
             cursor.execute("ALTER TABLE articles ADD COLUMN page_id TEXT DEFAULT ''")
-        except sqlite3.OperationalError:
+        except (sqlite3.OperationalError, Exception):
             pass  # คอลัมน์มีอยู่แล้ว
 
         # เพิ่มคอลัมน์ card_image_path ในตาราง articles สำหรับเก็บ Social Card
         try:
             cursor.execute("ALTER TABLE articles ADD COLUMN card_image_path TEXT DEFAULT ''")
-        except sqlite3.OperationalError:
+        except (sqlite3.OperationalError, Exception):
             pass
 
         # 4. ตารางคิวตั้งเวลาโพสต์ (Scheduled Posts)
@@ -123,7 +224,7 @@ def init_db():
         for tbl in ["pages", "scheduled_posts", "articles"]:
             try:
                 cursor.execute(f"ALTER TABLE {tbl} ADD COLUMN user_id INTEGER DEFAULT 1")
-            except sqlite3.OperationalError:
+            except (sqlite3.OperationalError, Exception):
                 pass
 
         # เพิ่มคอลัมน์สำหรับการตั้งค่าความถี่และโควตาโพสต์ประจำเพจ
@@ -135,7 +236,7 @@ def init_db():
         ]:
             try:
                 cursor.execute(f"ALTER TABLE pages ADD COLUMN {col_name} {col_type}")
-            except sqlite3.OperationalError:
+            except (sqlite3.OperationalError, Exception):
                 pass
 
         # เพิ่มคอลัมน์สำหรับ Native FB Scheduling & สถิติประวัติโพสต์ใน scheduled_posts
@@ -148,7 +249,7 @@ def init_db():
         ]:
             try:
                 cursor.execute(f"ALTER TABLE scheduled_posts ADD COLUMN {col_name} {col_type}")
-            except sqlite3.OperationalError:
+            except (sqlite3.OperationalError, Exception):
                 pass
 
         conn.commit()

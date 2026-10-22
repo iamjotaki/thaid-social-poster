@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent
 
 def reload_config():
-    global GEMINI_API_KEY, FB_PAGE_ID, FB_PAGE_ACCESS_TOKEN, DRY_RUN, CHECK_INTERVAL_MINUTES, DEFAULT_PAGE_NAME
+    global GEMINI_API_KEY, FB_PAGE_ID, FB_PAGE_ACCESS_TOKEN, DRY_RUN, CHECK_INTERVAL_MINUTES, DEFAULT_PAGE_NAME, DATABASE_URL
     load_dotenv(BASE_DIR / ".env", override=True)
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
     FB_PAGE_ID = os.getenv("FB_PAGE_ID", "").strip()
@@ -13,6 +13,7 @@ def reload_config():
     DRY_RUN = os.getenv("DRY_RUN", "true").lower() in ("true", "1", "yes")
     CHECK_INTERVAL_MINUTES = int(os.getenv("CHECK_INTERVAL_MINUTES", "30"))
     DEFAULT_PAGE_NAME = os.getenv("DEFAULT_PAGE_NAME", "ทันข่าว").strip()
+    DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
 reload_config()
 
