@@ -31,6 +31,7 @@ from database import (
     get_recent_articles,
     is_article_seen,
     mark_as_posted,
+    build_fb_post_url,
     update_rewritten,
     save_article,
     create_scheduled_post,
@@ -1002,7 +1003,7 @@ def api_create_schedule():
             published_at=scheduled_time
         )
         if article_url:
-            mark_as_posted(article_url)
+            mark_as_posted(article_url, post_id=fb_id, page_id=page_id)
 
         time_display = sched_dt.strftime("%d/%m/%Y %H:%M")
         add_log(f"🌐 [Facebook Scheduled] ส่งขึ้นไปตั้งเวลาบน Facebook สำเร็จ! เพจ: '{pname}' นัดปล่อย: {time_display} (Post ID: {fb_id})", "success")
@@ -1010,6 +1011,7 @@ def api_create_schedule():
             "success": True,
             "schedule_id": db_id,
             "post_id": fb_id,
+            "fb_post_url": build_fb_post_url(fb_id, page_id),
             "mode": "facebook",
             "message": f"ตั้งเวลาบน Facebook เรียบร้อยแล้ว (จะเผยแพร่วันที่ {time_display} โดยที่เซิร์ฟเวอร์ไม่ต้องเปิดทิ้งไว้)"
         })
@@ -1080,6 +1082,9 @@ def get_news():
                 art["local_image"] = img
         else:
             art["local_image"] = None
+
+        if art.get("status") == "posted" and not art.get("fb_post_url"):
+            art["fb_post_url"] = build_fb_post_url(art.get("fb_post_id"), art.get("page_id") or page_id)
 
     return jsonify(articles)
 
@@ -1347,8 +1352,9 @@ def post_single_news():
     )
 
     if res.get("success"):
-        mark_as_posted(url)
         fb_id = res.get("post_id") or "sim_post"
+        fb_url = build_fb_post_url(fb_id, target_page_id)
+        mark_as_posted(url, post_id=fb_id, fb_post_url=fb_url, page_id=target_page_id)
         user_id = session.get("user_id", 1)
         record_post_history(
             page_id=target_page_id or config.FB_PAGE_ID,
@@ -1366,7 +1372,7 @@ def post_single_news():
             add_log(f"🟡 [DRY-RUN] จำลองโพสต์ขึ้นเพจ '{target_name}' สำเร็จ ({reason} - ยังไม่ได้ยิงขึ้น Facebook จริง)", "warning")
         else:
             add_log(f"🎉 [LIVE] โพสต์ข่าวขึ้น Facebook เพจ '{target_name}' สำเร็จแล้ว! (Post ID: {fb_id})", "success")
-        return jsonify({"success": True, "result": res})
+        return jsonify({"success": True, "result": res, "post_id": fb_id, "fb_post_url": fb_url})
     else:
         err = res.get("error", "ไม่สามารถโพสต์ได้")
         add_log(f"❌ โพสต์ขึ้น Facebook ล้มเหลว: {err}", "error")
@@ -1498,8 +1504,11 @@ def api_post_reel(article_id):
             video_path=video_path,
             user_id=user_id
         )
+        if article.get("url"):
+            fb_url = build_fb_post_url(vid_id, target_page_id)
+            mark_as_posted(article.get("url"), post_id=vid_id, fb_post_url=fb_url, page_id=target_page_id)
         add_log(f"🎉 โพสต์ Facebook Reel สำเร็จเรียบร้อย!{mode} (Video ID: {vid_id})", "success")
-        return jsonify({"success": True, "result": res})
+        return jsonify({"success": True, "result": res, "post_id": vid_id, "fb_post_url": build_fb_post_url(vid_id, target_page_id)})
     else:
         err = res.get("error", "ไม่สามารถโพสต์ได้")
         add_log(f"❌ โพสต์ Facebook Reel ล้มเหลว: {err}", "error")
@@ -2100,7 +2109,8 @@ def manual_fetch():
                                 target_access_token=p_info["access_token"]
                             )
                             if res.get("success"):
-                                mark_as_posted(url)
+                                fb_id = res.get("post_id") or "sim_post"
+                                mark_as_posted(url, post_id=fb_id, page_id=art_page)
                                 if res.get("mode") == "dry_run":
                                     add_log(f"🟡 [DRY-RUN] จำลองโพสต์ขึ้นเพจ '{p_info['name']}' สำเร็จ: {title[:30]}... (โหมดทดสอบ)", "warning")
                                 else:
@@ -2172,7 +2182,8 @@ def toggle_auto():
 
                                 post_img = card_path if (card_path and os.path.exists(card_path)) else local_img
                                 res_auto = post_to_facebook(clean_post_for_facebook(rewritten), post_img, art.get("image_url") if not post_img else None, target_page_id=pid, target_access_token=token)
-                                mark_as_posted(art["url"])
+                                auto_fb_id = res_auto.get("post_id") or "sim_post"
+                                mark_as_posted(art["url"], post_id=auto_fb_id, page_id=pid)
                                 if res_auto.get("mode") == "dry_run":
                                     add_log(f"🟡 [Auto-Bot (DRY-RUN)] จำลองโพสต์ข่าวขึ้นเพจ '{p['name']}': {art['title'][:30]}... (โหมดทดสอบ)", "warning")
                                 else:
@@ -2226,7 +2237,7 @@ def start_scheduler_worker():
                             fb_id = res.get("post_id", "Dry-Run")
                             update_scheduled_post_status(post_id, "posted", post_fb_id=fb_id)
                             if post.get("article_url"):
-                                mark_as_posted(post["article_url"])
+                                mark_as_posted(post["article_url"], post_id=fb_id, page_id=page_id)
                             add_log(f"🎉 [Schedule] ยิงโพสต์ตามเวลานัดหมายสำเร็จ! (Post ID: {fb_id})", "success")
                         else:
                             err = res.get("error", "Unknown error")

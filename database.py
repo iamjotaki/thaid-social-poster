@@ -170,6 +170,16 @@ def init_db():
         except (sqlite3.OperationalError, Exception):
             pass
 
+        # เพิ่มคอลัมน์ fb_post_id และ fb_post_url ในตาราง articles สำหรับลิงก์ไปยัง Facebook Post
+        for col_name, col_type in [
+            ("fb_post_id", "TEXT DEFAULT ''"),
+            ("fb_post_url", "TEXT DEFAULT ''")
+        ]:
+            try:
+                cursor.execute(f"ALTER TABLE articles ADD COLUMN {col_name} {col_type}")
+            except (sqlite3.OperationalError, Exception):
+                pass
+
         # 4. ตารางคิวตั้งเวลาโพสต์ (Scheduled Posts)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS scheduled_posts (
@@ -503,15 +513,60 @@ def update_rewritten(url: str, rewritten_text: str):
         """, (rewritten_text, url))
         conn.commit()
 
-def mark_as_posted(url: str):
-    """บันทึกสถานะว่าโพสต์ขึ้น Facebook สำเร็จแล้ว"""
+def build_fb_post_url(post_id: Optional[str] = None, page_id: Optional[str] = None) -> str:
+    """สร้าง URL สำหรับเปิดดูโพสต์บน Facebook โดยตรง"""
+    post_id_str = str(post_id or "").strip()
+    page_id_str = str(page_id or "").strip()
+    if page_id_str == "your_page_id_here":
+        page_id_str = ""
+
+    # กรณี post_id ใช้งานได้จริง (ไม่ใช่ค่าจำลอง Dry-Run เช่น sim_...)
+    if post_id_str and not post_id_str.startswith("sim_") and post_id_str.lower() != "dry-run":
+        if "_" in post_id_str:
+            p_part, id_part = post_id_str.split("_", 1)
+            return f"https://www.facebook.com/{p_part}/posts/{id_part}"
+        elif page_id_str:
+            return f"https://www.facebook.com/{page_id_str}/posts/{post_id_str}"
+        else:
+            return f"https://www.facebook.com/{post_id_str}"
+
+    # กรณีไม่มี post_id หรือเป็นโพสต์จำลอง dry-run ให้ลิงก์ไปยังหน้าเพจ Facebook
+    if page_id_str:
+        return f"https://www.facebook.com/{page_id_str}"
+
+    default_pid = getattr(config, "FB_PAGE_ID", "")
+    if default_pid and default_pid != "your_page_id_here":
+        return f"https://www.facebook.com/{default_pid}"
+
+    return "https://www.facebook.com"
+
+def mark_as_posted(url: str, post_id: Optional[str] = None, fb_post_url: Optional[str] = None, page_id: Optional[str] = None):
+    """บันทึกสถานะว่าโพสต์ขึ้น Facebook สำเร็จแล้ว พร้อมเก็บ post_id และ ลิงก์ตรง fb_post_url"""
+    if not fb_post_url and (post_id or page_id):
+        fb_post_url = build_fb_post_url(post_id, page_id)
+
     with get_connection() as conn:
         cursor = conn.cursor()
+        if not fb_post_url or fb_post_url == "https://www.facebook.com":
+            try:
+                cursor.execute("SELECT page_id FROM articles WHERE url = ?", (url,))
+                row = cursor.fetchone()
+                if row and row[0]:
+                    page_id = row[0]
+                    fb_post_url = build_fb_post_url(post_id, page_id)
+            except Exception:
+                pass
+
+        if not fb_post_url:
+            fb_post_url = build_fb_post_url(post_id, page_id)
+
         cursor.execute("""
             UPDATE articles
-            SET status = 'posted'
+            SET status = 'posted',
+                fb_post_id = COALESCE(NULLIF(?, ''), fb_post_id, ''),
+                fb_post_url = COALESCE(NULLIF(?, ''), fb_post_url, '')
             WHERE url = ?
-        """, (url,))
+        """, (post_id or '', fb_post_url or '', url))
         conn.commit()
 
 def update_card_image(article_id: int, card_image_path: str):
@@ -534,7 +589,11 @@ def get_recent_articles(limit: int = 30, page_id: Optional[str] = None) -> List[
             cursor.execute("SELECT * FROM articles WHERE page_id = ? ORDER BY id DESC LIMIT ?", (page_id, limit))
         else:
             cursor.execute("SELECT * FROM articles ORDER BY id DESC LIMIT ?", (limit,))
-        return [dict(row) for row in cursor.fetchall()]
+        rows = [dict(row) for row in cursor.fetchall()]
+        for art in rows:
+            if art.get("status") == "posted" and not art.get("fb_post_url"):
+                art["fb_post_url"] = build_fb_post_url(art.get("fb_post_id"), art.get("page_id") or page_id)
+        return rows
 
 # -------------------------------------------------------------
 # จัดการระบบตั้งเวลาโพสต์ (Scheduled Posts Queue)
@@ -731,17 +790,18 @@ def record_post_history(
 
     with get_connection() as conn:
         cursor = conn.cursor()
+        fb_url = build_fb_post_url(post_id, page_id)
         cursor.execute("""
             INSERT INTO scheduled_posts (
                 page_id, title, caption, post_type, post_id, status,
                 image_url, local_image_path, video_path, scheduled_time,
-                is_fb_native, published_at, user_id
+                is_fb_native, published_at, user_id, fb_post_url
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             page_id, title, caption, post_type, post_id, status,
             image_url, local_image_path, video_path, sched_t,
-            is_fb_native, pub_time, user_id
+            is_fb_native, pub_time, user_id, fb_url
         ))
         conn.commit()
         return cursor.lastrowid
@@ -894,7 +954,11 @@ def get_post_history(
         query += " ORDER BY COALESCE(sp.scheduled_time, sp.created_at) DESC LIMIT ?"
         params.append(limit)
         cursor.execute(query, params)
-        return [dict(r) for r in cursor.fetchall()]
+        rows = [dict(r) for r in cursor.fetchall()]
+        for r in rows:
+            if not r.get("fb_post_url"):
+                r["fb_post_url"] = build_fb_post_url(r.get("post_id"), r.get("page_id"))
+        return rows
 
 # -------------------------------------------------------------
 # ระบบโพสต์ & วิเคราะห์เชิงกลยุทธ์ (Smart Publishing & Content Calendar)

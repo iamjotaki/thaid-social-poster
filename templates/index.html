@@ -5253,8 +5253,10 @@
                         statusBadge = `<span class="bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full text-[11px]">ยกเลิก</span>`;
                     }
 
-                    const fbLink = item.post_id && !String(item.post_id).startsWith('sim_')
-                        ? `<a href="https://facebook.com/${item.post_id}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-mono text-[11px]"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>เปิดดู</a>`
+                    const fbTargetUrl = item.fb_post_url || (item.post_id && !String(item.post_id).startsWith('sim_') ? `https://facebook.com/${item.post_id}` : (item.page_id && !String(item.page_id).startsWith('your_page') ? `https://facebook.com/${item.page_id}` : ''));
+
+                    const fbLink = fbTargetUrl
+                        ? `<a href="${fbTargetUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 underline font-mono text-[11px]"><i class="fa-brands fa-facebook"></i> เปิดดู <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i></a>`
                         : `<span class="text-zinc-600 font-mono text-[11px]">${item.post_id || '-'}</span>`;
 
                     const dateDisplay = item.published_at || item.scheduled_time || item.created_at;
@@ -5589,8 +5591,16 @@
 
                 container.innerHTML = articles.map((art, idx) => {
                     const isPosted = art.status === 'posted';
+                    const fbPostUrl = art.fb_post_url || (art.fb_post_id && !String(art.fb_post_id).startsWith('sim_') ? `https://facebook.com/${art.fb_post_id}` : (art.page_id && !String(art.page_id).startsWith('your_page') ? `https://facebook.com/${art.page_id}` : 'https://facebook.com'));
+
                     const statusBadge = isPosted 
-                        ? `<span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><i class="fa-solid fa-check"></i> โพสต์แล้ว</span>`
+                        ? `<a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="group text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-3 py-1 rounded-full font-semibold flex items-center gap-1.5 transition shadow-sm hover:scale-105" title="คลิกเพื่อเปิดดูข่าวนี้บน Facebook ทันที">
+                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                            <span>โพสต์แล้ว</span>
+                            <span class="text-blue-400 group-hover:text-blue-300 flex items-center gap-1 ml-1 pl-1.5 border-l border-emerald-500/30 text-[11px]">
+                                <i class="fa-brands fa-facebook"></i> ดูบน FB <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                            </span>
+                           </a>`
                         : `<span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><i class="fa-regular fa-clock"></i> รอดำเนินการ</span>`;
 
                     const hasCard = !!art.card_image_path;
@@ -5674,9 +5684,27 @@
                                             <a href="${art.url}" target="_blank" class="text-xs text-zinc-400 hover:text-white px-2 py-1.5 flex items-center gap-1">
                                                 <i class="fa-solid fa-arrow-up-right-from-square"></i> ดูต้นฉบับ
                                             </a>
+                                            ${isPosted ? `
+                                            <a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-600/20 hover:bg-blue-600/35 text-blue-300 hover:text-white border border-blue-500/40 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm" title="เปิดดูโพสต์บน Facebook ในแท็บใหม่">
+                                                <i class="fa-brands fa-facebook text-blue-400 text-sm"></i>
+                                                <span>เปิดดูบน Facebook</span>
+                                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70"></i>
+                                            </a>
+                                            ` : ''}
                                         </div>
 
                                         <div class="flex items-center space-x-2 w-full sm:w-auto justify-end pt-2 sm:pt-0">
+                                            ${isPosted ? `
+                                            <!-- Button Repost -->
+                                            <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 font-medium px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="โพสต์ข่าวนี้ซ้ำอีกครั้ง">
+                                                <i class="fa-solid fa-repeat text-zinc-400"></i> โพสต์ซ้ำ
+                                            </button>
+
+                                            <!-- Button View on Facebook -->
+                                            <a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-initial justify-center text-xs bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-blue-600/30 hover:scale-102">
+                                                <i class="fa-brands fa-facebook text-base"></i> ไปที่โพสต์ Facebook <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-0.5"></i>
+                                            </a>
+                                            ` : `
                                             <!-- Button Schedule -->
                                             <button onclick="openScheduleModal(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
                                                 <i class="fa-solid fa-calendar-plus text-amber-400"></i> ตั้งเวลา
@@ -5686,6 +5714,7 @@
                                             <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-lfc-red hover:bg-lfc-darkred text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-lfc-red/20">
                                                 <i class="fa-solid fa-paper-plane"></i> โพสต์ทันที
                                             </button>
+                                            `}
                                         </div>
                                     </div>
                                 </div>
