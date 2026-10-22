@@ -1631,6 +1631,56 @@
                     </div>
                 </form>
 
+                <!-- DIRECT PREMIUM NEWS FEEDS HUB (GUARANTEED IMAGES) -->
+                <div class="pt-4 border-t border-zinc-800 space-y-3">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="text-xs font-bold text-zinc-200 flex items-center gap-2">
+                            <i class="fa-solid fa-camera text-emerald-400"></i>
+                            <span>แหล่งข่าวแนะนำ (มีรูปภาพจริงความคมชัดสูง 100% ทุกข่าว)</span>
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">แนะนำ ไม่ใช้ภาพแทน</span>
+                        </div>
+                        <span class="text-[11px] text-zinc-400">ฟีดสำนักข่าวที่ส่งรูปตรงในระบบ ไม่ต้องพึ่งพาภาพสุ่ม:</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <!-- 1. The Verge -->
+                        <button type="button" onclick="quickAddGoogleNews('The Verge (Tech & AI)', 'https://www.theverge.com/rss/index.xml')" class="bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 hover:border-emerald-500/50 rounded-xl p-2.5 text-left transition group">
+                            <div class="flex items-center justify-between text-xs font-bold text-zinc-200 group-hover:text-emerald-300">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-emerald-400"></i> The Verge</span>
+                                <i class="fa-solid fa-plus text-[10px] text-zinc-500 group-hover:text-emerald-400"></i>
+                            </div>
+                            <div class="text-[10px] text-zinc-400 mt-1">ข่าวด่วนไอที & AI มีรูปพรีเมียมทุกข่าว</div>
+                        </button>
+
+                        <!-- 2. Engadget -->
+                        <button type="button" onclick="quickAddGoogleNews('Engadget (Gadgets & Gaming)', 'https://www.engadget.com/rss.xml')" class="bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 hover:border-sky-500/50 rounded-xl p-2.5 text-left transition group">
+                            <div class="flex items-center justify-between text-xs font-bold text-zinc-200 group-hover:text-sky-300">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-gamepad text-sky-400"></i> Engadget</span>
+                                <i class="fa-solid fa-plus text-[10px] text-zinc-500 group-hover:text-sky-400"></i>
+                            </div>
+                            <div class="text-[10px] text-zinc-400 mt-1">สมาร์ตโฟน, แกดเจ็ต, เกม</div>
+                        </button>
+
+                        <!-- 3. ไทยรัฐออนไลน์ -->
+                        <button type="button" onclick="quickAddGoogleNews('ไทยรัฐออนไลน์ (ข่าวด่วน)', 'https://www.thairath.co.th/rss/news')" class="bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 hover:border-green-500/50 rounded-xl p-2.5 text-left transition group">
+                            <div class="flex items-center justify-between text-xs font-bold text-zinc-200 group-hover:text-green-300">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-newspaper text-green-400"></i> ไทยรัฐออนไลน์</span>
+                                <i class="fa-solid fa-plus text-[10px] text-zinc-500 group-hover:text-green-400"></i>
+                            </div>
+                            <div class="text-[10px] text-zinc-400 mt-1">ข่าวด่วนภาษาไทย มีรูปประกอบตรง</div>
+                        </button>
+
+                        <!-- 4. ข่าวสด -->
+                        <button type="button" onclick="quickAddGoogleNews('ข่าวสด (Khaosod Online)', 'https://www.khaosod.co.th/feed')" class="bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-2.5 text-left transition group">
+                            <div class="flex items-center justify-between text-xs font-bold text-zinc-200 group-hover:text-amber-300">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-fire text-amber-400"></i> ข่าวสด ออนไลน์</span>
+                                <i class="fa-solid fa-plus text-[10px] text-zinc-500 group-hover:text-amber-400"></i>
+                            </div>
+                            <div class="text-[10px] text-zinc-400 mt-1">ข่าวร้อนรอบวัน อัปเดตตลอด 24 ชม.</div>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- GOOGLE NEWS INTERNATIONAL PRESETS HUB -->
                 <div class="pt-4 border-t border-zinc-800 space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-2">

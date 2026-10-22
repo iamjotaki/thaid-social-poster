@@ -26,30 +26,73 @@ HEADERS = {
 IMAGES_DIR = BASE_DIR / "downloads" / "images"
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
-# คลังภาพปกความละเอียดสูงแยกตามหมวดหมู่ (สำหรับ Fallback กรณีข่าวไม่มีรูป หรือเว็บต้นทางบล็อกการดูดรูป)
+# คลังภาพปกความละเอียดสูงแยกตามหมวดหมู่และคีย์เวิร์ดเฉพาะ (สำหรับ Fallback กรณีข่าวไม่มีรูป หรือเว็บต้นทางบล็อกการดูดรูป)
 NICHE_FALLBACK_IMAGES = {
+    "apple": [
+        "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=1200&q=80", # iPhone บนโต๊ะโมเดิร์น
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&q=80", # MacBook และอุปกรณ์ Apple
+        "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=1200&q=80", # iPad จอแสดงผล
+        "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=1200&q=80", # สมาร์ทโฟน iPhone สไตล์พรีเมียม
+        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&q=80"  # หูฟังและแกดเจ็ตเทคโนโลยี
+    ],
+    "tesla": [
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=1200&q=80", # รถยนต์ Tesla Model
+        "https://images.unsplash.com/photo-1536700503339-1e4b06520771?w=1200&q=80", # สถานีชาร์จรถไฟฟ้า EV
+        "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1200&q=80", # ห้องโดยสารรถยนต์ไฮเทค
+        "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=1200&q=80"  # เทคโนโลยีขับขี่อัตโนมัติ
+    ],
+    "gaming": [
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&q=80", # จอยเกมคอนโซลและเครื่องเกม
+        "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&q=80", # เวทีแข่งขัน Esports และหน้าจอเกม
+        "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&q=80", # คีย์บอร์ดและอุปกรณ์เกมเมอร์
+        "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1200&q=80", # คอนโซลเกมและไฟนีออน RGB
+        "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=1200&q=80", # จอยสติ๊กเกมมิ่ง
+        "https://images.unsplash.com/photo-1592840496694-26d035b52b48?w=1200&q=80"  # แป้นควบคุมเกมคอนโซล
+    ],
+    "youtube": [
+        "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=1200&q=80", # โลโก้และแพลตฟอร์มวิดีโอ
+        "https://images.unsplash.com/photo-1598550476439-6847785fdd52?w=1200&q=80", # กล้องวิดีโอระดับมืออาชีพ
+        "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=1200&q=80", # ไมโครโฟนสตูดิโอและพอดแคสต์
+        "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1200&q=80"  # ห้องตัดต่อคอนเทนต์วิดีโอ
+    ],
     "tech": [
         "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80", # ชิปและบอร์ดเทคโนโลยี
         "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&q=80", # กราฟิกคลื่น AI
         "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&q=80", # หุ่นยนต์ AI
-        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&q=80"  # Cyber Matrix Data
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&q=80", # Cyber Matrix Data
+        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1200&q=80", # แล็ปท็อปเทคโนโลยีล้ำสมัย
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&q=80", # ระบบ Cybersecurity และเครือข่าย
+        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&q=80"  # สมองกล AI และโครงข่ายประสาท
     ],
     "biz": [
         "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=1200&q=80", # กราฟหุ้นและการเงิน
         "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80", # ตึกการเงินระดับโลก
-        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80"  # ข้อมูลวิเคราะห์ธุรกิจ
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80", # ข้อมูลวิเคราะห์ธุรกิจ
+        "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1200&q=80", # กราฟการลงทุนหุ้นและการวิเคราะห์
+        "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200&q=80", # เงินและคริปโตเคอร์เรนซี
+        "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&q=80"  # ประชุมธุรกิจผู้บริหาร
     ],
     "sports": [
         "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1200&q=80", # สนามฟุตบอลและสปอตไลท์
         "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80", # ลูกฟุตบอลบนสนาม
-        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80"  # อัฒจันทร์สนามแข่งขัน
+        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80", # อัฒจันทร์สนามแข่งขัน
+        "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=1200&q=80", # การแข่งขันกีฬา
+        "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1200&q=80"  # บาสเกตบอลและสนามแข่ง
+    ],
+    "entertainment": [
+        "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80", # โรงภาพยนตร์และจอยักษ์
+        "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=80", # คอนเสิร์ตและแสงไฟเวที
+        "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&q=80"  # บรรยากาศฉายหนัง
     ],
     "general": [
         "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80", # ไมโครโฟนแถลงข่าว
         "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80", # ลูกโลกดิจิทัลรอบโลก
-        "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1200&q=80"  # หนังสือพิมพ์และข่าวสาร
+        "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1200&q=80", # หนังสือพิมพ์และข่าวสาร
+        "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200&q=80"  # การอ่านข่าวและสื่อสารมวลชน
     ]
 }
+
+RECENT_FALLBACKS = []
 
 def resolve_article_url(url: str) -> str:
     """ถอดรหัส Google News redirect URL ให้เป็น URL ของสำนักข่าวต้นทางจริง"""
@@ -103,12 +146,23 @@ def fetch_article_details(url: str, timeout: int = 8) -> Dict[str, Optional[str]
                 soup.find("meta", property="og:image") or 
                 soup.find("meta", attrs={"name": "og:image"}) or 
                 soup.find("meta", attrs={"name": "twitter:image"}) or
-                soup.find("meta", property="twitter:image")
+                soup.find("meta", property="twitter:image") or
+                soup.find("meta", property="image") or
+                soup.find("link", rel="image_src")
             )
-            if og_img and og_img.get("content"):
-                cand = og_img.get("content").strip()
-                if not re.search(r'(googleusercontent\.com|gstatic\.com|logo|icon|avatar|favicon)', cand, re.IGNORECASE):
+            if og_img:
+                cand = (og_img.get("content") or og_img.get("href") or "").strip()
+                if cand and cand.startswith("http") and not re.search(r'(1x1|spacer|favicon\.|default_avatar|blank\.gif|tracking)', cand, re.IGNORECASE):
                     result["image_url"] = cand
+
+            # หากยังไม่มีรูป ให้ลองหาแท็ก <img> ตัวแรกในบทความ
+            if not result.get("image_url"):
+                art_tag = soup.find("article") or soup.find("main") or soup
+                for im in art_tag.find_all("img"):
+                    src = im.get("src") or im.get("data-src") or im.get("data-original")
+                    if src and src.startswith("http") and not re.search(r'(favicon|avatar|emoji|pixel|1x1|spacer)', src, re.IGNORECASE):
+                        result["image_url"] = src
+                        break
             
             # ดึง og:description
             og_desc = (
@@ -160,27 +214,48 @@ def clean_html_text(raw_html: str) -> str:
     return text
 
 def get_niche_fallback_image(title: str = "", source: str = "") -> str:
-    """สุ่มเลือกรูปภาพคุณภาพสูงที่ตรงกับหมวดหมู่ข่าว"""
+    """สุ่มเลือกรูปภาพคุณภาพสูงที่ตรงกับหัวข้อข่าว โดยจำประวัติเพื่อไม่ให้ใช้รูปซ้ำกัน"""
+    global RECENT_FALLBACKS
     import random
     text = f"{title} {source}".lower()
-    
-    if any(k in text for k in ['ai', 'tech', 'technology', 'chip', 'robot', 'software', 'apple', 'google', 'openai', 'cyber']):
+
+    if any(k in text for k in ['apple', 'iphone', 'ipad', 'macbook', 'ios', 'vision pro', 'แอปเปิล', 'ไอโฟน', 'ไอแพด', 'แมคบุ๊ก']):
+        pool = NICHE_FALLBACK_IMAGES.get("apple", NICHE_FALLBACK_IMAGES["tech"])
+    elif any(k in text for k in ['tesla', 'elon', 'musk', 'electric vehicle', 'ev car', 'cybercab', 'เทสลา', 'รถยนต์ไฟฟ้า', 'รถ ev']):
+        pool = NICHE_FALLBACK_IMAGES.get("tesla", NICHE_FALLBACK_IMAGES["tech"])
+    elif any(k in text for k in ['game', 'gaming', 'xbox', 'playstation', 'nintendo', 'ea ', 'bioware', 'gta', 'steam', 'เกม', 'เกมส์', 'คอนโซล', 'เอ็กซ์บ็อกซ์', 'เพลย์สเตชัน']):
+        pool = NICHE_FALLBACK_IMAGES.get("gaming", NICHE_FALLBACK_IMAGES["tech"])
+    elif any(k in text for k in ['youtube', 'video', 'stream', 'twitch', 'tiktok', 'creator', 'dislike', 'ยูทูบ', 'ยูทูป', 'วิดีโอ', 'ติ๊กต็อก', 'สตรีม']):
+        pool = NICHE_FALLBACK_IMAGES.get("youtube", NICHE_FALLBACK_IMAGES["tech"])
+    elif any(k in text for k in ['ai', 'tech', 'technology', 'chip', 'robot', 'software', 'openai', 'cyber', 'google', 'meta', 'nvidia']):
         pool = NICHE_FALLBACK_IMAGES["tech"]
-    elif any(k in text for k in ['biz', 'business', 'stock', 'invest', 'market', 'finance', 'economy', 'crypto', 'bank']):
+    elif any(k in text for k in ['biz', 'business', 'stock', 'invest', 'market', 'finance', 'economy', 'crypto', 'bitcoin', 'bank']):
         pool = NICHE_FALLBACK_IMAGES["biz"]
     elif any(k in text for k in ['sport', 'football', 'soccer', 'liverpool', 'premier', 'league', 'match']):
         pool = NICHE_FALLBACK_IMAGES["sports"]
+    elif any(k in text for k in ['movie', 'entertainment', 'cinema', 'hollywood', 'music', 'song']):
+        pool = NICHE_FALLBACK_IMAGES.get("entertainment", NICHE_FALLBACK_IMAGES["general"])
     else:
         pool = NICHE_FALLBACK_IMAGES["general"]
-        
-    return random.choice(pool)
+
+    # คัดเลือกรูปที่ไม่ซ้ำกับที่เพิ่งใช้ไป
+    candidates = [img for img in pool if img not in RECENT_FALLBACKS]
+    if not candidates:
+        candidates = pool
+
+    chosen = random.choice(candidates)
+    RECENT_FALLBACKS.append(chosen)
+    if len(RECENT_FALLBACKS) > 25:
+        RECENT_FALLBACKS.pop(0)
+
+    return chosen
 
 def download_image(image_url: str, filename_prefix: str = "img", fallback_title: str = "") -> Optional[str]:
     """ดาวน์โหลดรูปภาพมาเก็บไว้ในเครื่องเพื่อใช้อัปโหลดขึ้น Facebook พร้อม fallback อัตโนมัติ"""
     url_to_fetch = image_url
 
-    # หากไม่มี URL หรือเป็น URL รูปไอคอน Google ให้ใช้ภาพสต็อกระดับพรีเมียมตามหมวด
-    if not url_to_fetch or re.search(r'(googleusercontent\.com|gstatic\.com|logo|icon|favicon)', url_to_fetch, re.IGNORECASE):
+    # หากไม่มี URL หรือเป็น URL รูปไอคอน/พิกเซลว่าง ให้ใช้ภาพสต็อกระดับพรีเมียมตามหมวด
+    if not url_to_fetch or re.search(r'(googleusercontent\.com|gstatic\.com|favicon\.|default_avatar|1x1|spacer)', url_to_fetch, re.IGNORECASE):
         url_to_fetch = get_niche_fallback_image(title=fallback_title, source=filename_prefix)
 
     try:
