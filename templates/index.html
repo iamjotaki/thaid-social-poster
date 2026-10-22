@@ -211,7 +211,7 @@
                 </div>
                 <div>
                     <div id="stat-sources" class="text-xl font-bold text-purple-400">0</div>
-                    <div class="text-[11px] text-zinc-400">RSS Feeds</div>
+                    <div class="text-[11px] text-zinc-400" title="จำนวนฟีดที่เปิดใช้งาน / ฟีดทั้งหมดในระบบ">RSS Feeds (เปิด/ทั้งหมด)</div>
                 </div>
             </div>
 
@@ -4353,7 +4353,9 @@
                 let specificOptions = ``;
 
                 allPages.forEach(p => {
-                    options += `<option value="${p.page_id}">🔴 ${p.name} (${p.feeds_count} feeds)</option>`;
+                    const activeCount = typeof p.active_feeds_count !== 'undefined' ? p.active_feeds_count : p.feeds_count;
+                    const feedLabel = p.feeds_count === activeCount ? `${activeCount} feeds` : `เปิด ${activeCount}/${p.feeds_count} feeds`;
+                    options += `<option value="${p.page_id}">🔴 ${p.name} (${feedLabel})</option>`;
                     specificOptions += `<option value="${p.page_id}">🔴 ${p.name}</option>`;
                 });
 
@@ -4414,7 +4416,7 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 text-xs text-zinc-400 pt-2 border-t border-zinc-800/80">
-                            <div><i class="fa-solid fa-rss text-purple-400 mr-1"></i> ${p.feeds_count} RSS Feeds</div>
+                            <div><i class="fa-solid fa-rss text-purple-400 mr-1"></i> เปิด ${typeof p.active_feeds_count !== 'undefined' ? p.active_feeds_count : p.feeds_count}/${p.feeds_count} Feeds</div>
                             <div><i class="fa-solid fa-newspaper text-lfc-red mr-1"></i> ${p.articles_count} ข่าวในระบบ</div>
                         </div>
 
@@ -4576,8 +4578,18 @@
             try {
                 const res = await fetch(`/api/pages/${pageId}/feeds`);
                 const feeds = await res.json();
-                document.getElementById('badge-feed-count').innerText = feeds.length;
-                document.getElementById('stat-sources').innerText = feeds.length;
+                const activeFeeds = feeds.filter(f => f.is_enabled === 1).length;
+                const totalFeeds = feeds.length;
+                const badgeFeedElem = document.getElementById('badge-feed-count');
+                if (badgeFeedElem) {
+                    badgeFeedElem.innerText = activeFeeds;
+                    badgeFeedElem.title = `เปิดใช้งาน ${activeFeeds} จากทั้งหมด ${totalFeeds} ฟีด`;
+                }
+                const statSourcesElem = document.getElementById('stat-sources');
+                if (statSourcesElem) {
+                    statSourcesElem.innerText = activeFeeds === totalFeeds ? activeFeeds : `${activeFeeds} / ${totalFeeds}`;
+                    statSourcesElem.title = `เปิดใช้งาน ${activeFeeds} จากทั้งหมด ${totalFeeds} ฟีด`;
+                }
                 const container = document.getElementById('feeds-list');
 
                 if (feeds.length === 0) {
@@ -6241,7 +6253,18 @@
                 document.getElementById('stat-total').innerText = data.stats.total;
                 document.getElementById('stat-posted').innerText = data.stats.posted;
                 document.getElementById('stat-scheduled').innerText = data.stats.scheduled_count || 0;
-                document.getElementById('stat-sources').innerText = data.stats.sources_count;
+                const activeFeeds = data.stats.sources_count || 0;
+                const totalFeeds = typeof data.stats.total_sources !== 'undefined' ? data.stats.total_sources : activeFeeds;
+                const statSourcesElem = document.getElementById('stat-sources');
+                if (statSourcesElem) {
+                    statSourcesElem.innerText = activeFeeds === totalFeeds ? activeFeeds : `${activeFeeds} / ${totalFeeds}`;
+                    statSourcesElem.title = `เปิดใช้งาน ${activeFeeds} จากทั้งหมด ${totalFeeds} ฟีด`;
+                }
+                const badgeFeedCount = document.getElementById('badge-feed-count');
+                if (badgeFeedCount) {
+                    badgeFeedCount.innerText = activeFeeds;
+                    badgeFeedCount.title = `เปิดใช้งาน ${activeFeeds} จากทั้งหมด ${totalFeeds} ฟีด`;
+                }
 
                 const autoBtn = document.getElementById('btn-auto');
                 const autoText = document.getElementById('auto-btn-text');

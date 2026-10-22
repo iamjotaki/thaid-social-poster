@@ -391,6 +391,7 @@ def get_all_pages() -> List[Dict]:
         cursor.execute("""
             SELECT p.*,
                    (SELECT COUNT(*) FROM page_feeds WHERE page_id = p.page_id) as feeds_count,
+                   (SELECT COUNT(*) FROM page_feeds WHERE page_id = p.page_id AND is_enabled = 1) as active_feeds_count,
                    (SELECT COUNT(*) FROM articles WHERE page_id = p.page_id) as articles_count
             FROM pages p
             ORDER BY p.id ASC

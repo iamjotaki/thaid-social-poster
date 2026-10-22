@@ -417,6 +417,8 @@ def get_status():
             pending_count = cursor.fetchone()[0]
             cursor.execute("SELECT COUNT(*) FROM page_feeds WHERE page_id = ? AND is_enabled = 1", (page_id,))
             sources_count = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) FROM page_feeds WHERE page_id = ?", (page_id,))
+            total_sources = cursor.fetchone()[0]
             cursor.execute("SELECT COUNT(*) FROM scheduled_posts WHERE page_id = ? AND status = 'scheduled'", (page_id,))
             scheduled_count = cursor.fetchone()[0]
         else:
@@ -428,6 +430,8 @@ def get_status():
             pending_count = cursor.fetchone()[0]
             cursor.execute("SELECT COUNT(*) FROM page_feeds WHERE is_enabled = 1")
             sources_count = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) FROM page_feeds")
+            total_sources = cursor.fetchone()[0]
             cursor.execute("SELECT COUNT(*) FROM scheduled_posts WHERE status = 'scheduled'")
             scheduled_count = cursor.fetchone()[0]
 
@@ -444,6 +448,7 @@ def get_status():
             "posted": posted_count,
             "pending": pending_count,
             "sources_count": sources_count,
+            "total_sources": total_sources,
             "scheduled_count": scheduled_count
         }
     })
