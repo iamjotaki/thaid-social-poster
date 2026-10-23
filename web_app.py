@@ -67,7 +67,13 @@ from database import (
     get_content_strategy_analytics
 )
 from news_fetcher import fetch_all_new_articles, download_image
-from ai_rewriter import rewrite_article, detect_article_category, extract_thai_card_headline, clean_post_for_facebook
+from ai_rewriter import (
+    rewrite_article,
+    detect_article_category,
+    extract_thai_card_headline,
+    clean_post_for_facebook,
+    get_card_category_and_theme
+)
 from fb_poster import post_to_facebook, post_reel_to_facebook, delete_facebook_post
 from card_generator import generate_social_card
 from match_center import (
@@ -1136,6 +1142,12 @@ def get_news():
         if art.get("status") == "posted" and not art.get("fb_post_url"):
             art["fb_post_url"] = build_fb_post_url(art.get("fb_post_id"), art.get("page_id") or page_id)
 
+        cat_type = detect_article_category(art.get("title", ""), art.get("summary", ""), art.get("source", ""))
+        c_cat, c_theme = get_card_category_and_theme(cat_type, title_source=f"{art.get('title','')} {art.get('source','')}")
+        art["detected_category"] = c_cat
+        art["detected_theme"] = c_theme
+        art["raw_category"] = cat_type
+
     return jsonify(articles)
 
 @app.route("/api/logs")
@@ -1204,25 +1216,11 @@ def api_generate_card(article_id):
         article = dict(row)
 
     art_cat = detect_article_category(article.get("title", ""), article.get("summary", ""), article.get("source", ""))
+    default_cat, default_theme = get_card_category_and_theme(art_cat, title_source=f"{article.get('title','')} {article.get('source','')}")
     if not category:
-        if art_cat == "tech":
-            category = "ข่าวเทคโนโลยี & AI"
-        elif art_cat == "biz":
-            category = "ธุรกิจ & การเงิน"
-        elif art_cat == "sports":
-            category = "ข่าวกีฬา"
-        else:
-            category = "ข่าวรอบโลก"
-
+        category = default_cat
     if not theme:
-        if art_cat == "tech":
-            theme = "tech"
-        elif art_cat == "biz":
-            theme = "biz"
-        elif art_cat == "sports":
-            theme = "sports"
-        else:
-            theme = "breaking"
+        theme = default_theme
 
     if not headline:
         headline = extract_thai_card_headline(
@@ -2112,19 +2110,7 @@ def manual_fetch():
 
                         cat_type = detect_article_category(title, summary, source)
                         card_hl = extract_thai_card_headline(rewritten, fallback_title=title, category=cat_type)
-
-                        if cat_type == "tech":
-                            card_cat = "ข่าวเทคโนโลยี & AI"
-                            card_theme = "tech"
-                        elif cat_type == "biz":
-                            card_cat = "ธุรกิจ & การเงิน"
-                            card_theme = "biz"
-                        elif cat_type == "sports":
-                            card_cat = "ข่าวกีฬา"
-                            card_theme = "lfc" if "หงส์" in p_name or "liverpool" in (title + source).lower() else "sports"
-                        else:
-                            card_cat = "ข่าวรอบโลก"
-                            card_theme = "breaking"
+                        card_cat, card_theme = get_card_category_and_theme(cat_type, p_name, f"{title} {source}")
 
                         cards_dir = config.BASE_DIR / "downloads" / "cards"
                         cards_dir.mkdir(parents=True, exist_ok=True)
@@ -2152,7 +2138,7 @@ def manual_fetch():
                         if p_info:
                             post_img = card_path if (card_path and os.path.exists(card_path)) else local_img
                             res = post_to_facebook(
-                                message=clean_post_for_facebook(rewritten),
+                                message=clean_post_for_facebook(rewritten, category=cat_type),
                                 image_path=post_img,
                                 image_url=img if not post_img else None,
                                 target_page_id=art_page,
@@ -2214,8 +2200,7 @@ def toggle_auto():
                                 try:
                                     cat_type = detect_article_category(art["title"], art.get("summary", ""), art.get("source", ""))
                                     card_hl = extract_thai_card_headline(rewritten, fallback_title=art["title"], category=cat_type)
-                                    card_cat = "ข่าวเทคโนโลยี & AI" if cat_type == "tech" else ("ธุรกิจ & การเงิน" if cat_type == "biz" else ("ข่าวกีฬา" if cat_type == "sports" else "ข่าวรอบโลก"))
-                                    card_theme = "tech" if cat_type == "tech" else ("biz" if cat_type == "biz" else ("sports" if cat_type == "sports" else "breaking"))
+                                    card_cat, card_theme = get_card_category_and_theme(cat_type, p["name"], f"{art['title']} {art.get('source','')}")
                                     cards_dir = config.BASE_DIR / "downloads" / "cards"
                                     cards_dir.mkdir(parents=True, exist_ok=True)
                                     out_card = str(cards_dir / f"card_{int(time.time()*1000)}.jpg")
@@ -2231,7 +2216,7 @@ def toggle_auto():
                                     print(f"Auto card error: {e_card}")
 
                                 post_img = card_path if (card_path and os.path.exists(card_path)) else local_img
-                                res_auto = post_to_facebook(clean_post_for_facebook(rewritten), post_img, art.get("image_url") if not post_img else None, target_page_id=pid, target_access_token=token)
+                                res_auto = post_to_facebook(clean_post_for_facebook(rewritten, category=cat_type), post_img, art.get("image_url") if not post_img else None, target_page_id=pid, target_access_token=token)
                                 auto_fb_id = res_auto.get("post_id") or "sim_post"
                                 mark_as_posted(art["url"], post_id=auto_fb_id, page_id=pid)
                                 if res_auto.get("mode") == "dry_run":

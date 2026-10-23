@@ -2075,22 +2075,30 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-semibold text-zinc-300 mb-1">หมวดหมู่ / ป้าย Tag บนภาพ:</label>
-                            <select id="card-input-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-lfc-red">
+                            <select id="card-input-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                                <option value="เรื่องลึกลับ & ปริศนา">🔍 เรื่องลึกลับ & ปริศนา</option>
+                                <option value="ประวัติศาสตร์ & โบราณคดี">🏛️ ประวัติศาสตร์ & โบราณคดี</option>
+                                <option value="ธรรมชาติ & วิทยาศาสตร์">🌿 ธรรมชาติ & วิทยาศาสตร์</option>
+                                <option value="สุขภาพ & จิตวิทยา">💡 สุขภาพ & จิตวิทยา</option>
+                                <option value="เทคโนโลยี & AI">⚡ เทคโนโลยี & AI</option>
+                                <option value="ธุรกิจ & การเงิน">📈 ธุรกิจ & การเงิน</option>
+                                <option value="เรื่องน่ารู้รอบโลก">🌐 เรื่องน่ารู้รอบโลก</option>
+                                <option value="ข่าวกีฬา">⚽ ข่าวกีฬา</option>
                                 <option value="🔴 ข่าวลิเวอร์พูล">🔴 ข่าวลิเวอร์พูล</option>
                                 <option value="⚡ BREAKING NEWS">⚡ BREAKING NEWS</option>
-                                <option value="🔥 ข่าวเด่นประเด็นร้อน">🔥 ข่าวเด่นประเด็นร้อน</option>
-                                <option value="💰 ตลาดซื้อขายนักเตะ">💰 ตลาดซื้อขายนักเตะ</option>
-                                <option value="📊 MATCH PREVIEW">📊 MATCH PREVIEW</option>
-                                <option value="💬 สัมภาษณ์พิเศษ">💬 สัมภาษณ์พิเศษ</option>
-                                <option value="⭐ ผลการแข่งขัน">⭐ ผลการแข่งขัน</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-zinc-300 mb-1">สไตล์สีของการ์ด (Theme):</label>
-                            <select id="card-input-theme" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-lfc-red">
+                            <select id="card-input-theme" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                                <option value="mystery">🔮 เรื่องลึกลับ (Mystery Violet)</option>
+                                <option value="history">🏛️ ประวัติศาสตร์ (Ancient Gold)</option>
+                                <option value="nature">🌿 ธรรมชาติ / สัตว์โลก (Forest Green)</option>
+                                <option value="health">💡 สุขภาพ / จิตวิทยา (Teal Cyan)</option>
+                                <option value="tech">⚡ เทคโนโลยี & AI (Sky Blue)</option>
+                                <option value="biz">📈 ธุรกิจ & การเงิน (Emerald)</option>
+                                <option value="breaking">🚨 ข่าวเด่นรอบโลก (Crimson Red)</option>
                                 <option value="lfc">🔴 หงส์แดง (LFC Red & Gold)</option>
-                                <option value="breaking">⚡ ข่าวด่วนเดือด (Hot Red & Yellow)</option>
-                                <option value="tactics">💎 แท็กติก & สถิติ (Teal & Cyan)</option>
                                 <option value="gold">👑 พรีเมียมโกลด์ (Royal Gold)</option>
                             </select>
                         </div>
@@ -6163,13 +6171,34 @@
             // พาดหัวเริ่มต้น
             let defaultHeadline = art.title;
             if (art.rewritten_text) {
-                const firstLine = art.rewritten_text.split('\n')[0].replace(/[🔴⚡🔥]/g, '').trim();
-                if (firstLine.length > 10 && firstLine.length < 120) {
-                    defaultHeadline = firstLine;
+                const matchHl = art.rewritten_text.match(/\[HEADLINE_TH\](.*?)\[END_HEADLINE\]/is);
+                if (matchHl && matchHl[1].trim()) {
+                    defaultHeadline = matchHl[1].trim();
+                } else {
+                    const firstLine = art.rewritten_text.split('\n')[0].replace(/[🔴⚡🔥🚨🔍🏛️🌿💡📌]/g, '').trim();
+                    if (firstLine.length > 10 && firstLine.length < 120) {
+                        defaultHeadline = firstLine;
+                    }
                 }
             }
             document.getElementById('card-input-headline').value = defaultHeadline;
             document.getElementById('card-input-subtitle').value = '';
+
+            if (art.detected_category) {
+                const catSelect = document.getElementById('card-input-category');
+                if (catSelect) {
+                    for (let opt of catSelect.options) {
+                        if (opt.value === art.detected_category || opt.text.includes(art.detected_category)) {
+                            catSelect.value = opt.value;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (art.detected_theme) {
+                const themeSelect = document.getElementById('card-input-theme');
+                if (themeSelect) themeSelect.value = art.detected_theme;
+            }
 
             // Image Preview & Download link
             const previewImg = document.getElementById('card-preview-img');

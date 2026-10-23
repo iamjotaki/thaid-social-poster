@@ -79,6 +79,34 @@ THEMES = {
         "badge_bg": (200, 16, 46, 255),
         "badge_text": (255, 255, 255),
         "bar": (200, 16, 46),
+    },
+    "mystery": {
+        "primary": (168, 85, 247),       # Purple / Mystery Violet
+        "accent": (192, 132, 252),
+        "badge_bg": (147, 51, 234, 255),
+        "badge_text": (255, 255, 255),
+        "bar": (168, 85, 247),
+    },
+    "history": {
+        "primary": (217, 119, 6),        # Amber Bronze / Ancient Gold
+        "accent": (251, 191, 36),
+        "badge_bg": (180, 83, 9, 255),
+        "badge_text": (255, 255, 255),
+        "bar": (217, 119, 6),
+    },
+    "nature": {
+        "primary": (16, 185, 129),       # Emerald Green
+        "accent": (52, 211, 153),
+        "badge_bg": (5, 150, 105, 255),
+        "badge_text": (255, 255, 255),
+        "bar": (16, 185, 129),
+    },
+    "health": {
+        "primary": (20, 184, 166),       # Teal Health
+        "accent": (94, 234, 212),
+        "badge_bg": (13, 148, 136, 255),
+        "badge_text": (255, 255, 255),
+        "bar": (20, 184, 166),
     }
 }
 
