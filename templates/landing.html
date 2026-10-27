@@ -127,7 +127,11 @@
           <span class="text-[#0569ff] font-bold">✦</span>
           <span>หน้าหลัก ThaiD</span>
         </a>
-        <button onclick="openGoogleLoginModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#171717] hover:bg-black text-white text-xs font-semibold shadow-2xs transition-all hover:scale-[1.02] active:scale-[0.98]"><span class="material-symbols-outlined text-[15px]">login</span><span>เข้าสู่ระบบ</span></button>
+        <button onclick="quickLogin('boss@fanpage.com', 'Admin Boss (Superadmin)', 'admin', 'VIP Enterprise', 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0569ff]/10 hover:bg-[#0569ff]/20 text-[#0569ff] text-xs font-semibold transition-colors">
+            <span class="material-symbols-outlined text-[14px]">bolt</span>
+            <span>เข้าแดชบอร์ด Demo</span>
+          </button>
+          <button onclick="openGoogleLoginModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#171717] hover:bg-black text-white text-xs font-semibold shadow-2xs transition-all hover:scale-[1.02] active:scale-[0.98]"><span class="material-symbols-outlined text-[15px]">login</span><span>เข้าสู่ระบบ</span></button>
       </div>
 
     </div>
@@ -159,13 +163,17 @@
             </p>
 
             <!-- CTA Row -->
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-                <button onclick="openGoogleLoginModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#171717] hover:bg-black text-white rounded-full px-8 py-3.5 text-sm font-semibold shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]">
-                    <span class="material-symbols-outlined text-[18px]">login</span>
-                    <span>เริ่มต้นใช้งานฟรี (Get started)</span>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <button onclick="quickLogin('boss@fanpage.com', 'Admin Boss (Superadmin)', 'admin', 'VIP Enterprise', 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#171717] hover:bg-black text-white rounded-full px-8 py-3.5 text-sm font-semibold shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-[18px]">bolt</span>
+                    <span>เข้าสู่ห้องควบคุม Dashboard ทันที (Demo)</span>
                     <span class="text-base leading-none">→</span>
                 </button>
-                <a href="#features" class="inline-flex items-center gap-1.5 px-6 py-3.5 rounded-full border border-black/[0.08] hover:bg-stone-50 text-[#2b313b] text-sm font-semibold transition-colors">
+                <button onclick="openGoogleLoginModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-black/[0.08] hover:bg-stone-50 text-[#2b313b] text-sm font-semibold transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">login</span>
+                    <span>เข้าสู่ระบบ Google</span>
+                </button>
+                <a href="#features" class="inline-flex items-center gap-1.5 px-6 py-3.5 rounded-full border border-black/[0.08] hover:bg-stone-50 text-[#5e6675] text-sm font-semibold transition-colors">
                     <span class="material-symbols-outlined text-[18px]">play_circle</span>
                     <span>ดูฟังก์ชันการทำงาน</span>
                     <span class="material-symbols-outlined text-[18px]">chevron_right</span>
@@ -573,8 +581,9 @@
 
     <!-- SCRIPTS -->
     <script>
-        // ThaiD Studio Theme Locked
-            localStorage.setItem('social-theme', isDark ? 'dark' : 'light');
+        function initTheme() {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
         }
 
         // Initialize Theme from localStorage
