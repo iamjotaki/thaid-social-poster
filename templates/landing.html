@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th" class="scroll-smooth dark">
+<html lang="th" class="dark scroll-smooth bg-[#141414]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
@@ -8,7 +8,7 @@
     <!-- Apple Fonts & Thai Typography (Plus Jakarta Sans, Prompt, Sarabun) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <!-- Material Symbols Outlined -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     
@@ -30,7 +30,7 @@
                         'apple-border': 'rgba(0, 0, 0, 0.08)'
                     },
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Prompt', 'Sarabun', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        sans: ['Google Sans', 'Noto Sans Thai', 'Plus Jakarta Sans', 'Prompt', 'sans-serif'],
                         thai: ['Prompt', 'Sarabun', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace']
                     }
@@ -67,12 +67,12 @@
         .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
     </style>
 </head>
-<body class="bg-[#f5f5f7] dark:bg-[#0c0c0e] text-[#1d1d1f] dark:text-[#f5f5f7] min-h-screen flex flex-col font-sans transition-colors duration-300 selection:bg-orange-500/20 selection:text-apple-coral">
+<body class="bg-[#141414] text-[#f5f5f7] min-h-screen flex flex-col font-sans selection:bg-[#0074e2]/30 selection:text-white">
 
     <!-- ======================================================== -->
     <!-- 1. TRANSLUCENT GLOBAL HEADER (APPLE FROSTED NAVBAR)     -->
     <!-- ======================================================== -->
-    <header class="sticky top-0 z-50 h-[52px] bg-white/80 dark:bg-[#161619]/80 backdrop-blur-xl border-b border-black/[0.08] dark:border-white/[0.08] shadow-xs">
+    <header class="sticky top-0 z-50 border-b border-white/[0.08] bg-[#141414]/90 backdrop-blur-md">
         <div class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4">
             
             <!-- Left: Brand Logo -->
@@ -81,13 +81,13 @@
                     <span class="material-symbols-outlined text-[17px]">campaign</span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <span class="text-sm sm:text-base font-bold tracking-tight text-[#1d1d1f] dark:text-white">Auto-Poster Pro</span>
+                    <span class="text-sm sm:text-base font-bold tracking-tight text-white">Auto-Poster Pro</span>
                     <span class="hidden sm:inline-block bg-black/5 dark:bg-white/10 text-apple-titanium dark:text-stone-400 text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase">STUDIO</span>
                 </div>
             </a>
 
             <!-- Center: Contextual Segmented Navigation Links (Unified 4-Pill Ecosystem Standard) -->
-            <nav class="hidden md:flex items-center gap-1 bg-stone-200/60 dark:bg-white/[0.06] p-1 rounded-xl border border-black/[0.04] dark:border-white/[0.05] text-xs font-medium">
+            <nav class="hidden md:flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-black/[0.04] dark:border-white/[0.05] text-xs font-medium">
                 <a href="https://thaid.online" class="px-3 py-1 rounded-lg text-[#86868b] hover:text-[#1d1d1f] dark:text-stone-400 dark:hover:text-white transition-colors flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-[14px]">hub</span>
                     <span>ThaiD Hub</span>
@@ -96,7 +96,7 @@
                     <span class="material-symbols-outlined text-[14px]">edit_note</span>
                     <span>นิยาย AI</span>
                 </a>
-                <a href="https://social.thaid.online" class="px-3 py-1 rounded-lg text-[#1d1d1f] dark:text-white bg-white dark:bg-white/10 shadow-xs font-semibold flex items-center gap-1.5">
+                <a href="https://social.thaid.online" class="px-3 py-1 rounded-lg text-white bg-white dark:bg-white/10 shadow-xs font-semibold flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-[14px]">campaign</span>
                     <span>โพสต์ Facebook</span>
                 </a>
@@ -108,9 +108,7 @@
 
             <!-- Right Controls -->
             <div class="flex items-center gap-2 flex-shrink-0">
-                <button type="button" onclick="toggleTheme()" class="p-1.5 rounded-lg text-stone-600 hover:text-[#1d1d1f] dark:text-stone-400 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-white/10 transition-colors" title="สลับโหมดมืด / สว่าง">
-                    <span class="material-symbols-outlined text-[19px]" id="theme-icon">light_mode</span>
-                </button>
+                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-[11px] text-stone-400"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Fastwork Studio</span></div>
 
                 <button onclick="openGoogleLoginModal()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-apple-coral hover:bg-apple-coral-hover text-white shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]">
                     <span class="material-symbols-outlined text-[15px]">login</span>
@@ -118,14 +116,14 @@
                 </button>
 
                 <!-- Mobile Hamburger Button -->
-                <button type="button" onclick="toggleMobileNav()" class="md:hidden p-1.5 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-white/10">
+                <button type="button" onclick="toggleMobileNav()" class="md:hidden p-1.5 rounded-lg text-stone-400 hover:bg-stone-200/60 dark:hover:bg-white/10">
                     <span class="material-symbols-outlined text-[22px]" id="mobile-menu-icon">menu</span>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Sheet (Unified Ecosystem Standard) -->
-        <div id="mobile-nav-sheet" class="hidden md:hidden border-b border-black/[0.08] dark:border-white/[0.08] bg-white/95 dark:bg-[#161619]/95 backdrop-blur-2xl px-4 py-4 space-y-2 text-sm shadow-xl">
+        <div id="mobile-nav-sheet" class="hidden md:hidden border-b border-white/[0.08] bg-white/95 dark:bg-[#161619]/95 backdrop-blur-2xl px-4 py-4 space-y-2 text-sm shadow-xl">
             <a href="https://thaid.online" class="flex items-center justify-between px-3 py-2 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-white/5">
                 <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[17px]">hub</span> ThaiD Hub (หน้าแรก)</span>
                 <span class="material-symbols-outlined text-xs">arrow_outward</span>
@@ -142,7 +140,7 @@
                 <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[17px]">sentiment_satisfied</span> สติกเกอร์ไลน์ (LINE Sticker)</span>
                 <span class="material-symbols-outlined text-xs">arrow_outward</span>
             </a>
-            <div class="pt-2 border-t border-black/[0.06] dark:border-white/[0.06]">
+            <div class="pt-2 border-t border-white/[0.08]">
                 <button onclick="openGoogleLoginModal()" class="w-full py-2.5 rounded-xl bg-apple-coral text-white font-semibold text-center flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-[17px]">login</span>
                     <span>เข้าสู่ระบบ / ทดลองใช้ฟรี</span>
@@ -154,19 +152,19 @@
     <!-- ======================================================== -->
     <!-- 2. HERO SECTION (APPLE BENTO BANNER)                     -->
     <!-- ======================================================== -->
-    <section class="relative pt-12 sm:pt-16 pb-14 sm:pb-20 overflow-hidden border-b border-black/[0.06] dark:border-white/[0.06]">
+    <section class="relative pt-12 sm:pt-16 pb-14 sm:pb-20 overflow-hidden border-b border-white/[0.08]">
         <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-apple-coral/15 via-apple-blue/15 to-transparent blur-3xl pointer-events-none rounded-full"></div>
 
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10 text-center">
             
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-white/[0.07] border border-black/[0.08] dark:border-white/[0.08] shadow-xs text-xs font-semibold mb-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-white/[0.07] border border-white/[0.08] shadow-xs text-xs font-semibold mb-6">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span class="text-[#1d1d1f] dark:text-stone-300">ThaiD Social Ecosystem · Multi-Page Support</span>
                 <span class="text-apple-titanium dark:text-stone-500">|</span>
                 <span class="text-apple-coral font-bold">Pro Edition</span>
             </div>
 
-            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1d1d1f] dark:text-white max-w-4xl mx-auto leading-[1.15]">
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.15]">
                 ระบบผลิตคอนเทนต์ & วิดีโอสั้น <br class="hidden sm:inline">
                 <span class="bg-gradient-to-r from-apple-coral via-orange-500 to-apple-blue bg-clip-text text-transparent">
                     โพสต์ Facebook อัตโนมัติ 24 ชม.
@@ -182,7 +180,7 @@
                     <span class="material-symbols-outlined text-[18px]">login</span>
                     <span>เริ่มต้นใช้งานฟรีด้วย Google</span>
                 </button>
-                <a href="#features" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-white dark:bg-[#161619] hover:bg-stone-50 dark:hover:bg-white/10 text-[#1d1d1f] dark:text-white font-semibold text-sm border border-black/[0.08] dark:border-white/[0.08] shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+                <a href="#features" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#1b1b1e] hover:bg-stone-50 dark:hover:bg-white/10 text-white font-semibold text-sm border border-white/[0.08] shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">play_circle</span>
                     <span>ดูฟังก์ชันการทำงาน</span>
                 </a>
@@ -190,8 +188,8 @@
 
             <!-- Bento Preview Mockup -->
             <div class="mt-12 max-w-4xl mx-auto">
-                <div class="rounded-3xl bg-white dark:bg-[#161619] border border-black/[0.08] dark:border-white/[0.08] p-4 sm:p-6 cinema-screen-shadow text-left">
-                    <div class="flex items-center justify-between pb-4 border-b border-black/[0.06] dark:border-white/[0.06] mb-5">
+                <div class="rounded-3xl bg-[#1b1b1e] border border-white/[0.08] p-4 sm:p-6 cinema-screen-shadow text-left">
+                    <div class="flex items-center justify-between pb-4 border-b border-white/[0.08] mb-5">
                         <div class="flex items-center gap-2 text-xs font-mono text-apple-titanium dark:text-stone-400">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                             <span>social.thaid.online · Multi-Page Feed & Auto-Bot</span>
@@ -207,7 +205,7 @@
                                 <span class="material-symbols-outlined text-[16px]">rss_feed</span>
                                 <span>ดึงข่าวสดแบบเรียลไทม์</span>
                             </div>
-                            <h4 class="font-bold text-sm text-[#1d1d1f] dark:text-white">เจาะลึกแท็กติกหลังเกมทุบชัย</h4>
+                            <h4 class="font-bold text-sm text-white">เจาะลึกแท็กติกหลังเกมทุบชัย</h4>
                             <p class="text-xs text-apple-titanium dark:text-stone-400 leading-relaxed">
                                 แปลงเนื้อหาเป็นสำนวนไทยลื่นไหล ตัดคำไม่เหมาะสม พร้อมการ์ดภาพความละเอียดสูง
                             </p>
@@ -218,7 +216,7 @@
                                 <span class="material-symbols-outlined text-[16px]">movie</span>
                                 <span>วิดีโอ 9:16 Reels AI</span>
                             </div>
-                            <h4 class="font-bold text-sm text-[#1d1d1f] dark:text-white">เสียงพากย์ Gemini Neural AI</h4>
+                            <h4 class="font-bold text-sm text-white">เสียงพากย์ Gemini Neural AI</h4>
                             <p class="text-xs text-apple-titanium dark:text-stone-400 leading-relaxed">
                                 เรนเดอร์คลิปวิดีโอสั้นแนวตั้งความยาว 30-45 วินาที พร้อมเสียงพากย์ 5 สไตล์
                             </p>
@@ -229,7 +227,7 @@
                                 <span class="material-symbols-outlined text-[16px]">schedule</span>
                                 <span>คิวโพสต์อัตโนมัติ 24 ชม.</span>
                             </div>
-                            <h4 class="font-bold text-sm text-[#1d1d1f] dark:text-white">ยิงขึ้น Facebook Fanpage</h4>
+                            <h4 class="font-bold text-sm text-white">ยิงขึ้น Facebook Fanpage</h4>
                             <p class="text-xs text-apple-titanium dark:text-stone-400 leading-relaxed">
                                 ทำงานเบื้องหลัง แม้คุณปิดคอมพิวเตอร์หรือปิดเบราว์เซอร์ ระบบยังโพสต์ต่อเนื่อง
                             </p>
@@ -240,19 +238,19 @@
 
             <!-- Stats Bar -->
             <div class="mt-12 max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div class="p-4 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08]">
-                    <div class="text-2xl sm:text-3xl font-extrabold text-[#1d1d1f] dark:text-white">100,000+</div>
+                <div class="p-4 rounded-2xl bg-[#1b1b1e] border border-black/[0.06] dark:border-white/[0.08]">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white">100,000+</div>
                     <div class="text-xs text-apple-titanium dark:text-stone-400 mt-0.5">โพสต์ข่าวที่สร้างและแชร์</div>
                 </div>
-                <div class="p-4 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08]">
+                <div class="p-4 rounded-2xl bg-[#1b1b1e] border border-black/[0.06] dark:border-white/[0.08]">
                     <div class="text-2xl sm:text-3xl font-extrabold text-apple-coral">99.8%</div>
                     <div class="text-xs text-apple-titanium dark:text-stone-400 mt-0.5">ความแม่นยำของคิวโพสต์</div>
                 </div>
-                <div class="p-4 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08]">
+                <div class="p-4 rounded-2xl bg-[#1b1b1e] border border-black/[0.06] dark:border-white/[0.08]">
                     <div class="text-2xl sm:text-3xl font-extrabold text-apple-blue">5 คาแรคเตอร์</div>
                     <div class="text-xs text-apple-titanium dark:text-stone-400 mt-0.5">เสียงพากย์ Neural AI</div>
                 </div>
-                <div class="p-4 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08]">
+                <div class="p-4 rounded-2xl bg-[#1b1b1e] border border-black/[0.06] dark:border-white/[0.08]">
                     <div class="text-2xl sm:text-3xl font-extrabold text-emerald-500">3 เท่า</div>
                     <div class="text-xs text-apple-titanium dark:text-stone-400 mt-0.5">การเติบโตของยอดเข้าถึง</div>
                 </div>
@@ -269,7 +267,7 @@
                 <span class="material-symbols-outlined text-[15px]">auto_awesome</span>
                 <span>CORE CAPABILITIES</span>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#1d1d1f] dark:text-white">
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
                 ฟังก์ชันครบ จบทุกปัญหาของเจ้าของเพจ
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-apple-titanium dark:text-[#94949b]">
@@ -279,67 +277,67 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Feature 1 -->
-            <div class="p-6 rounded-3xl bg-white dark:bg-[#161619] border border-black/[0.08] dark:border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
+            <div class="p-6 rounded-3xl bg-[#1b1b1e] border border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
                 <div class="w-11 h-11 rounded-2xl bg-apple-coral/10 text-apple-coral flex items-center justify-center">
                     <span class="material-symbols-outlined text-[22px]">history_edu</span>
                 </div>
-                <h3 class="text-lg font-bold text-[#1d1d1f] dark:text-white">AI เขียนข่าวสไตล์เก๋าตัวพ่อ</h3>
+                <h3 class="text-lg font-bold text-white">AI เขียนข่าวสไตล์เก๋าตัวพ่อ</h3>
                 <p class="text-xs sm:text-sm text-apple-titanium dark:text-stone-400 leading-relaxed">
                     เขียนภาษาไทยสำนวนแสบๆ คันๆ กวนประสาท จิกกัด เหน็บแนม เหมือนคอลัมนิสต์ลูกหนังระดับเก๋า พร้อมระบบกรองคำต้องห้าม 100%
                 </p>
             </div>
 
             <!-- Feature 2 -->
-            <div id="video-ai" class="p-6 rounded-3xl bg-white dark:bg-[#161619] border border-black/[0.08] dark:border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4 relative">
+            <div id="video-ai" class="p-6 rounded-3xl bg-[#1b1b1e] border border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4 relative">
                 <span class="absolute top-4 right-4 bg-apple-blue/10 text-apple-blue border border-apple-blue/20 text-[10px] font-bold px-2 py-0.5 rounded-full">ไฮไลท์เด่น</span>
                 <div class="w-11 h-11 rounded-2xl bg-apple-blue/10 text-apple-blue flex items-center justify-center">
                     <span class="material-symbols-outlined text-[22px]">video_library</span>
                 </div>
-                <h3 class="text-lg font-bold text-[#1d1d1f] dark:text-white">วิดีโอ Reels AI เสียงสมจริง</h3>
+                <h3 class="text-lg font-bold text-white">วิดีโอ Reels AI เสียงสมจริง</h3>
                 <p class="text-xs sm:text-sm text-apple-titanium dark:text-stone-400 leading-relaxed">
                     เรนเดอร์คลิปวิดีโอสั้นแนวตั้ง 9:16 ด้วยเสียงพากย์ Google AI Studio Gemini TTS 5 คาแรคเตอร์ ยิงลง Facebook Reels ในคลิกเดียว
                 </p>
             </div>
 
             <!-- Feature 3 -->
-            <div class="p-6 rounded-3xl bg-white dark:bg-[#161619] border border-black/[0.08] dark:border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
+            <div class="p-6 rounded-3xl bg-[#1b1b1e] border border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
                 <div class="w-11 h-11 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
                     <span class="material-symbols-outlined text-[22px]">layers</span>
                 </div>
-                <h3 class="text-lg font-bold text-[#1d1d1f] dark:text-white">จัดการหลายเพจ (Multi-Page)</h3>
+                <h3 class="text-lg font-bold text-white">จัดการหลายเพจ (Multi-Page)</h3>
                 <p class="text-xs sm:text-sm text-apple-titanium dark:text-stone-400 leading-relaxed">
                     เชื่อมต่อเพจ Facebook ได้ไม่จำกัด สลับเพจทำงานได้ทันที พร้อมกำหนดแหล่งข่าว RSS Feeds แยกของแต่ละเพจได้อย่างอิสระ
                 </p>
             </div>
 
             <!-- Feature 4 -->
-            <div class="p-6 rounded-3xl bg-white dark:bg-[#161619] border border-black/[0.08] dark:border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
+            <div class="p-6 rounded-3xl bg-[#1b1b1e] border border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
                 <div class="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
                     <span class="material-symbols-outlined text-[22px]">schedule</span>
                 </div>
-                <h3 class="text-lg font-bold text-[#1d1d1f] dark:text-white">ระบบตั้งเวลาโพสต์ล่วงหน้า</h3>
+                <h3 class="text-lg font-bold text-white">ระบบตั้งเวลาโพสต์ล่วงหน้า</h3>
                 <p class="text-xs sm:text-sm text-apple-titanium dark:text-stone-400 leading-relaxed">
                     ตั้งเวลาโพสต์ล่วงหน้าได้ตลอดทั้งสัปดาห์ มีปุ่มลัด (+15 นาที, +1 ชม., เย็นนี้ 18:00) ระบบมี Background Worker อัตโนมัติ 24 ชม.
                 </p>
             </div>
 
             <!-- Feature 5 -->
-            <div class="p-6 rounded-3xl bg-white dark:bg-[#161619] border border-black/[0.08] dark:border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
+            <div class="p-6 rounded-3xl bg-[#1b1b1e] border border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
                 <div class="w-11 h-11 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
                     <span class="material-symbols-outlined text-[22px]">sports_soccer</span>
                 </div>
-                <h3 class="text-lg font-bold text-[#1d1d1f] dark:text-white">Match Center & ตารางคะแนน</h3>
+                <h3 class="text-lg font-bold text-white">Match Center & ตารางคะแนน</h3>
                 <p class="text-xs sm:text-sm text-apple-titanium dark:text-stone-400 leading-relaxed">
                     ดึงโปรแกรมแข่ง ผลบอลสด ตารางคะแนนพรีเมียร์ลีกล่าสุด พร้อมสั่ง AI วิเคราะห์ก่อนเกมและตัดเกรดคะแนนผู้เล่นหลังจบเกม
                 </p>
             </div>
 
             <!-- Feature 6 -->
-            <div class="p-6 rounded-3xl bg-white dark:bg-[#161619] border border-black/[0.08] dark:border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
+            <div class="p-6 rounded-3xl bg-[#1b1b1e] border border-white/[0.08] bento-card-hover cinema-screen-shadow space-y-4">
                 <div class="w-11 h-11 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
                     <span class="material-symbols-outlined text-[22px]">shopping_bag</span>
                 </div>
-                <h3 class="text-lg font-bold text-[#1d1d1f] dark:text-white">ระบบ Affiliate สร้างรายได้</h3>
+                <h3 class="text-lg font-bold text-white">ระบบ Affiliate สร้างรายได้</h3>
                 <p class="text-xs sm:text-sm text-apple-titanium dark:text-stone-400 leading-relaxed">
                     แทรกลิงก์สินค้า Shopee / Lazada / TikTok Shop ของแท้ท้ายโพสต์อัตโนมัติ ช่วยสร้างรายได้ Passive Income ค่าคอมมิชชัน
                 </p>
@@ -350,14 +348,14 @@
     <!-- ======================================================== -->
     <!-- 4. PRICING SECTION                                      -->
     <!-- ======================================================== -->
-    <section id="pricing" class="py-14 sm:py-20 border-t border-black/[0.06] dark:border-white/[0.06] bg-white dark:bg-[#111114]">
+    <section id="pricing" class="py-14 sm:py-20 border-t border-white/[0.08] bg-white dark:bg-[#111114]">
         <div class="max-w-[1400px] w-full mx-auto px-4 sm:px-6">
             <div class="text-center max-w-2xl mx-auto mb-12">
                 <div class="inline-flex items-center gap-1.5 text-xs font-bold text-apple-coral uppercase tracking-wider mb-1">
                     <span class="material-symbols-outlined text-[15px]">credit_card</span>
                     <span>TRANSPARENT PRICING</span>
                 </div>
-                <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#1d1d1f] dark:text-white">
+                <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
                     เลือกแพ็กเกจที่เหมาะกับเพจของคุณ
                 </h2>
                 <p class="mt-2 text-xs sm:text-sm text-apple-titanium dark:text-[#94949b]">
@@ -370,16 +368,16 @@
                 <div class="p-6 sm:p-7 rounded-3xl bg-[#f5f5f7] dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] flex flex-col justify-between space-y-6 bento-card-hover">
                     <div class="space-y-4">
                         <span class="text-xs font-bold px-3 py-1 rounded-full bg-stone-200 dark:bg-white/10 text-apple-titanium dark:text-stone-300">ทดลองใช้</span>
-                        <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white">Free Trial</h3>
-                        <div class="text-3xl font-extrabold text-[#1d1d1f] dark:text-white">฿0 <span class="text-xs font-normal text-apple-titanium">/ 14 วัน</span></div>
-                        <ul class="space-y-2.5 text-xs text-[#1d1d1f] dark:text-stone-300 pt-3 border-t border-black/[0.06] dark:border-white/[0.06]">
+                        <h3 class="text-xl font-bold text-white">Free Trial</h3>
+                        <div class="text-3xl font-extrabold text-white">฿0 <span class="text-xs font-normal text-apple-titanium">/ 14 วัน</span></div>
+                        <ul class="space-y-2.5 text-xs text-[#1d1d1f] dark:text-stone-300 pt-3 border-t border-white/[0.08]">
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> เชื่อมได้ 1 เพจ Facebook</li>
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> ดึงข่าว AI ไม่จำกัด</li>
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> เครดิตคลิปวิดีโอ 5 คลิป</li>
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> การ์ดกราฟิก Social Card</li>
                         </ul>
                     </div>
-                    <button onclick="openGoogleLoginModal()" class="w-full py-2.5 rounded-xl bg-stone-200 dark:bg-white/10 hover:bg-stone-300 dark:hover:bg-white/20 text-[#1d1d1f] dark:text-white font-semibold text-xs transition">
+                    <button onclick="openGoogleLoginModal()" class="w-full py-2.5 rounded-xl bg-stone-200 dark:bg-white/10 hover:bg-stone-300 dark:hover:bg-white/20 text-white font-semibold text-xs transition">
                         เริ่มต้นใช้งานฟรี
                     </button>
                 </div>
@@ -389,9 +387,9 @@
                     <span class="absolute -top-3 right-6 bg-apple-coral text-white text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider">แนะนำ / ยอดนิยม</span>
                     <div class="space-y-4">
                         <span class="text-xs font-bold px-3 py-1 rounded-full bg-apple-coral/10 text-apple-coral">สำหรับเจ้าของเพจ</span>
-                        <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white">Pro Creator</h3>
+                        <h3 class="text-xl font-bold text-white">Pro Creator</h3>
                         <div class="text-3xl font-extrabold text-apple-coral">฿490 <span class="text-xs font-normal text-apple-titanium">/ เดือน</span></div>
-                        <ul class="space-y-2.5 text-xs text-[#1d1d1f] dark:text-stone-300 pt-3 border-t border-black/[0.06] dark:border-white/[0.06]">
+                        <ul class="space-y-2.5 text-xs text-[#1d1d1f] dark:text-stone-300 pt-3 border-t border-white/[0.08]">
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> เชื่อมได้ 3 เพจ Facebook</li>
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> เครดิตวิดีโอ Reels 30 คลิป/เดือน</li>
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> เสียงพากย์ Google AI Studio TTS</li>
@@ -408,9 +406,9 @@
                 <div class="p-6 sm:p-7 rounded-3xl bg-[#f5f5f7] dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] flex flex-col justify-between space-y-6 bento-card-hover">
                     <div class="space-y-4">
                         <span class="text-xs font-bold px-3 py-1 rounded-full bg-apple-blue/10 text-apple-blue">เอเจนซี่ & หลายเพจ</span>
-                        <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white">VIP Agency</h3>
-                        <div class="text-3xl font-extrabold text-[#1d1d1f] dark:text-white">฿990 <span class="text-xs font-normal text-apple-titanium">/ เดือน</span></div>
-                        <ul class="space-y-2.5 text-xs text-[#1d1d1f] dark:text-stone-300 pt-3 border-t border-black/[0.06] dark:border-white/[0.06]">
+                        <h3 class="text-xl font-bold text-white">VIP Agency</h3>
+                        <div class="text-3xl font-extrabold text-white">฿990 <span class="text-xs font-normal text-apple-titanium">/ เดือน</span></div>
+                        <ul class="space-y-2.5 text-xs text-[#1d1d1f] dark:text-stone-300 pt-3 border-t border-white/[0.08]">
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> เชื่อมได้ 10 เพจ Facebook</li>
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> เครดิตวิดีโอ Reels 100 คลิป/เดือน</li>
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> Match Center วิเคราะห์ผลบอลสด</li>
@@ -418,7 +416,7 @@
                             <li class="flex items-center gap-2"><span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span> คิวประมวลผลด่วนพิเศษ VIP</li>
                         </ul>
                     </div>
-                    <button onclick="openGoogleLoginModal()" class="w-full py-2.5 rounded-xl bg-stone-200 dark:bg-white/10 hover:bg-stone-300 dark:hover:bg-white/20 text-[#1d1d1f] dark:text-white font-semibold text-xs transition">
+                    <button onclick="openGoogleLoginModal()" class="w-full py-2.5 rounded-xl bg-stone-200 dark:bg-white/10 hover:bg-stone-300 dark:hover:bg-white/20 text-white font-semibold text-xs transition">
                         สมัครใช้งาน VIP
                     </button>
                 </div>
@@ -430,12 +428,12 @@
     <!-- 5. FAQ SECTION                                          -->
     <!-- ======================================================== -->
     <section id="faq" class="py-14 sm:py-20 max-w-4xl mx-auto px-4 sm:px-6">
-        <h2 class="text-2xl sm:text-3xl font-bold text-center text-[#1d1d1f] dark:text-white mb-8">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center text-white mb-8">
             คำถามที่พบบ่อย (FAQ)
         </h2>
         <div class="space-y-3.5 text-xs sm:text-sm">
-            <div class="p-5 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] shadow-xs space-y-1.5">
-                <div class="font-bold text-[#1d1d1f] dark:text-white flex items-center gap-2">
+            <div class="p-5 rounded-2xl bg-[#1b1b1e] border border-black/[0.06] dark:border-white/[0.08] shadow-xs space-y-1.5">
+                <div class="font-bold text-white flex items-center gap-2">
                     <span class="material-symbols-outlined text-apple-coral text-[18px]">help</span>
                     <span>Q: ปลอดภัยกับเพจ Facebook หรือไม่?</span>
                 </div>
@@ -443,8 +441,8 @@
                     A: ปลอดภัย 100% เพราะระบบเชื่อมต่อผ่าน Facebook Graph API ที่เป็นช่องทางทางการของ Meta โดยไม่มีการใช้สคริปต์สแปมหรือการแฮกใดๆ
                 </div>
             </div>
-            <div class="p-5 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] shadow-xs space-y-1.5">
-                <div class="font-bold text-[#1d1d1f] dark:text-white flex items-center gap-2">
+            <div class="p-5 rounded-2xl bg-[#1b1b1e] border border-black/[0.06] dark:border-white/[0.08] shadow-xs space-y-1.5">
+                <div class="font-bold text-white flex items-center gap-2">
                     <span class="material-symbols-outlined text-apple-coral text-[18px]">help</span>
                     <span>Q: หากเครดิตวิดีโอหมด สามารถเติมเพิ่มได้หรือไม่?</span>
                 </div>
@@ -452,8 +450,8 @@
                     A: สามารถซื้อแพ็กเกจเติมเครดิตวิดีโอแยก หรือติดต่อผู้ดูแลระบบเพื่อเติมเครดิตเพิ่มได้ตลอดเวลา
                 </div>
             </div>
-            <div class="p-5 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] shadow-xs space-y-1.5">
-                <div class="font-bold text-[#1d1d1f] dark:text-white flex items-center gap-2">
+            <div class="p-5 rounded-2xl bg-[#1b1b1e] border border-black/[0.06] dark:border-white/[0.08] shadow-xs space-y-1.5">
+                <div class="font-bold text-white flex items-center gap-2">
                     <span class="material-symbols-outlined text-apple-coral text-[18px]">help</span>
                     <span>Q: รองรับเพจแนวอื่นนอกจากฟุตบอลหรือไม่?</span>
                 </div>
@@ -467,14 +465,14 @@
     <!-- ======================================================== -->
     <!-- 6. FOOTER                                               -->
     <!-- ======================================================== -->
-    <footer class="mt-auto border-t border-black/[0.08] dark:border-white/[0.08] bg-[#f5f5f7] dark:bg-[#0c0c0e] py-10 text-xs text-apple-titanium dark:text-stone-400">
+    <footer class="mt-auto border-t border-white/[0.08] bg-[#f5f5f7] dark:bg-[#141414] py-10 text-xs text-apple-titanium dark:text-stone-400">
         <div class="max-w-[1400px] w-full mx-auto px-4 sm:px-6">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-black/[0.06] dark:border-white/[0.06]">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
                 <div class="flex items-center gap-2">
                     <div class="w-5 h-5 rounded-md bg-apple-coral flex items-center justify-center text-white">
                         <span class="material-symbols-outlined text-[13px]">campaign</span>
                     </div>
-                    <span class="font-bold text-sm text-[#1d1d1f] dark:text-white">Auto-Poster Pro</span>
+                    <span class="font-bold text-sm text-white">Auto-Poster Pro</span>
                     <span class="text-[11px] text-apple-titanium">· Part of ThaiD.online Ecosystem</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-4 text-xs">
@@ -510,7 +508,7 @@
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                     </svg>
                 </div>
-                <h3 class="text-base font-bold text-[#1d1d1f] dark:text-white">เข้าสู่ระบบด้วย Google Account</h3>
+                <h3 class="text-base font-bold text-white">เข้าสู่ระบบด้วย Google Account</h3>
                 <p class="text-xs text-apple-titanium dark:text-stone-400">เลือกล็อกอินด้วยบัญชีจำลอง หรือระบุอีเมล Google เพื่อเข้าใช้งาน Dashboard</p>
             </div>
 
@@ -519,11 +517,11 @@
                 <div class="text-[10px] font-bold text-apple-titanium dark:text-stone-400 uppercase tracking-wider">บัญชีทดสอบ One-Click:</div>
 
                 <!-- Admin Preset -->
-                <button onclick="quickLogin('admin@lfcautonews.com', 'Admin Boss (ผู้ดูแลระบบ)', 'admin', 'VIP Agency', 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss')" class="w-full bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200 dark:hover:bg-white/[0.08] border border-black/[0.06] dark:border-white/[0.06] rounded-2xl p-3 flex items-center justify-between transition text-left">
+                <button onclick="quickLogin('admin@lfcautonews.com', 'Admin Boss (ผู้ดูแลระบบ)', 'admin', 'VIP Agency', 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss')" class="w-full bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200 dark:hover:bg-white/[0.08] border border-white/[0.08] rounded-2xl p-3 flex items-center justify-between transition text-left">
                     <div class="flex items-center gap-3">
                         <img src="https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss" class="w-8 h-8 rounded-full bg-stone-200 dark:bg-zinc-800">
                         <div>
-                            <div class="text-xs font-bold text-[#1d1d1f] dark:text-white flex items-center gap-1.5">
+                            <div class="text-xs font-bold text-white flex items-center gap-1.5">
                                 <span>Admin Boss</span>
                                 <span class="text-[10px] bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 px-1.5 py-0.2 rounded-full font-bold">Admin</span>
                             </div>
@@ -534,11 +532,11 @@
                 </button>
 
                 <!-- Member Pro Preset -->
-                <button onclick="quickLogin('thekop@fanpage.com', 'The Kop Thailand (คุณกฤต)', 'member', 'Pro', 'https://api.dicebear.com/7.x/avataaars/svg?seed=TheKop')" class="w-full bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200 dark:hover:bg-white/[0.08] border border-black/[0.06] dark:border-white/[0.06] rounded-2xl p-3 flex items-center justify-between transition text-left">
+                <button onclick="quickLogin('thekop@fanpage.com', 'The Kop Thailand (คุณกฤต)', 'member', 'Pro', 'https://api.dicebear.com/7.x/avataaars/svg?seed=TheKop')" class="w-full bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200 dark:hover:bg-white/[0.08] border border-white/[0.08] rounded-2xl p-3 flex items-center justify-between transition text-left">
                     <div class="flex items-center gap-3">
                         <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=TheKop" class="w-8 h-8 rounded-full bg-stone-200 dark:bg-zinc-800">
                         <div>
-                            <div class="text-xs font-bold text-[#1d1d1f] dark:text-white flex items-center gap-1.5">
+                            <div class="text-xs font-bold text-white flex items-center gap-1.5">
                                 <span>The Kop Thailand</span>
                                 <span class="text-[10px] bg-apple-coral/10 text-apple-coral border border-apple-coral/20 px-1.5 py-0.2 rounded-full font-bold">Pro</span>
                             </div>
@@ -549,11 +547,11 @@
                 </button>
 
                 <!-- Free Trial Preset -->
-                <button onclick="quickLogin('newbie@gmail.com', 'สมาชิกใหม่ บอลเต็ง', 'member', 'Free Trial', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Newbie')" class="w-full bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200 dark:hover:bg-white/[0.08] border border-black/[0.06] dark:border-white/[0.06] rounded-2xl p-3 flex items-center justify-between transition text-left">
+                <button onclick="quickLogin('newbie@gmail.com', 'สมาชิกใหม่ บอลเต็ง', 'member', 'Free Trial', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Newbie')" class="w-full bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200 dark:hover:bg-white/[0.08] border border-white/[0.08] rounded-2xl p-3 flex items-center justify-between transition text-left">
                     <div class="flex items-center gap-3">
                         <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Newbie" class="w-8 h-8 rounded-full bg-stone-200 dark:bg-zinc-800">
                         <div>
-                            <div class="text-xs font-bold text-[#1d1d1f] dark:text-white flex items-center gap-1.5">
+                            <div class="text-xs font-bold text-white flex items-center gap-1.5">
                                 <span>สมาชิกใหม่ บอลเต็ง</span>
                                 <span class="text-[10px] bg-stone-200 dark:bg-white/10 text-apple-titanium px-1.5 py-0.2 rounded-full font-bold">Trial</span>
                             </div>
@@ -565,10 +563,10 @@
             </div>
 
             <!-- Custom Email Form -->
-            <div class="pt-3 border-t border-black/[0.06] dark:border-white/[0.06] space-y-2">
+            <div class="pt-3 border-t border-white/[0.08] space-y-2">
                 <div class="text-[11px] font-semibold text-apple-titanium dark:text-stone-400">หรือระบุอีเมล Google ของคุณ:</div>
                 <div class="flex items-center gap-2">
-                    <input type="email" id="landing-custom-email" placeholder="your.email@gmail.com" class="flex-1 bg-stone-100 dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-xl px-3 py-2 text-xs text-[#1d1d1f] dark:text-white focus:outline-none focus:border-apple-coral">
+                    <input type="email" id="landing-custom-email" placeholder="your.email@gmail.com" class="flex-1 bg-stone-100 dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-apple-coral">
                     <button onclick="customLandingLogin()" class="bg-apple-coral hover:bg-apple-coral-hover text-white font-semibold px-3.5 py-2 rounded-xl text-xs transition">
                         เข้าสู่ระบบ
                     </button>
@@ -579,12 +577,7 @@
 
     <!-- SCRIPTS -->
     <script>
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            const icon = document.getElementById('theme-icon');
-            if (icon) {
-                icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-            }
+        // Fastwork Dark Theme Locked
             localStorage.setItem('social-theme', isDark ? 'dark' : 'light');
         }
 
