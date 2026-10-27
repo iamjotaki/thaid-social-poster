@@ -5,10 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
     <title>Social Auto-Poster Pro — ThaiD Luxury AI Content Automation</title>
     
-    <!-- Apple Fonts & Thai Typography (Plus Jakarta Sans, Prompt, Sarabun) -->
+    <!-- ThaiD Studio Official Typography Stack (Google Sans Thai + Latin) -->
+    <style>
+      @font-face {
+        font-family: "Google Sans";
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+        src: url("/static/fonts/google-sans-thai-normal.woff2") format("woff2");
+        unicode-range: U+2D7, U+303, U+331, U+E01-E5B, U+200C-200D, U+25CC;
+      }
+      @font-face {
+        font-family: "Google Sans";
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+        src: url("/static/fonts/google-sans-latin-normal.woff2") format("woff2");
+        unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "ThaiDStudio";
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+        src: url("/static/fonts/thaid-studio-bold.ttf") format("truetype");
+      }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <!-- Material Symbols Outlined -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     
@@ -30,7 +55,7 @@
                         'apple-border': 'rgba(0, 0, 0, 0.08)'
                     },
                     fontFamily: {
-                        sans: ['Google Sans', 'Noto Sans Thai', 'Plus Jakarta Sans', 'Prompt', 'sans-serif'],
+                        sans: ['Google Sans', 'ThaiDStudio', 'Noto Sans Thai', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
                         thai: ['Prompt', 'Sarabun', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace']
                     }
@@ -72,78 +97,46 @@
     <!-- ======================================================== -->
     <!-- 1. TRANSLUCENT GLOBAL HEADER (APPLE FROSTED NAVBAR)     -->
     <!-- ======================================================== -->
-    <header class="sticky top-0 z-50 border-b border-black/[0.08] bg-white/80 backdrop-blur-xl">
-        <div class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4">
+    <!-- ======================================================== -->
+    <!-- 1. THAID FLOATING TOP NAVBAR (MASTER TEMPLATE STANDARD)   -->
+    <!-- ======================================================== -->
+    <header class="fixed top-3 sm:top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <div class="w-full max-w-6xl rounded-full bg-white/90 backdrop-blur-md border border-black/[0.08] px-4 sm:px-6 py-2.5 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] pointer-events-auto">
             
-            <!-- Left: Brand Logo -->
+            <!-- Left: Signature Monogram T+D & Sub-brand Title -->
             <a href="/" class="flex items-center gap-2.5 cursor-pointer group flex-shrink-0">
-                <div class="w-7 h-7 rounded-lg bg-apple-coral flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
-                    <span class="material-symbols-outlined text-[17px]">campaign</span>
+                <div class="w-7 h-7 rounded-lg bg-[#2b313b] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6.5H15M9.5 6.5V19" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 10.5C14 10.5 18 10.8 18 14.5C18 18.2 14 18.5 14 18.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <span class="text-sm sm:text-base font-bold tracking-tight text-white">Auto-Poster Pro</span>
-                    <span class="hidden sm:inline-block bg-black/5 dark:bg-white/10 text-apple-titanium dark:text-[#737373] text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase">STUDIO</span>
+                    <span class="font-bold text-base text-[#2b313b] tracking-tight">ThaiD</span>
+                    <span class="text-xs text-stone-300 font-light">/</span>
+                    <span class="text-xs font-semibold text-[#5e6675]">Social AI</span>
                 </div>
             </a>
 
-            <!-- Center: Contextual Segmented Navigation Links (Unified 4-Pill Ecosystem Standard) -->
-            <nav class="hidden md:flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-black/[0.04] dark:border-black/[0.08] text-xs font-medium">
-                <a href="https://thaid.online" class="px-3 py-1 rounded-lg text-[#86868b] hover:text-[#1d1d1f] dark:text-[#737373] dark:hover:text-white transition-colors flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">hub</span>
-                    <span>ThaiD Hub</span>
-                </a>
-                <a href="https://novel.thaid.online" class="px-3 py-1 rounded-lg text-[#86868b] hover:text-[#1d1d1f] dark:text-[#737373] dark:hover:text-white transition-colors flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">edit_note</span>
-                    <span>นิยาย AI</span>
-                </a>
-                <a href="https://social.thaid.online" class="px-3 py-1 rounded-lg text-white bg-white dark:bg-white/10 shadow-xs font-semibold flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">campaign</span>
-                    <span>โพสต์ Facebook</span>
-                </a>
-                <a href="https://sticker.thaid.online" class="px-3 py-1 rounded-lg text-[#86868b] hover:text-[#1d1d1f] dark:text-[#737373] dark:hover:text-white transition-colors flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">sentiment_satisfied</span>
-                    <span>สติกเกอร์ไลน์</span>
-                </a>
+            <!-- Center: Ecosystem Links (Unified Standard) -->
+            <nav class="hidden md:flex items-center gap-1 bg-stone-100/90 p-1 rounded-full border border-black/[0.04] text-xs font-medium">
+                <a href="https://thaid.online" class="px-3 py-1 rounded-full text-[#5e6675] hover:text-[#171717] transition-colors">✦ ThaiD Hub</a>
+                <a href="https://novel.thaid.online" class="px-3 py-1 rounded-full text-[#5e6675] hover:text-[#171717] transition-colors">นิยาย AI</a>
+                <a href="https://social.thaid.online" class="px-3 py-1 rounded-full text-[#171717] bg-white shadow-xs font-semibold">โพสต์ Facebook</a>
+                <a href="https://mockup.thaid.online" class="px-3 py-1 rounded-full text-[#5e6675] hover:text-[#171717] transition-colors">Mockup AI</a>
+                <a href="https://vault.thaid.online" class="px-3 py-1 rounded-full text-[#5e6675] hover:text-[#171717] transition-colors">Security Vault</a>
             </nav>
 
-            <!-- Right Controls -->
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-black/[0.08] text-[11px] text-[#737373]"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Fastwork Studio</span></div>
+            <!-- Right Controls: Back to Master Portal & Login -->
+            <div class="flex items-center gap-2.5 flex-shrink-0">
+                <a href="https://thaid.online" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-50 hover:bg-stone-100 border border-black/[0.06] text-xs font-medium text-[#2b313b] transition-colors">
+                    <span class="text-[#0569ff] font-bold">✦</span>
+                    <span>กลับหน้าหลัก ThaiD</span>
+                </a>
 
-                <button onclick="openGoogleLoginModal()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-apple-coral hover:bg-apple-coral-hover text-white shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]">
+                <button onclick="openGoogleLoginModal()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full bg-[#171717] hover:bg-black text-white shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]">
                     <span class="material-symbols-outlined text-[15px]">login</span>
                     <span>เข้าสู่ระบบ</span>
-                </button>
-
-                <!-- Mobile Hamburger Button -->
-                <button type="button" onclick="toggleMobileNav()" class="md:hidden p-1.5 rounded-lg text-[#737373] hover:bg-stone-200/60 dark:hover:bg-white/10">
-                    <span class="material-symbols-outlined text-[22px]" id="mobile-menu-icon">menu</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Sheet (Unified Ecosystem Standard) -->
-        <div id="mobile-nav-sheet" class="hidden md:hidden border-b border-black/[0.08] bg-white/95 dark:bg-white/95 backdrop-blur-2xl px-4 py-4 space-y-2 text-sm shadow-xl">
-            <a href="https://thaid.online" class="flex items-center justify-between px-3 py-2 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-white/5">
-                <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[17px]">hub</span> ThaiD Hub (หน้าแรก)</span>
-                <span class="material-symbols-outlined text-xs">arrow_outward</span>
-            </a>
-            <a href="https://novel.thaid.online" class="flex items-center justify-between px-3 py-2 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-white/5 text-apple-coral">
-                <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[17px]">edit_note</span> นิยาย AI (Novel Studio)</span>
-                <span class="material-symbols-outlined text-xs">arrow_outward</span>
-            </a>
-            <a href="https://social.thaid.online" class="flex items-center justify-between px-3 py-2 rounded-lg font-semibold bg-stone-100 dark:bg-white/10 text-apple-blue">
-                <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[17px]">campaign</span> โพสต์ Facebook (Social Poster)</span>
-                <span class="text-[10px] bg-apple-blue/10 text-apple-blue px-2 py-0.5 rounded font-bold">CURRENT</span>
-            </a>
-            <a href="https://sticker.thaid.online" class="flex items-center justify-between px-3 py-2 rounded-lg font-medium hover:bg-stone-100 dark:hover:bg-white/5 text-emerald-600 dark:text-emerald-400">
-                <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[17px]">sentiment_satisfied</span> สติกเกอร์ไลน์ (LINE Sticker)</span>
-                <span class="material-symbols-outlined text-xs">arrow_outward</span>
-            </a>
-            <div class="pt-2 border-t border-black/[0.08]">
-                <button onclick="openGoogleLoginModal()" class="w-full py-2.5 rounded-xl bg-apple-coral text-white font-semibold text-center flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[17px]">login</span>
-                    <span>เข้าสู่ระบบ / ทดลองใช้ฟรี</span>
                 </button>
             </div>
         </div>
@@ -152,37 +145,39 @@
     <!-- ======================================================== -->
     <!-- 2. HERO SECTION (APPLE BENTO BANNER)                     -->
     <!-- ======================================================== -->
-    <section class="relative pt-12 sm:pt-16 pb-14 sm:pb-20 overflow-hidden border-b border-black/[0.08]">
-        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-apple-coral/15 via-apple-blue/15 to-transparent blur-3xl pointer-events-none rounded-full"></div>
-
+    <section class="relative pt-28 md:pt-36 pb-20 px-4 text-center overflow-hidden border-b border-black/[0.08]">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10 text-center">
             
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-white/[0.07] border border-black/[0.08] shadow-xs text-xs font-semibold mb-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-50 border border-black/[0.08] shadow-xs text-xs font-semibold mb-6">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-[#1d1d1f] dark:text-stone-700">ThaiD Social Ecosystem · Multi-Page Support</span>
-                <span class="text-apple-titanium dark:text-stone-500">|</span>
-                <span class="text-apple-coral font-bold">Pro Edition</span>
+                <span class="text-[#2b313b]">ThaiD Social Ecosystem · Multi-Page Support</span>
+                <span class="text-stone-300">|</span>
+                <span class="text-[#0569ff] font-bold">Pro Edition</span>
             </div>
 
-            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.15]">
-                ระบบผลิตคอนเทนต์ & วิดีโอสั้น <br class="hidden sm:inline">
-                <span class="bg-gradient-to-r from-apple-coral via-orange-500 to-apple-blue bg-clip-text text-transparent">
-                    โพสต์ Facebook อัตโนมัติ 24 ชม.
-                </span>
+            <!-- Monumental Headline -->
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-medium tracking-tight text-[#2b313b] leading-[1.12] max-w-4xl mx-auto mb-6">
+                ระบบผลิตคอนเทนต์ & วิดีโอสั้น
+                <br />
+                <span class="text-[#0569ff]">โพสต์ Facebook อัตโนมัติ 24 ชม.</span>
             </h1>
 
-            <p class="mt-5 text-sm sm:text-lg text-apple-titanium dark:text-[#94949b] max-w-2xl mx-auto leading-relaxed">
+            <!-- Editorial Subtitle -->
+            <p class="text-base sm:text-lg md:text-xl text-[#5e6675] max-w-2xl mx-auto leading-relaxed mb-8">
                 ดึงข่าวสดจาก RSS แปลงเป็นบทความภาษาไทยสำนวนคอลัมนิสต์เก๋าจัดจ้าน ออกแบบการ์ดภาพ Social Card กีฬาพรีเมียม และเรนเดอร์คลิป Reels AI พร้อมระบบคิวโพสต์แบบไร้รอยต่อ
             </p>
 
-            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-md mx-auto">
-                <button onclick="openGoogleLoginModal()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-apple-coral hover:bg-apple-coral-hover text-white font-semibold text-sm shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+            <!-- CTA Row -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                <button onclick="openGoogleLoginModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#171717] hover:bg-black text-white rounded-full px-8 py-3.5 text-sm font-semibold shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]">
                     <span class="material-symbols-outlined text-[18px]">login</span>
-                    <span>เริ่มต้นใช้งานฟรีด้วย Google</span>
+                    <span>เริ่มต้นใช้งานฟรี (Get started)</span>
+                    <span class="text-base leading-none">→</span>
                 </button>
-                <a href="#features" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-white hover:bg-stone-50 dark:hover:bg-white/10 text-white font-semibold text-sm border border-black/[0.08] shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+                <a href="#features" class="inline-flex items-center gap-1.5 px-6 py-3.5 rounded-full border border-black/[0.08] hover:bg-stone-50 text-[#2b313b] text-sm font-semibold transition-colors">
                     <span class="material-symbols-outlined text-[18px]">play_circle</span>
                     <span>ดูฟังก์ชันการทำงาน</span>
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
                 </a>
             </div>
 
@@ -205,7 +200,7 @@
                                 <span class="material-symbols-outlined text-[16px]">rss_feed</span>
                                 <span>ดึงข่าวสดแบบเรียลไทม์</span>
                             </div>
-                            <h4 class="font-bold text-sm text-white">เจาะลึกแท็กติกหลังเกมทุบชัย</h4>
+                            <h4 class="font-bold text-sm text-[#2b313b]">เจาะลึกแท็กติกหลังเกมทุบชัย</h4>
                             <p class="text-xs text-apple-titanium dark:text-[#737373] leading-relaxed">
                                 แปลงเนื้อหาเป็นสำนวนไทยลื่นไหล ตัดคำไม่เหมาะสม พร้อมการ์ดภาพความละเอียดสูง
                             </p>
@@ -465,27 +460,37 @@
     <!-- ======================================================== -->
     <!-- 6. FOOTER                                               -->
     <!-- ======================================================== -->
-    <footer class="mt-auto border-t border-black/[0.08] bg-[#f5f5f7] dark:bg-white py-10 text-xs text-apple-titanium dark:text-[#737373]">
-        <div class="max-w-[1400px] w-full mx-auto px-4 sm:px-6">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-black/[0.08]">
+    <!-- ======================================================== -->
+    <!-- 6. THAID MASTER EDITORIAL FOOTER                         -->
+    <!-- ======================================================== -->
+    <footer class="mt-auto border-t border-black/[0.08] bg-[#fafafa] py-16 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="flex flex-col items-center md:items-start gap-2">
                 <div class="flex items-center gap-2">
-                    <div class="w-5 h-5 rounded-md bg-apple-coral flex items-center justify-center text-white">
-                        <span class="material-symbols-outlined text-[13px]">campaign</span>
+                    <div class="w-6 h-6 rounded-lg bg-[#2b313b] flex items-center justify-center text-white">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 6.5H15M9.5 6.5V19" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 10.5C14 10.5 18 10.8 18 14.5C18 18.2 14 18.5 14 18.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                        </svg>
                     </div>
-                    <span class="font-bold text-sm text-white">Auto-Poster Pro</span>
-                    <span class="text-[11px] text-apple-titanium">· Part of ThaiD.online Ecosystem</span>
+                    <span class="font-bold text-base text-[#2b313b]">ThaiD Social Studio</span>
                 </div>
-                <div class="flex flex-wrap items-center gap-4 text-xs">
-                    <a href="https://thaid.online" class="hover:text-apple-coral transition-colors">ThaiD.online</a>
-                    <a href="https://novel.thaid.online" class="hover:text-apple-coral transition-colors">novel.thaid.online</a>
-                    <a href="/privacy" class="hover:text-apple-coral transition-colors">นโยบายความเป็นส่วนตัว</a>
-                    <a href="/data-deletion" class="hover:text-apple-coral transition-colors">การลบข้อมูลผู้ใช้</a>
-                </div>
+                <p class="text-xs text-[#737373]">
+                    Next-generation AI Ecosystem for Thai Creators &amp; Businesses.
+                </p>
             </div>
 
-            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px]">
-                <p>© 2026 ThaiD Social Studio. All rights reserved.</p>
-                <p>Protected by Enterprise Traefik SSL</p>
+            <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-[#737373]">
+                <a href="https://thaid.online" class="hover:text-[#171717] transition-colors font-medium">✦ หน้าแรก ThaiD</a>
+                <a href="https://novel.thaid.online" class="hover:text-[#171717] transition-colors">Novel AI</a>
+                <a href="https://mockup.thaid.online" class="hover:text-[#171717] transition-colors">Mockup AI</a>
+                <a href="https://vault.thaid.online" class="hover:text-[#171717] transition-colors">Security Vault</a>
+                <a href="/privacy" class="hover:text-[#171717] transition-colors">ความเป็นส่วนตัว</a>
+                <a href="/data-deletion" class="hover:text-[#171717] transition-colors">การลบข้อมูล</a>
+            </div>
+
+            <div class="text-xs text-[#737373]">
+                &copy; 2026 ThaiD.online. All rights reserved.
             </div>
         </div>
     </footer>
@@ -508,7 +513,7 @@
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                     </svg>
                 </div>
-                <h3 class="text-base font-bold text-white">เข้าสู่ระบบด้วย Google Account</h3>
+                <h3 class="text-base font-bold text-[#2b313b]">เข้าสู่ระบบด้วย Google Account</h3>
                 <p class="text-xs text-apple-titanium dark:text-[#737373]">เลือกล็อกอินด้วยบัญชีจำลอง หรือระบุอีเมล Google เพื่อเข้าใช้งาน Dashboard</p>
             </div>
 
@@ -577,7 +582,7 @@
 
     <!-- SCRIPTS -->
     <script>
-        // Fastwork Dark Theme Locked
+        // ThaiD Studio Theme Locked
             localStorage.setItem('social-theme', isDark ? 'dark' : 'light');
         }
 
