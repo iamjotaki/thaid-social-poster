@@ -124,8 +124,10 @@
         </div>
       </a>
 
-      <!-- Zone 2: Center - SaaS Services Selector Dropdown -->
-      <div class="relative" id="thaidSaasDropdownWrap">
+      <!-- Zone 3: Right - Sub Home Link & Far Right Login/Profile -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <!-- SaaS Services Selector Dropdown (Moved to Right) -->
+        <div class="relative" id="thaidSaasDropdownWrap">
         <button
           type="button"
           onclick="toggleThaiDSaasMenu()"
@@ -139,7 +141,7 @@
         </button>
 
         <!-- Dropdown Menu -->
-        <div id="thaidSaasMenu" class="hidden absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 sm:w-80 bg-white/95 backdrop-blur-2xl border border-black/[0.08] rounded-2xl shadow-2xl p-2 z-50 text-left">
+        <div id="thaidSaasMenu" class="hidden absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white/95 backdrop-blur-2xl border border-black/[0.08] rounded-2xl shadow-2xl p-2 z-50 text-left">
           <div class="px-3 py-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider border-b border-black/[0.05] mb-1 flex items-center justify-between">
             <span>ThaiD SaaS Ecosystem</span>
             <span class="text-emerald-600 font-semibold">6 เครื่องมือ</span>
@@ -220,13 +222,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Zone 3: Right - Sub Home Link & Far Right Login/Profile -->
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <!-- Sub Home Link -->
-        <a href="https://social.thaid.online" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/[0.08] bg-white/80 hover:bg-white text-xs font-semibold text-[#2b313b] transition-colors shadow-2xs">
-          <span>หน้าแรก Social</span>
-        </a>
 
         <!-- Far Right Login Pill (Guest) -->
         <button id="thaidLoginBtn" type="button" onclick="openThaiDAuthModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#171717] hover:bg-black text-white text-xs font-semibold shadow-2xs transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
