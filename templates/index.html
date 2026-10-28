@@ -1608,27 +1608,27 @@
             </div>
 
             <!-- Page Quota & Next Slot Info Banner -->
-            <div id="page-quota-banner" class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3 shadow-md">
+            <div id="page-quota-banner" class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3 shadow-xs">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/60 flex items-center justify-center text-lg shrink-0">
                         <i class="fa-solid fa-clock"></i>
                     </div>
                     <div class="text-xs space-y-0.5">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="font-bold text-zinc-200">โควตาประจำเพจ:</span>
-                            <span id="banner-quota-page-name" class="text-amber-400 font-semibold">-</span>
-                            <span class="text-zinc-500">|</span>
-                            <span class="text-zinc-300">วันละ <b id="banner-quota-posts" class="text-white">3</b> โพสต์, <b id="banner-quota-reels" class="text-white">2</b> คลิป Reels</span>
+                            <span class="font-bold text-stone-900 dark:text-white">โควตาประจำเพจ:</span>
+                            <span id="banner-quota-page-name" class="text-amber-600 dark:text-amber-400 font-semibold">-</span>
+                            <span class="text-stone-300 dark:text-stone-600">|</span>
+                            <span class="text-stone-700 dark:text-stone-300">วันละ <b id="banner-quota-posts" class="text-stone-900 dark:text-white">3</b> โพสต์, <b id="banner-quota-reels" class="text-stone-900 dark:text-white">2</b> คลิป Reels</span>
                         </div>
-                        <div class="text-zinc-400 flex items-center gap-2 flex-wrap">
-                            <span>รอบเวลา: <code id="banner-quota-times" class="text-zinc-300 font-mono">09:00, 13:00, 17:00, 20:00</code></span>
-                            <span class="text-zinc-500">•</span>
-                            <span class="text-emerald-400">คิวว่างถัดไปบน FB: <b id="banner-next-slot-time">กำลังคำนวณ...</b></span>
+                        <div class="text-stone-600 dark:text-stone-400 flex items-center gap-2 flex-wrap">
+                            <span>รอบเวลา: <code id="banner-quota-times" class="text-stone-800 dark:text-stone-200 font-mono bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded">09:00, 13:00, 17:00, 20:00</code></span>
+                            <span class="text-stone-300 dark:text-stone-600">•</span>
+                            <span class="text-emerald-600 dark:text-emerald-400 font-medium">คิวว่างถัดไปบน FB: <b id="banner-next-slot-time">กำลังคำนวณ...</b></span>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="openPageScheduleRulesModal()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg border border-zinc-700 transition flex items-center gap-1">
+                    <button onclick="openPageScheduleRulesModal()" class="text-xs bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700 transition flex items-center gap-1 font-medium shadow-2xs">
                         <i class="fa-solid fa-pen-to-square"></i> แก้ไขโควตาเพจ
                     </button>
                 </div>
@@ -1636,31 +1636,31 @@
 
             <!-- Tabs: คิวบน FB vs ประวัติย้อนหลัง -->
             <div class="space-y-4">
-                <div class="flex items-center justify-between border-b border-zinc-800 pb-2 flex-wrap gap-2">
+                <div class="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-2.5 flex-wrap gap-2">
                     <div class="flex space-x-1.5 sm:space-x-2">
-                        <button id="btn-subtab-queue" onclick="switchScheduleSubTab('queue')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-amber-500 text-zinc-950 transition flex items-center gap-1.5 shadow-sm">
+                        <button id="btn-subtab-queue" onclick="switchScheduleSubTab('queue')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white transition flex items-center gap-1.5 shadow-xs">
                             <i class="fa-brands fa-facebook"></i> <span>คิวรอเผยแพร่ (<span id="count-tab-queue">0</span>)</span>
                         </button>
-                        <button id="btn-subtab-calendar" onclick="switchScheduleSubTab('calendar')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-zinc-800 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-calendar-days text-amber-400"></i> <span>ปฏิทินคอนเทนต์</span>
+                        <button id="btn-subtab-calendar" onclick="switchScheduleSubTab('calendar')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition flex items-center gap-1.5 border border-stone-200/60 dark:border-stone-700">
+                            <i class="fa-solid fa-calendar-days text-amber-500"></i> <span>ปฏิทินคอนเทนต์</span>
                         </button>
-                        <button id="btn-subtab-history" onclick="switchScheduleSubTab('history')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-zinc-800 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
+                        <button id="btn-subtab-history" onclick="switchScheduleSubTab('history')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition flex items-center gap-1.5 border border-stone-200/60 dark:border-stone-700">
                             <i class="fa-solid fa-clock-rotate-left"></i> <span>ประวัติย้อนหลัง (<span id="count-tab-history">0</span>)</span>
                         </button>
                     </div>
 
                     <!-- Filter Options -->
                     <div class="flex items-center gap-2 flex-wrap text-xs">
-                        <select id="filter-history-page" onchange="applyScheduleFilters()" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-300">
+                        <select id="filter-history-page" onchange="applyScheduleFilters()" class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-lg px-2.5 py-1.5 text-stone-700 dark:text-stone-300 shadow-2xs">
                             <option value="">ทุกเพจ Facebook</option>
                         </select>
-                        <select id="filter-history-type" onchange="applyScheduleFilters()" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-300">
+                        <select id="filter-history-type" onchange="applyScheduleFilters()" class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-lg px-2.5 py-1.5 text-stone-700 dark:text-stone-300 shadow-2xs">
                             <option value="all">ทุกประเภทเนื้อหา</option>
                             <option value="post">โพสต์ข่าว & บทความ</option>
                             <option value="card">โซเชียลการ์ด (Social Card)</option>
                             <option value="reel">คลิปวิดีโอ (Reels)</option>
                         </select>
-                        <select id="filter-history-date" onchange="applyScheduleFilters()" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-zinc-300">
+                        <select id="filter-history-date" onchange="applyScheduleFilters()" class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-lg px-2.5 py-1.5 text-stone-700 dark:text-stone-300 shadow-2xs">
                             <option value="all">ช่วงเวลาทั้งหมด</option>
                             <option value="today">เฉพาะวันนี้</option>
                             <option value="7days">7 วันที่ผ่านมา</option>
@@ -1742,10 +1742,10 @@
 
                 <!-- Sub-view 2: Post History Log (ย้อนหลัง) -->
                 <div id="view-schedule-history" class="hidden space-y-3">
-                    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl overflow-hidden shadow-xs">
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs text-zinc-300">
-                                <thead class="bg-zinc-950/80 text-zinc-400 uppercase text-[10px] tracking-wider border-b border-zinc-800">
+                            <table class="w-full text-left text-xs text-stone-700 dark:text-stone-300">
+                                <thead class="bg-stone-50 dark:bg-stone-800/80 text-stone-600 dark:text-stone-400 uppercase text-[10px] font-bold tracking-wider border-b border-stone-200 dark:border-stone-800">
                                     <tr>
                                         <th class="py-3 px-4">วันและเวลา</th>
                                         <th class="py-3 px-3">เพจ Facebook</th>
@@ -1755,7 +1755,7 @@
                                         <th class="py-3 px-3 text-center">ลิงก์บน FB</th>
                                     </tr>
                                 </thead>
-                                <tbody id="history-table-tbody" class="divide-y divide-zinc-800/60">
+                                <tbody id="history-table-tbody" class="divide-y divide-stone-200/60 dark:divide-stone-800/60">
                                     <!-- Populated by JS -->
                                 </tbody>
                             </table>
@@ -5592,13 +5592,13 @@
                 const container = document.getElementById('schedules-container');
                 if (activeQueue.length === 0) {
                     container.innerHTML = `
-                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center text-zinc-400 space-y-3">
-                            <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl">
+                        <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-8 text-center text-stone-600 dark:text-stone-400 space-y-3 shadow-xs">
+                            <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/60 flex items-center justify-center text-2xl">
                                 <i class="fa-solid fa-calendar-check"></i>
                             </div>
-                            <p class="font-bold text-zinc-200">ไม่มีคิวโพสต์ที่รอเผยแพร่ในขณะนี้</p>
-                            <p class="text-xs text-zinc-500 max-w-md mx-auto">
-                                คุณสามารถกดปุ่ม <span class="text-amber-400 font-medium">"+ ตั้งเวลาโพสต์ใหม่"</span> หรือไปที่แท็บรายการข่าว/Reels เพื่อส่งงานขึ้นไปตั้งเวลาบน Facebook ล่วงหน้าได้ทันที
+                            <p class="font-bold text-stone-900 dark:text-white">ไม่มีคิวโพสต์ที่รอเผยแพร่ในขณะนี้</p>
+                            <p class="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto">
+                                คุณสามารถกดปุ่ม <span class="text-amber-600 dark:text-amber-400 font-bold">"+ ตั้งเวลาโพสต์ใหม่"</span> หรือไปที่แท็บรายการข่าว/Reels เพื่อส่งงานขึ้นไปตั้งเวลาบน Facebook ล่วงหน้าได้ทันที
                             </p>
                         </div>
                     `;
@@ -5609,46 +5609,46 @@
                     let statusBadge = "";
                     if (sp.status === 'fb_scheduled' || sp.is_fb_native) {
                         statusBadge = `
-                            <span class="text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1.5 shadow-sm">
-                                <i class="fa-brands fa-facebook text-sky-400"></i> ตั้งเวลาบน Facebook (Native)
+                            <span class="text-xs bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1.5 shadow-2xs">
+                                <i class="fa-brands fa-facebook text-sky-500"></i> ตั้งเวลาบน Facebook (Native)
                             </span>
                         `;
                     } else if (sp.status === 'scheduled') {
                         statusBadge = `
-                            <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1.5">
-                                <i class="fa-solid fa-clock"></i> ตั้งเวลาบน Host
+                            <span class="text-xs bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1.5 shadow-2xs">
+                                <i class="fa-solid fa-clock text-amber-500"></i> ตั้งเวลาบน Host
                             </span>
                         `;
                     }
 
                     const isReel = sp.post_type === 'reel';
                     const typeBadge = isReel 
-                        ? `<span class="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 rounded-md font-semibold"><i class="fa-solid fa-video mr-1"></i>Reels</span>`
-                        : `<span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-md font-semibold"><i class="fa-solid fa-newspaper mr-1"></i>บทความ</span>`;
+                        ? `<span class="text-[10px] bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-2 py-0.5 rounded-md font-semibold"><i class="fa-solid fa-video mr-1"></i>Reels</span>`
+                        : `<span class="text-[10px] bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-md font-semibold"><i class="fa-solid fa-newspaper mr-1"></i>บทความ</span>`;
 
                     return `
-                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-start hover:border-zinc-700 transition shadow-lg">
-                            ${sp.image_url ? `<img src="${sp.image_url}" class="w-full sm:w-28 h-20 object-cover rounded-xl border border-zinc-800 shrink-0">` : (isReel ? `<div class="w-full sm:w-28 h-20 bg-rose-950/40 rounded-xl border border-rose-900/40 flex items-center justify-center text-rose-400 shrink-0 text-xl"><i class="fa-solid fa-film"></i></div>` : '')}
+                        <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-start hover:border-stone-300 dark:hover:border-stone-700 transition shadow-xs">
+                            ${sp.image_url ? `<img src="${sp.image_url}" class="w-full sm:w-28 h-20 object-cover rounded-xl border border-stone-200 dark:border-stone-800 shrink-0">` : (isReel ? `<div class="w-full sm:w-28 h-20 bg-rose-50 dark:bg-rose-950/40 rounded-xl border border-rose-200 dark:border-rose-900/40 flex items-center justify-center text-rose-500 shrink-0 text-xl"><i class="fa-solid fa-film"></i></div>` : '')}
                             <div class="flex-1 space-y-2 w-full">
                                 <div class="flex items-center justify-between flex-wrap gap-2">
                                     <div class="flex items-center gap-2 flex-wrap">
-                                        <span class="text-xs font-bold bg-blue-600/30 text-blue-300 border border-blue-500/30 px-2.5 py-0.5 rounded-lg">เพจ: ${sp.page_name || sp.page_id}</span>
+                                        <span class="text-xs font-bold bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 rounded-lg">เพจ: ${sp.page_name || sp.page_id}</span>
                                         ${typeBadge}
-                                        <span class="text-xs text-amber-400 font-semibold flex items-center gap-1">
+                                        <span class="text-xs text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
                                             <i class="fa-solid fa-clock"></i> นัดปล่อย: ${sp.scheduled_time}
                                         </span>
                                     </div>
                                     ${statusBadge}
                                 </div>
-                                <h4 class="font-bold text-sm text-zinc-100">${sp.title || (isReel ? 'คลิปวิดีโอ Facebook Reel' : 'โพสต์ข่าว')}</h4>
-                                <p class="text-xs text-zinc-300 line-clamp-2">${sp.caption}</p>
+                                <h4 class="font-bold text-sm text-stone-900 dark:text-white">${sp.title || (isReel ? 'คลิปวิดีโอ Facebook Reel' : 'โพสต์ข่าว')}</h4>
+                                <p class="text-xs text-stone-600 dark:text-stone-300 line-clamp-2">${sp.caption}</p>
 
-                                <div class="flex items-center justify-between pt-2 border-t border-zinc-800/80 text-xs">
-                                    <span class="text-[11px] text-zinc-500">
-                                        ${sp.post_id ? `<i class="fa-brands fa-facebook text-zinc-400 mr-1"></i> ID บน FB: <code class="text-zinc-300">${sp.post_id}</code>` : ''}
+                                <div class="flex items-center justify-between pt-2 border-t border-stone-200/80 dark:border-stone-800/80 text-xs">
+                                    <span class="text-[11px] text-stone-500 dark:text-stone-400">
+                                        ${sp.post_id ? `<i class="fa-brands fa-facebook text-stone-400 mr-1"></i> ID บน FB: <code class="text-stone-700 dark:text-stone-300">${sp.post_id}</code>` : ''}
                                     </span>
                                     <div class="flex items-center gap-2">
-                                        <button onclick="cancelSchedule(${sp.id})" class="text-xs bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 px-3 py-1 rounded-lg flex items-center gap-1 transition">
+                                        <button onclick="cancelSchedule(${sp.id})" class="text-xs bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-3 py-1 rounded-lg flex items-center gap-1 transition font-semibold shadow-2xs">
                                             <i class="fa-solid fa-ban"></i> ยกเลิก/ลบจาก Facebook
                                         </button>
                                     </div>
