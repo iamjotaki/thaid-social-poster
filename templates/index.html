@@ -6114,6 +6114,20 @@
             `;
         }
 
+        function handleImageError(img, idx) {
+            img.onerror = null;
+            if (img.parentElement) {
+                img.parentElement.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center p-3 text-center bg-stone-50 dark:bg-stone-950">
+                        <i class="fa-solid fa-image text-stone-300 dark:text-stone-700 text-2xl mb-1"></i>
+                        <button onclick="openCardModal(${idx})" class="text-xs text-blue-600 hover:underline font-semibold">
+                            + สร้าง Social Card
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
         async function loadNews(page = 1) {
             currentNewsPage = page;
             try {
@@ -6178,7 +6192,7 @@
                     const imgTag = displayImg 
                         ? `
                         <div class="relative group shrink-0 w-full sm:w-56 h-44 rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-950 border border-stone-200/80 dark:border-stone-800 shadow-xs">
-                            <img src="${displayImg}" alt="Cover" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex flex-col items-center justify-center p-3 text-center\'><i class=\'fa-solid fa-image text-stone-300 text-2xl mb-1\'></i><button onclick=\'openCardModal(${idx})\' class=\'text-xs text-blue-600 hover:underline font-semibold\'>+ สร้าง Social Card</button></div>';">
+                            <img src="${displayImg}" alt="Cover" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" onerror="handleImageError(this, ${idx})">
                             ${hasCard ? `<span class="absolute top-2 left-2 bg-stone-900/85 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1"><i class="fa-solid fa-paintbrush text-amber-400"></i> Social Card</span>` : ''}
                             <button onclick="openCardModal(${idx})" class="absolute bottom-2 right-2 bg-stone-900/85 hover:bg-stone-900 text-white text-[11px] font-medium px-2.5 py-1 rounded-lg backdrop-blur border border-white/20 transition flex items-center gap-1.5 shadow-md">
                                 <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> ปรับแต่งการ์ด
