@@ -1,116 +1,226 @@
 <!DOCTYPE html>
-<html lang="th" class="scroll-smooth bg-white text-[#171717]">
+<html lang="th" class="scroll-smooth bg-stone-50 dark:bg-[#0c0d0e] text-stone-900 dark:text-stone-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔴 LFC Auto News - Multi-Page & Scheduler Manager</title>
+    <title>ThaiD Social Poster — AI Multi-Page & Content Studio</title>
+
+    <!-- ThaiD Official Typography Stack -->
+    <style>
+      @font-face {
+        font-family: "Google Sans";
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+        src: url("/static/fonts/google-sans-thai-normal.woff2") format("woff2");
+        unicode-range: U+2D7, U+303, U+331, U+E01-E5B, U+200C-200D, U+25CC;
+      }
+      @font-face {
+        font-family: "Google Sans";
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+        src: url("/static/fonts/google-sans-latin-normal.woff2") format("woff2");
+        unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "ThaiDStudio";
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+        src: url("/static/fonts/thaid-studio-bold.ttf") format("truetype");
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Material Symbols Outlined & Font Awesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts: Prompt -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        lfc: {
-                            red: '#C8102E',
-                            darkred: '#9B0014',
-                            gold: '#F6EB61',
-                            teal: '#00B2A9'
-                        }
+                        'thai-brand': '#2b313b',
+                        'thai-blue': '#0569ff',
+                        'thai-border': 'rgba(0, 0, 0, 0.08)'
                     },
                     fontFamily: {
-                        sans: ['"Google Sans"', '"Noto Sans Thai"', 'sans-serif'],
+                        sans: ['"Google Sans"', '"Prompt"', '"Noto Sans Thai"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Prompt', sans-serif; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #1f252e; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        body { font-family: 'Prompt', 'Google Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen bg-white text-[#171717] font-sans antialiased selection:bg-[#1f242d]/15 selection:text-[#0569ff]">
+<body class="min-h-screen bg-stone-50 dark:bg-[#0c0d0e] text-stone-900 dark:text-stone-100 font-sans antialiased selection:bg-[#1f242d]/15 selection:text-[#0569ff]">
 
-    <!-- TOP NAVBAR (APPLE FROSTED NAVBAR) -->
-    <header class="bg-zinc-900/90 backdrop-blur-xl border-b border-black/[0.08] sticky top-0 z-40">
-        <div class="max-w-[1600px] mx-auto px-3 sm:px-6 h-[52px] sm:h-14 flex items-center justify-between gap-1.5 sm:gap-3">
-            <!-- Brand -->
-            <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
-                <a href="/" class="flex items-center gap-2 group">
-                    <div class="w-8 h-8 rounded-lg bg-[#e85a2d] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
-                        <span class="material-symbols-outlined text-[18px]">campaign</span>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-xs sm:text-base leading-tight flex items-center gap-1 sm:gap-2">
-                            <span class="whitespace-nowrap text-white">Auto-Poster Pro</span>
-                            <span class="hidden md:inline-block text-[9px] bg-[#e85a2d]/20 text-[#e85a2d] border border-[#e85a2d]/30 px-1.5 py-0.5 rounded uppercase font-bold">STUDIO</span>
-                        </h1>
-                    </div>
-                </a>
-            </div>
+    <!-- ======================================================== -->
+    <!-- 1. THAID FLOATING TOP NAVBAR (MASTER TEMPLATE STANDARD)   -->
+    <!-- ======================================================== -->
+    <header class="fixed top-0 inset-x-0 z-50 pt-3 px-3 sm:px-6 pointer-events-none">
+        <div class="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-black/[0.08] dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-full px-4 sm:px-5 py-2.5 relative">
 
-            <!-- Center: Contextual Segmented Navigation Links (Unified 4-Pill Ecosystem Standard) -->
-            <div class="hidden lg:flex items-center gap-1 bg-white/[0.06] p-1 rounded-xl border border-black/[0.08] text-xs font-medium">
-                <a href="https://thaid.online" class="px-3 py-1 rounded-lg text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">hub</span>
-                    <span>ThaiD Hub</span>
-                </a>
-                <a href="https://novel.thaid.online" class="px-3 py-1 rounded-lg text-zinc-400 hover:text-[#e85a2d] transition-colors flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">edit_note</span>
-                    <span>นิยาย AI</span>
-                </a>
-                <a href="https://social.thaid.online" class="px-3 py-1 rounded-lg text-white bg-white/10 shadow-xs font-semibold flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">campaign</span>
-                    <span>โพสต์ Facebook</span>
-                </a>
-                <a href="https://sticker.thaid.online" class="px-3 py-1 rounded-lg text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">sentiment_satisfied</span>
-                    <span>สติกเกอร์ไลน์</span>
-                </a>
-            </div>
+            <!-- Zone 1: Left - Brand Logo + ThaiD Monogram -->
+            <a href="https://thaid.online" class="flex items-center gap-2.5 text-stone-800 dark:text-white hover:opacity-85 transition-opacity group flex-shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-[#2b313b] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6.5H15M9.5 6.5V19" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 10.5C14 10.5 18 10.8 18 14.5C18 18.2 14 18.5 14 18.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-lg tracking-tight text-stone-900 dark:text-white">ThaiD</span>
+                    <span class="text-xs text-stone-300 dark:text-stone-600 font-light">/</span>
+                    <span class="text-xs font-semibold text-stone-600 dark:text-stone-300">Social Poster</span>
+                </div>
+            </a>
 
-            <!-- Page Selector & Controls -->
-            <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
+            <!-- Zone 2: Center - Clean Open Space -->
+            <div class="hidden md:block"></div>
+
+            <!-- Zone 3: Right - Page Selector, Quick Controls, SaaS Selector, Profile -->
+            <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                 <!-- Page Selector Dropdown -->
-                <div class="flex items-center bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1 sm:px-2.5 sm:py-1.5 max-w-[115px] xs:max-w-[145px] sm:max-w-[200px] shrink-0">
-                    <i class="fa-brands fa-facebook text-blue-500 mr-1.5 text-xs sm:text-sm shrink-0"></i>
-                    <select id="active-page-select" onchange="onPageChange()" class="bg-transparent text-[11px] sm:text-xs font-semibold text-zinc-200 focus:outline-none cursor-pointer pr-1 truncate w-full">
+                <div class="flex items-center bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-full px-2.5 py-1 max-w-[125px] sm:max-w-[170px] shrink-0">
+                    <i class="fa-brands fa-facebook text-blue-500 mr-1.5 text-xs shrink-0"></i>
+                    <select id="active-page-select" onchange="onPageChange()" class="bg-transparent text-[11px] sm:text-xs font-semibold text-stone-700 dark:text-stone-200 focus:outline-none cursor-pointer pr-1 truncate w-full">
                         <option value="">ทุกเพจ (All Pages)</option>
                     </select>
                 </div>
 
-                <!-- Quick Action Buttons -->
-                <button onclick="triggerFetch()" id="btn-fetch" class="bg-lfc-red hover:bg-lfc-darkred text-white font-medium text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl flex items-center gap-1.5 transition shadow-lg shadow-lfc-red/20 shrink-0" title="ดึงข่าวทันที">
-                    <i class="fa-solid fa-bolt text-xs"></i>
-                    <span class="hidden md:inline">ดึงข่าวทันที</span>
+                <!-- Quick Action: Fetch News -->
+                <button onclick="triggerFetch()" id="btn-fetch" class="bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs px-3 py-1.5 rounded-full font-medium transition flex items-center gap-1.5 shadow-xs shrink-0" title="ดึงข่าวทันที">
+                    <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
+                    <span class="hidden lg:inline">ดึงข่าว</span>
                 </button>
 
-                <button onclick="toggleAutoBot()" id="btn-auto" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl flex items-center gap-1.5 transition shrink-0" title="เปิด/ปิด Auto-Bot">
+                <!-- Quick Action: Auto-Bot -->
+                <button onclick="toggleAutoBot()" id="btn-auto" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-full font-medium transition flex items-center gap-1.5 shadow-xs shrink-0" title="เปิด/ปิด Auto-Bot">
                     <i class="fa-solid fa-clock text-xs"></i>
                     <span id="auto-btn-text" class="hidden md:inline">เริ่ม Auto-Bot</span>
                 </button>
 
-                <button onclick="openSettingsModal()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs p-2 sm:px-3 sm:py-2 rounded-xl transition border border-zinc-700 shrink-0" title="ตั้งค่าระบบ">
+                <!-- Settings Gear -->
+                <button onclick="openSettingsModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 flex items-center justify-center transition border border-stone-200/80 dark:border-stone-700 text-xs shrink-0" title="ตั้งค่าระบบ">
                     <i class="fa-solid fa-gear"></i>
                 </button>
 
                 <!-- Admin Portal Button (Visible only to Admin) -->
-                <a href="/admin" id="btn-admin-portal" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-purple-600/20 shrink-0 hidden" title="เข้าสู่ระบบหลังบ้าน Superadmin">
+                <a href="/admin" id="btn-admin-portal" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3 py-1.5 rounded-full transition flex items-center gap-1.5 shadow-sm shrink-0 hidden" title="เข้าสู่ระบบหลังบ้าน Superadmin">
                     <i class="fa-solid fa-shield-halved"></i>
-                    <span class="hidden lg:inline">หลังบ้าน Admin</span>
+                    <span class="hidden xl:inline">Admin</span>
                 </a>
+
+                <!-- SaaS Services Selector Dropdown (Standard ThaiD Unified) -->
+                <div class="relative" id="thaidSaasDropdownWrap">
+                    <button
+                        type="button"
+                        onclick="toggleThaiDSaasMenu()"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/[0.08] dark:border-white/10 bg-white/90 dark:bg-stone-800 hover:bg-white dark:hover:bg-stone-700 text-xs font-semibold text-stone-700 dark:text-stone-200 transition-all shadow-2xs cursor-pointer shrink-0"
+                    >
+                        <span class="text-[#0569ff] font-bold text-xs">✦</span>
+                        <span class="hidden sm:inline">เลือกบริการ SaaS</span>
+                        <svg id="thaidSaasChevron" width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" class="text-stone-400 transition-transform duration-200">
+                            <path d="m4.5 6 3.5 3.5L11.5 6" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="thaidSaasMenu" class="hidden absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white/95 dark:bg-stone-900/95 backdrop-blur-2xl border border-black/[0.08] dark:border-white/10 rounded-2xl shadow-2xl p-2 z-50 text-left">
+                        <div class="px-3 py-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider border-b border-black/[0.05] dark:border-white/[0.05] mb-1 flex items-center justify-between">
+                            <span>ThaiD SaaS Ecosystem</span>
+                            <span class="text-emerald-600 font-semibold">6 เครื่องมือ</span>
+                        </div>
+                        <div class="grid grid-cols-1 gap-1 max-h-[380px] overflow-y-auto">
+                            <a href="https://novel.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-[#0569ff]">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Novel Studio</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">แต่งนิยาย AI 10 ตอนจบ</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">10 ตอนจบ</span>
+                            </a>
+                            <a href="https://social.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-emerald-600">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Social Auto-Poster</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">ดึงข่าว RSS & โพสต์ Facebook 24 ชม.</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">Auto 24h</span>
+                            </a>
+                            <a href="https://sticker.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-pink-500">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">LINE Sticker Creator</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สร้างชุดสติกเกอร์ไลน์ 40 แอ็กชัน</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">40 แอ็กชัน</span>
+                            </a>
+                            <a href="https://clip.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-purple-500">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Clip AI & Reels</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สคริปต์คลิปสั้น 9:16 สไตล์ไวรัล</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">9:16 Shorts</span>
+                            </a>
+                            <a href="https://chat.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-teal-600">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Smart Chat AI</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">บอทแอดมินตอบแชทบน LINE OA 24/7</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">ตอบ 0.8 วิ</span>
+                            </a>
+                            <a href="https://mockup.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-blue-500">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Mockup Studio</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สตูดิโอภาพถ่ายสินค้าลักชัวรี ไดคัต AI</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">Studio 4K</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Google Account Login / Profile Indicator -->
                 <div id="auth-container" class="shrink-0">
@@ -120,130 +230,130 @@
         </div>
     </header>
 
-    <!-- Impersonation Banner -->
-    <div id="impersonate-banner" class="bg-amber-500/20 border-b border-amber-500/40 text-amber-200 text-xs px-4 py-2 flex items-center justify-between hidden">
-        <div class="flex items-center gap-2">
-            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
-            <span>กำลังจำลองมุมมองสมาชิก: <strong id="impersonate-user-name" class="text-white">...</strong> (<span id="impersonate-user-email">...</span>)</span>
-            <span class="bg-amber-500/30 text-amber-300 px-2 py-0.5 rounded text-[10px] font-semibold">VIEW AS USER</span>
+    <!-- MAIN CONTAINER (MAX-W-6XL STANDARD) -->
+    <main class="max-w-6xl mx-auto px-3 sm:px-6 pt-20 sm:pt-24 pb-20 space-y-5">
+
+        <!-- Impersonation Banner -->
+        <div id="impersonate-banner" class="bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-200 text-xs px-4 py-2.5 rounded-2xl flex items-center justify-between hidden shadow-xs">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm"></i>
+                <span>กำลังจำลองมุมมองสมาชิก: <strong id="impersonate-user-name" class="text-stone-900 dark:text-white">...</strong> (<span id="impersonate-user-email">...</span>)</span>
+                <span class="bg-amber-500/20 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full text-[10px] font-bold">VIEW AS USER</span>
+            </div>
+            <button onclick="stopImpersonate()" class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold px-3 py-1 rounded-xl text-xs transition flex items-center gap-1 shadow-xs">
+                <i class="fa-solid fa-arrow-rotate-left"></i> สลับกลับแอดมิน
+            </button>
         </div>
-        <button onclick="stopImpersonate()" class="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold px-3 py-1 rounded-lg text-xs transition flex items-center gap-1 shadow">
-            <i class="fa-solid fa-arrow-rotate-left"></i> สลับกลับบัญชีแอดมิน
-        </button>
-    </div>
 
-    <!-- NAVIGATION TABS -->
-    <nav class="bg-zinc-900 border-b border-zinc-800 sticky top-14 sm:top-16 z-30 shadow-md">
-        <div class="max-w-7xl mx-auto px-2 sm:px-4 py-1.5 flex items-center overflow-x-auto no-scrollbar scroll-smooth gap-1 sm:gap-1.5">
-            <!-- กลุ่มที่ 1: สตูดิโอคอนเทนต์ (Content Studio) -->
-            <div class="flex items-center gap-0.5 bg-zinc-950/40 p-0.5 rounded-xl border border-zinc-800/60 shrink-0">
-                <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-lfc-red text-white transition shrink-0 whitespace-nowrap" title="รายการข่าวสาร & เตรียมโพสต์">
-                    <i class="fa-solid fa-newspaper text-xs"></i> <span>ข่าวสาร</span>
-                </button>
-                <button onclick="switchTab('tab-match')" id="nav-tab-match" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="Match Center (พรีวิว & ตัดเกรดนักเตะ)">
-                    <i class="fa-solid fa-futbol text-emerald-400 text-xs"></i> <span>Match Center</span>
-                </button>
-                <button onclick="switchTab('tab-community')" id="nav-tab-community" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="Community & ตอบคอมเมนต์เพจ">
-                    <i class="fa-solid fa-comments text-violet-400 text-xs"></i> <span>Community</span>
-                </button>
-                <button onclick="switchTab('tab-affiliate')" id="nav-tab-affiliate" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="Affiliate โพสต์สินค้าสร้างรายได้">
-                    <i class="fa-solid fa-bag-shopping text-amber-400 text-xs"></i> <span>Affiliate</span>
-                </button>
-                <button onclick="switchTab('tab-image-gen')" id="nav-tab-image-gen" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="สตูดิโอเจนรูป AI ด้วย Google Flow">
-                    <i class="fa-solid fa-paintbrush text-pink-400 text-xs"></i> <span>เจนรูป AI</span>
-                </button>
+        <!-- NAVIGATION TABS (SEGMENTED CONTROL STANDARD) -->
+        <nav class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 rounded-2xl p-1.5 shadow-xs">
+            <div class="flex items-center overflow-x-auto no-scrollbar scroll-smooth gap-1.5">
+                <!-- กลุ่มที่ 1: สตูดิโอคอนเทนต์ (Content Studio) -->
+                <div class="flex items-center gap-1 bg-stone-100 dark:bg-stone-800/80 p-1 rounded-xl shrink-0">
+                    <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-stone-900 dark:bg-white text-white dark:text-stone-950 shadow-xs transition shrink-0 whitespace-nowrap" title="รายการข่าวสาร & เตรียมโพสต์">
+                        <i class="fa-solid fa-newspaper text-xs text-blue-500"></i> <span>ข่าวสาร</span>
+                    </button>
+                    <button onclick="switchTab('tab-match')" id="nav-tab-match" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="Match Center (พรีวิว & ตัดเกรดนักเตะ)">
+                        <i class="fa-solid fa-futbol text-emerald-500 text-xs"></i> <span>Match Center</span>
+                    </button>
+                    <button onclick="switchTab('tab-community')" id="nav-tab-community" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="Community & ตอบคอมเมนต์เพจ">
+                        <i class="fa-solid fa-comments text-violet-500 text-xs"></i> <span>Community</span>
+                    </button>
+                    <button onclick="switchTab('tab-affiliate')" id="nav-tab-affiliate" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="Affiliate โพสต์สินค้าสร้างรายได้">
+                        <i class="fa-solid fa-bag-shopping text-amber-500 text-xs"></i> <span>Affiliate</span>
+                    </button>
+                    <button onclick="switchTab('tab-image-gen')" id="nav-tab-image-gen" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="สตูดิโอเจนรูป AI ด้วย Google Flow">
+                        <i class="fa-solid fa-paintbrush text-pink-500 text-xs"></i> <span>เจนรูป AI</span>
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="h-4 w-px bg-stone-200 dark:bg-stone-800 shrink-0 mx-0.5"></div>
+
+                <!-- กลุ่มที่ 2: เผยแพร่ & วิเคราะห์ (Publishing & Analytics) -->
+                <div class="flex items-center gap-1 bg-stone-100 dark:bg-stone-800/80 p-1 rounded-xl shrink-0">
+                    <button onclick="switchTab('tab-schedule')" id="nav-tab-schedule" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="ตั้งเวลาโพสต์ Facebook ล่วงหน้า">
+                        <i class="fa-solid fa-calendar-check text-amber-500 text-xs"></i> <span>ตั้งเวลา</span>
+                        <span id="badge-sched-count" class="text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-300 px-1.5 py-0.2 rounded-full font-bold">0</span>
+                    </button>
+                    <button onclick="switchTab('tab-analytics')" id="nav-tab-analytics" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="สถิติเพจ & ข้อมูลเชิงลึก">
+                        <i class="fa-solid fa-chart-line text-cyan-500 text-xs"></i> <span>สถิติ</span>
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="h-4 w-px bg-stone-200 dark:bg-stone-800 shrink-0 mx-0.5"></div>
+
+                <!-- กลุ่มที่ 3: ระบบ & ตั้งค่า (System & Config) -->
+                <div class="flex items-center gap-1 bg-stone-100 dark:bg-stone-800/80 p-1 rounded-xl shrink-0">
+                    <button onclick="switchTab('tab-feeds')" id="nav-tab-feeds" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="จัดการ RSS Feeds ของเพจ">
+                        <i class="fa-solid fa-rss text-purple-500 text-xs"></i> <span>RSS Feeds</span>
+                        <span id="badge-feed-count" class="text-[10px] bg-purple-500/20 text-purple-700 dark:text-purple-300 px-1.5 py-0.2 rounded-full font-bold">0</span>
+                    </button>
+                    <button onclick="switchTab('tab-pages')" id="nav-tab-pages" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="จัดการเพจ Facebook & Access Tokens">
+                        <i class="fa-brands fa-facebook text-blue-500 text-xs"></i> <span>เพจ FB</span>
+                        <span id="badge-page-count" class="text-[10px] bg-blue-500/20 text-blue-700 dark:text-blue-300 px-1.5 py-0.2 rounded-full font-bold">1</span>
+                    </button>
+                    <button onclick="switchTab('tab-apikeys')" id="nav-tab-apikeys" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="จัดการ Gemini API Keys ส่วนตัว">
+                        <i class="fa-solid fa-key text-yellow-500 text-xs"></i> <span>API Keys</span>
+                        <span id="badge-keys-count" class="text-[10px] bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 px-1.5 py-0.2 rounded-full font-bold">0</span>
+                    </button>
+                    <button onclick="switchTab('tab-logs')" id="nav-tab-logs" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="บันทึกกิจกรรม & Logs ระบบ">
+                        <i class="fa-solid fa-terminal text-emerald-500 text-xs"></i> <span>Logs</span>
+                    </button>
+                </div>
             </div>
+        </nav>
 
-            <!-- Divider -->
-            <div class="h-4 w-px bg-zinc-800 shrink-0 mx-0.5"></div>
-
-            <!-- กลุ่มที่ 2: เผยแพร่ & วิเคราะห์ (Publishing & Analytics) -->
-            <div class="flex items-center gap-0.5 bg-zinc-950/40 p-0.5 rounded-xl border border-zinc-800/60 shrink-0">
-                <button onclick="switchTab('tab-schedule')" id="nav-tab-schedule" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="ตั้งเวลาโพสต์ Facebook ล่วงหน้า & สถิติประวัติย้อนหลัง">
-                    <i class="fa-solid fa-calendar-check text-amber-400 text-xs"></i> <span>ตั้งเวลา</span>
-                    <span id="badge-sched-count" class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1 py-0.2 rounded-full font-bold">0</span>
-                </button>
-                <button onclick="switchTab('tab-analytics')" id="nav-tab-analytics" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="สถิติเพจ & ข้อมูลเชิงลึก">
-                    <i class="fa-solid fa-chart-line text-cyan-400 text-xs"></i> <span>สถิติ</span>
-                </button>
-            </div>
-
-            <!-- Divider -->
-            <div class="h-4 w-px bg-zinc-800 shrink-0 mx-0.5"></div>
-
-            <!-- กลุ่มที่ 3: ระบบ & ตั้งค่า (System & Config) -->
-            <div class="flex items-center gap-0.5 bg-zinc-950/40 p-0.5 rounded-xl border border-zinc-800/60 shrink-0">
-                <button onclick="switchTab('tab-feeds')" id="nav-tab-feeds" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="จัดการ RSS Feeds">
-                    <i class="fa-solid fa-rss text-purple-400 text-xs"></i> <span>RSS Feeds</span>
-                    <span id="badge-feed-count" class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1 py-0.2 rounded-full font-bold">0</span>
-                </button>
-                <button onclick="switchTab('tab-pages')" id="nav-tab-pages" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="จัดการเพจ Facebook">
-                    <i class="fa-brands fa-facebook text-blue-400 text-xs"></i> <span>เพจ FB</span>
-                    <span id="badge-page-count" class="text-[10px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-1 py-0.2 rounded-full font-bold">0</span>
-                </button>
-                <button onclick="switchTab('tab-apikeys')" id="nav-tab-apikeys" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="จัดการ Google Gemini API Keys ของคุณ">
-                    <i class="fa-solid fa-key text-yellow-400 text-xs"></i> <span>API Keys</span>
-                    <span id="badge-user-keys-count" class="text-[10px] bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 px-1 py-0.2 rounded-full font-bold">0</span>
-                </button>
-                <button onclick="switchTab('tab-logs')" id="nav-tab-logs" class="nav-tab px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition shrink-0 whitespace-nowrap" title="Live Logs บันทึกระบบ">
-                    <i class="fa-solid fa-terminal text-emerald-400 text-xs"></i> <span>Logs</span>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- MAIN CONTAINER -->
-    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full space-y-4 sm:space-y-6 pb-24 sm:pb-8">
-
-        <!-- STATS BAR -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-lfc-red/10 text-lfc-red flex items-center justify-center text-lg shrink-0">
+        <!-- OVERVIEW STATS CARDS (THAID LUXURY METRICS) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 flex items-center space-x-3.5 shadow-xs">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg shrink-0">
                     <i class="fa-solid fa-newspaper"></i>
                 </div>
                 <div>
-                    <div id="stat-total" class="text-xl font-bold text-white">0</div>
-                    <div class="text-[11px] text-zinc-400">ข่าวทั้งหมด</div>
+                    <div id="stat-total" class="text-xl font-bold text-stone-900 dark:text-white tracking-tight">0</div>
+                    <div class="text-[11px] font-medium text-stone-500 dark:text-stone-400">ข่าวทั้งหมด</div>
                 </div>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg shrink-0">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 flex items-center space-x-3.5 shadow-xs">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg shrink-0">
                     <i class="fa-solid fa-circle-check"></i>
                 </div>
                 <div>
-                    <div id="stat-posted" class="text-xl font-bold text-emerald-400">0</div>
-                    <div class="text-[11px] text-zinc-400">โพสต์สำเร็จแล้ว</div>
+                    <div id="stat-posted" class="text-xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight">0</div>
+                    <div class="text-[11px] font-medium text-stone-500 dark:text-stone-400">โพสต์สำเร็จแล้ว</div>
                 </div>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg shrink-0">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 flex items-center space-x-3.5 shadow-xs">
+                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                 </div>
                 <div>
-                    <div id="stat-scheduled" class="text-xl font-bold text-amber-400">0</div>
-                    <div class="text-[11px] text-zinc-400">ตั้งเวลาโพสต์ไว้</div>
+                    <div id="stat-scheduled" class="text-xl font-bold text-amber-600 dark:text-amber-400 tracking-tight">0</div>
+                    <div class="text-[11px] font-medium text-stone-500 dark:text-stone-400">ตั้งเวลาโพสต์ไว้</div>
                 </div>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg shrink-0">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 flex items-center space-x-3.5 shadow-xs">
+                <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-lg shrink-0">
                     <i class="fa-solid fa-rss"></i>
                 </div>
                 <div>
-                    <div id="stat-sources" class="text-xl font-bold text-purple-400">0</div>
-                    <div class="text-[11px] text-zinc-400" title="จำนวนฟีดที่เปิดใช้งาน / ฟีดทั้งหมดในระบบ">RSS Feeds (เปิด/ทั้งหมด)</div>
+                    <div id="stat-sources" class="text-xl font-bold text-purple-600 dark:text-purple-400 tracking-tight">0</div>
+                    <div class="text-[11px] font-medium text-stone-500 dark:text-stone-400">RSS Feeds</div>
                 </div>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3 col-span-2 md:col-span-1">
-                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg shrink-0">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 flex items-center space-x-3.5 shadow-xs col-span-2 sm:col-span-1">
+                <div class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 flex items-center justify-center text-lg shrink-0">
                     <i class="fa-brands fa-facebook"></i>
                 </div>
                 <div>
-                    <div id="stat-pages" class="text-xl font-bold text-blue-400">0</div>
-                    <div class="text-[11px] text-zinc-400">เพจในระบบ</div>
+                    <div id="stat-pages" class="text-xl font-bold text-sky-600 dark:text-sky-400 tracking-tight">0</div>
+                    <div class="text-[11px] font-medium text-stone-500 dark:text-stone-400">เพจในระบบ</div>
                 </div>
             </div>
         </div>
@@ -252,25 +362,49 @@
         <!-- TAB 1: รายการข่าว & โพสต์ (NEWS FEED) -->
         <!-- ============================================================== -->
         <section id="tab-news" class="tab-content space-y-4">
-            <div class="flex items-center justify-between flex-wrap gap-2">
-                <h2 class="text-base sm:text-lg font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-fire text-lfc-red"></i>
-                    <span>รายการข่าวล่าสุด & เตรียมโพสต์</span>
-                    <span id="current-page-label" class="text-xs bg-zinc-800 text-zinc-300 px-2.5 py-0.5 rounded-lg border border-zinc-700 font-normal">ทุกเพจ</span>
-                </h2>
-                <div class="flex items-center space-x-2">
-                    <button onclick="loadNews()" class="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
-                        <i class="fa-solid fa-arrows-rotate"></i> รีเฟรชข่าว
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 shadow-xs flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-2.5 flex-wrap">
+                    <h2 class="text-base font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-fire text-amber-500"></i>
+                        <span>รายการข่าวล่าสุด & เตรียมโพสต์</span>
+                    </h2>
+                    <span id="current-page-label" class="text-xs bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2.5 py-0.5 rounded-lg border border-stone-200 dark:border-stone-700 font-medium">ทุกเพจ</span>
+                    <span id="news-total-count-badge" class="text-xs bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 px-2.5 py-0.5 rounded-lg border border-blue-200 dark:border-blue-800 font-semibold">กำลังโหลด...</span>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                    <!-- Search input -->
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-stone-400"></i>
+                        <input type="text" id="news-search-input" onkeyup="onSearchNewsKeyup(event)" placeholder="ค้นหาข่าว..." class="pl-8 pr-3 py-1.5 text-xs bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 text-stone-800 dark:text-stone-200 w-36 sm:w-48">
+                    </div>
+
+                    <!-- Status Filter Tabs -->
+                    <div class="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-xl border border-stone-200 dark:border-stone-700 text-xs">
+                        <button onclick="setNewsFilter('all')" id="btn-filter-all" class="px-2.5 py-1 rounded-lg font-semibold bg-white dark:bg-stone-900 text-stone-900 dark:text-white shadow-xs transition">ทั้งหมด</button>
+                        <button onclick="setNewsFilter('pending')" id="btn-filter-pending" class="px-2.5 py-1 rounded-lg text-stone-600 dark:text-stone-400 hover:text-stone-900 transition">รอโพสต์</button>
+                        <button onclick="setNewsFilter('posted')" id="btn-filter-posted" class="px-2.5 py-1 rounded-lg text-stone-600 dark:text-stone-400 hover:text-stone-900 transition">โพสต์แล้ว</button>
+                    </div>
+
+                    <!-- Refresh Button -->
+                    <button onclick="loadNews(currentNewsPage)" class="text-xs text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white flex items-center gap-1.5 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 border border-stone-200 dark:border-stone-700 px-3 py-1.5 rounded-xl transition">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span class="hidden sm:inline">รีเฟรช</span>
                     </button>
                 </div>
             </div>
 
             <!-- CARDS CONTAINER -->
-            <div id="news-container" class="space-y-4">
-                <div class="text-center py-12 text-zinc-500">
+                <div id="news-container" class="space-y-4">
+                <div class="text-center py-12 text-stone-400">
                     <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
                     <p>กำลังโหลดรายการข่าว...</p>
                 </div>
+            </div>
+
+            <!-- PAGINATION BAR -->
+            <div id="news-pagination" class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 shadow-xs flex items-center justify-between flex-wrap gap-3">
+                <div class="text-xs text-stone-500 font-medium">กำลังเตรียมข้อมูลการแบ่งหน้า...</div>
             </div>
         </section>
 
@@ -2869,15 +3003,15 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-tab').forEach(el => {
-                el.classList.remove('bg-lfc-red', 'text-white');
-                el.classList.add('text-zinc-400');
+                el.classList.remove('bg-stone-900', 'text-white', 'dark:bg-white', 'dark:text-stone-950', 'shadow-xs', 'font-semibold');
+                el.classList.add('text-stone-600', 'dark:text-stone-400', 'font-medium');
             });
 
             document.getElementById(tabId).classList.remove('hidden');
             const activeNav = document.getElementById('nav-' + tabId);
             if (activeNav) {
-                activeNav.classList.remove('text-zinc-400');
-                activeNav.classList.add('bg-lfc-red', 'text-white');
+                activeNav.classList.remove('text-stone-600', 'dark:text-stone-400', 'font-medium');
+                activeNav.classList.add('bg-stone-900', 'text-white', 'dark:bg-white', 'dark:text-stone-950', 'shadow-xs', 'font-semibold');
             }
 
             // Sync Mobile Bottom Nav Highlight
@@ -5894,26 +6028,131 @@
         }
 
         // ==========================================
-        // NEWS & POSTING LOGIC
+        // NEWS & POSTING LOGIC (OPTIMIZED WITH PAGINATION & FILTERS)
         // ==========================================
-        async function loadNews() {
+        let currentNewsPage = 1;
+        let currentNewsLimit = 15;
+        let currentNewsFilter = 'all';
+        let currentNewsSearch = '';
+        let currentNewsTotal = 0;
+        let currentNewsTotalPages = 1;
+
+        function setNewsFilter(status) {
+            currentNewsFilter = status;
+            ['all', 'pending', 'posted'].forEach(s => {
+                const btn = document.getElementById('btn-filter-' + s);
+                if (btn) {
+                    if (s === status) {
+                        btn.className = "px-2.5 py-1 rounded-lg font-semibold bg-white dark:bg-stone-900 text-stone-900 dark:text-white shadow-xs transition";
+                    } else {
+                        btn.className = "px-2.5 py-1 rounded-lg text-stone-600 dark:text-stone-400 hover:text-stone-900 transition";
+                    }
+                }
+            });
+            loadNews(1);
+        }
+
+        let searchDebounceTimer = null;
+        function onSearchNewsKeyup(e) {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                currentNewsSearch = (document.getElementById('news-search-input')?.value || '').trim();
+                loadNews(1);
+            }, 300);
+        }
+
+        function renderPagination() {
+            const pagContainer = document.getElementById('news-pagination');
+            if (!pagContainer) return;
+            if (currentNewsTotal === 0) {
+                pagContainer.innerHTML = `<div class="text-xs text-stone-500 font-medium">ไม่พบรายการข่าวในเงื่อนไขนี้</div>`;
+                return;
+            }
+            if (currentNewsTotalPages <= 1 && currentNewsTotal <= currentNewsLimit) {
+                pagContainer.innerHTML = `
+                    <div class="text-xs text-stone-500 font-medium">แสดงทั้งหมด ${currentNewsTotal.toLocaleString()} รายการ</div>
+                    <div class="text-xs text-stone-400">หน้า 1 / 1</div>
+                `;
+                return;
+            }
+            
+            const startIdx = (currentNewsPage - 1) * currentNewsLimit + 1;
+            const endIdx = Math.min(currentNewsPage * currentNewsLimit, currentNewsTotal);
+            
+            let pageButtonsHtml = '';
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentNewsPage - 2);
+            let endPage = Math.min(currentNewsTotalPages, startPage + maxVisible - 1);
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+            
+            for (let p = startPage; p <= endPage; p++) {
+                const isActive = p === currentNewsPage;
+                pageButtonsHtml += `
+                    <button onclick="loadNews(${p})" class="w-8 h-8 rounded-xl text-xs font-semibold transition ${isActive ? 'bg-stone-900 dark:bg-white text-white dark:text-stone-950 shadow-xs' : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200'}">
+                        ${p}
+                    </button>
+                `;
+            }
+            
+            pagContainer.innerHTML = `
+                <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">
+                    แสดง <span class="font-bold text-stone-800 dark:text-stone-200">${startIdx} - ${endIdx}</span> จากทั้งหมด <span class="font-bold text-stone-800 dark:text-stone-200">${currentNewsTotal.toLocaleString()}</span> ข่าว
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="loadNews(${Math.max(1, currentNewsPage - 1)})" ${currentNewsPage <= 1 ? 'disabled class="opacity-40 cursor-not-allowed text-xs px-2.5 py-1.5 rounded-xl border border-stone-200 dark:border-stone-800 text-stone-400"' : 'class="text-xs px-2.5 py-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-100 transition"'}>
+                        <i class="fa-solid fa-chevron-left mr-1"></i> ก่อนหน้า
+                    </button>
+                    <div class="flex items-center gap-1">
+                        ${pageButtonsHtml}
+                    </div>
+                    <button onclick="loadNews(${Math.min(currentNewsTotalPages, currentNewsPage + 1)})" ${currentNewsPage >= currentNewsTotalPages ? 'disabled class="opacity-40 cursor-not-allowed text-xs px-2.5 py-1.5 rounded-xl border border-stone-200 dark:border-stone-800 text-stone-400"' : 'class="text-xs px-2.5 py-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-100 transition"'}>
+                        ถัดไป <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        async function loadNews(page = 1) {
+            currentNewsPage = page;
             try {
-                const pageParam = currentActivePageId ? `?page_id=${currentActivePageId}` : '';
-                const res = await fetch(`/api/news${pageParam}`);
-                const articles = await res.json();
+                const pageParam = currentActivePageId ? `&page_id=${currentActivePageId}` : '';
+                const searchParam = currentNewsSearch ? `&q=${encodeURIComponent(currentNewsSearch)}` : '';
+                const filterParam = currentNewsFilter && currentNewsFilter !== 'all' ? `&status=${currentNewsFilter}` : '';
+                const res = await fetch(`/api/news?page=${currentNewsPage}&limit=${currentNewsLimit}${filterParam}${searchParam}${pageParam}`);
+                const data = await res.json();
+
+                let articles = [];
+                if (Array.isArray(data)) {
+                    articles = data;
+                    currentNewsTotal = data.length;
+                    currentNewsTotalPages = 1;
+                } else {
+                    articles = data.items || [];
+                    currentNewsTotal = data.total || 0;
+                    currentNewsTotalPages = data.total_pages || 1;
+                }
                 currentArticles = articles;
+
+                const badgeTotal = document.getElementById('news-total-count-badge');
+                if (badgeTotal) {
+                    badgeTotal.innerText = `${currentNewsTotal.toLocaleString()} ข่าว`;
+                }
+
                 const container = document.getElementById('news-container');
 
                 if (articles.length === 0) {
                     container.innerHTML = `
-                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center text-zinc-400 space-y-3">
-                            <i class="fa-solid fa-mug-hot text-4xl text-zinc-600"></i>
-                            <p class="font-medium">ยังไม่มีข่าวสำหรับเพจนี้ในระบบ</p>
-                            <button onclick="triggerFetch()" class="bg-lfc-red text-white text-xs px-4 py-2 rounded-xl font-semibold hover:bg-lfc-darkred transition">
-                                <i class="fa-solid fa-bolt mr-1"></i> ดึงข่าวจากฟีดของเพจนี้
+                        <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-10 text-center text-stone-500 space-y-3 shadow-xs">
+                            <i class="fa-solid fa-newspaper text-4xl text-stone-300 dark:text-stone-700"></i>
+                            <p class="font-medium text-stone-700 dark:text-stone-300">ไม่พบข่าวสารในเงื่อนไขที่เลือก</p>
+                            <button onclick="triggerFetch()" class="bg-stone-900 hover:bg-stone-800 text-white text-xs px-4 py-2 rounded-xl font-medium transition shadow-xs">
+                                <i class="fa-solid fa-bolt mr-1 text-amber-400"></i> ดึงข่าวจากฟีดของเพจนี้
                             </button>
                         </div>
                     `;
+                    renderPagination();
                     return;
                 }
 
@@ -5922,124 +6161,118 @@
                     const fbPostUrl = art.fb_post_url || (art.fb_post_id && !String(art.fb_post_id).startsWith('sim_') ? `https://facebook.com/${art.fb_post_id}` : (art.page_id && !String(art.page_id).startsWith('your_page') ? `https://facebook.com/${art.page_id}` : 'https://facebook.com'));
 
                     const statusBadge = isPosted 
-                        ? `<a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="group text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-3 py-1 rounded-full font-semibold flex items-center gap-1.5 transition shadow-sm hover:scale-105" title="คลิกเพื่อเปิดดูข่าวนี้บน Facebook ทันที">
-                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        ? `<a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="group text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full font-semibold flex items-center gap-1.5 transition shadow-2xs hover:scale-102" title="คลิกเพื่อเปิดดูข่าวนี้บน Facebook ทันที">
+                            <i class="fa-solid fa-circle-check text-emerald-500"></i>
                             <span>โพสต์แล้ว</span>
-                            <span class="text-blue-400 group-hover:text-blue-300 flex items-center gap-1 ml-1 pl-1.5 border-l border-emerald-500/30 text-[11px]">
+                            <span class="text-blue-500 group-hover:text-blue-600 flex items-center gap-1 ml-1 pl-1.5 border-l border-emerald-500/30 text-[11px]">
                                 <i class="fa-brands fa-facebook"></i> ดูบน FB <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
                             </span>
                            </a>`
-                        : `<span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><i class="fa-regular fa-clock"></i> รอดำเนินการ</span>`;
+                        : `<span class="text-xs bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><i class="fa-regular fa-clock"></i> รอดำเนินการ</span>`;
 
                     const hasCard = !!art.card_image_path;
-                    const cardFilename = hasCard ? art.card_image_path.split(/[\\/]/).pop() : '';
+                    const cardFilename = hasCard ? art.card_image_path.split(/[\/]/).pop() : '';
                     const cardUrl = hasCard ? `/cards/${cardFilename}?t=${Date.now()}` : '';
                     const displayImg = cardUrl || art.image_url;
 
                     const imgTag = displayImg 
                         ? `
-                        <div class="relative group shrink-0 w-full sm:w-52">
-                            <img src="${displayImg}" alt="Cover" class="w-full sm:w-52 aspect-[16/9] sm:aspect-auto sm:h-44 object-cover rounded-2xl border border-zinc-800 shadow-lg transition" onerror="this.style.display='none'">
-                            ${hasCard ? `<span class="absolute top-2 left-2 bg-lfc-red/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1"><i class="fa-solid fa-paintbrush"></i> Social Card</span>` : ''}
-                            <button onclick="openCardModal(${idx})" class="absolute bottom-2 right-2 bg-black/85 hover:bg-lfc-red text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-xl backdrop-blur border border-white/20 transition flex items-center gap-1.5 shadow-lg" title="ปรับแต่งภาพกราฟิกข่าวกีฬา">
-                                <i class="fa-solid fa-wand-magic-sparkles text-lfc-gold"></i> ปรับแต่งการ์ด
+                        <div class="relative group shrink-0 w-full sm:w-56 h-44 rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-950 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+                            <img src="${displayImg}" alt="Cover" class="w-full h-full object-cover transition duration-300 group-hover:scale-105" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex flex-col items-center justify-center p-3 text-center\'><i class=\'fa-solid fa-image text-stone-300 text-2xl mb-1\'></i><button onclick=\'openCardModal(${idx})\' class=\'text-xs text-blue-600 hover:underline font-semibold\'>+ สร้าง Social Card</button></div>';">
+                            ${hasCard ? `<span class="absolute top-2 left-2 bg-stone-900/85 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1"><i class="fa-solid fa-paintbrush text-amber-400"></i> Social Card</span>` : ''}
+                            <button onclick="openCardModal(${idx})" class="absolute bottom-2 right-2 bg-stone-900/85 hover:bg-stone-900 text-white text-[11px] font-medium px-2.5 py-1 rounded-lg backdrop-blur border border-white/20 transition flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> ปรับแต่งการ์ด
                             </button>
                         </div>
                         `
                         : `
-                        <div class="shrink-0 w-full sm:w-52 h-36 sm:h-40 bg-zinc-950 border border-dashed border-zinc-800 rounded-2xl flex flex-col items-center justify-center p-3 text-center">
-                            <i class="fa-solid fa-image text-zinc-700 text-2xl mb-1"></i>
-                            <button onclick="openCardModal(${idx})" class="text-[11px] text-lfc-red hover:underline font-semibold">
+                        <div class="shrink-0 w-full sm:w-56 h-44 bg-stone-50 dark:bg-stone-950 border border-dashed border-stone-200 dark:border-stone-800 rounded-xl flex flex-col items-center justify-center p-3 text-center shadow-xs">
+                            <i class="fa-solid fa-image text-stone-300 dark:text-stone-700 text-2xl mb-1"></i>
+                            <button onclick="openCardModal(${idx})" class="text-xs text-blue-600 hover:underline font-semibold">
                                 + สร้าง Social Card
                             </button>
                         </div>
                         `;
 
                     return `
-                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 hover:border-zinc-700 transition">
+                        <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
                             <div class="flex flex-col sm:flex-row gap-4 items-start">
                                 ${imgTag}
-                                <div class="flex-1 space-y-2 w-full">
+                                <div class="flex-1 space-y-2.5 w-full">
                                     <div class="flex items-center justify-between flex-wrap gap-2">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-[11px] font-bold bg-lfc-red text-white px-2 py-0.5 rounded-md">${art.source}</span>
-                                            <span class="text-xs text-zinc-400">${art.published_at || 'ล่าสุด'}</span>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="text-[11px] font-semibold bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700 px-2 py-0.5 rounded-lg">${art.source}</span>
+                                            <span class="text-xs text-stone-400">${art.published_at || 'ล่าสุด'}</span>
+                                            ${art.detected_category ? `<span class="text-[11px] font-medium bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-300 px-2 py-0.5 rounded-md border border-blue-200/50">${art.detected_category}</span>` : ''}
                                         </div>
-                                        ${statusBadge}
+                                        <div>
+                                            ${statusBadge}
+                                        </div>
                                     </div>
 
-                                    <h3 class="font-bold text-base text-zinc-100 hover:text-lfc-red transition">
-                                        <a href="${art.url}" target="_blank" rel="noopener">${art.title}</a>
+                                    <h3 class="font-bold text-sm sm:text-base text-stone-900 dark:text-white leading-snug">
+                                        <a href="${art.url}" target="_blank" class="hover:text-blue-600 transition">${art.title}</a>
                                     </h3>
 
-                                    <!-- REWRITTEN CAPTION (EDITABLE) -->
-                                    <div class="space-y-1 pt-1">
-                                        <div class="flex items-center justify-between">
-                                            <label class="text-[11px] font-semibold text-zinc-400 flex items-center gap-1">
-                                                <i class="fa-solid fa-pen-to-square text-lfc-gold"></i> แคปชันสไตล์เก๋าจัดจ้าน (แก้ไขได้ก่อนโพสต์):
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <label class="text-[11px] text-stone-500 font-medium flex items-center gap-1">
+                                                <i class="fa-solid fa-pen-to-square"></i> แคปชันโพสต์ลงเพจ (แก้ไขได้ก่อนโพสต์):
                                             </label>
-                                            ${!art.rewritten_text ? `<span class="text-[11px] text-amber-400 flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่มีแคปชัน</span>` : ''}
                                         </div>
-                                        <textarea id="caption-${idx}" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-lfc-red transition resize-y min-h-[110px]" rows="4" placeholder="กำลังรอ AI เขียนแคปชัน...">${art.rewritten_text || ''}</textarea>
+                                        <textarea id="caption-${idx}" rows="4" class="w-full text-xs sm:text-sm bg-stone-50/80 dark:bg-stone-950/80 border border-stone-200 dark:border-stone-800 rounded-xl p-3 text-stone-800 dark:text-stone-200 font-sans focus:outline-none focus:ring-1 focus:ring-blue-500 transition leading-relaxed resize-y" placeholder="ข้อความสำหรับโพสต์บน Facebook...">${art.rewritten_caption || art.summary || ''}</textarea>
                                     </div>
 
-                                    <!-- AFFILIATE TOGGLE -->
-                                    <div class="flex items-center space-x-2 pt-1">
-                                        <input type="checkbox" id="aff-check-${idx}" class="w-3.5 h-3.5 accent-amber-500 rounded cursor-pointer">
-                                        <label for="aff-check-${idx}" class="text-[11px] text-zinc-400 cursor-pointer flex items-center gap-1">
-                                            <i class="fa-solid fa-bag-shopping text-amber-400"></i> แทรกลิงก์ Affiliate สินค้าแนะนำท้ายโพสต์ (Shopee / Lazada)
+                                    <div class="flex items-center gap-2 text-xs text-stone-500">
+                                        <label class="flex items-center gap-1.5 cursor-pointer">
+                                            <input type="checkbox" id="affiliate-chk-${idx}" class="rounded text-blue-600 border-stone-300">
+                                            <span>แทรกลิงก์ Affiliate สินค้าแนะนำท้ายโพสต์ (Shopee / Lazada)</span>
                                         </label>
                                     </div>
 
-                                    <!-- ACTION BUTTONS -->
-                                    <div class="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-zinc-800/80">
-                                        <div class="flex items-center space-x-2 flex-wrap gap-y-1">
-                                            <button onclick="openCardModal(${idx})" class="text-xs bg-lfc-red/20 hover:bg-lfc-red/30 text-rose-300 border border-lfc-red/30 font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1.5" title="สร้างหรือปรับแต่งภาพ Social Card สไตล์สื่อกีฬา">
-                                                <i class="fa-solid fa-paintbrush text-lfc-gold"></i> <span>Social Card</span>
+                                    <!-- Action Toolbar -->
+                                    <div class="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-stone-100 dark:border-stone-800/80">
+                                        <div class="flex items-center space-x-1.5 flex-wrap">
+                                            <button onclick="openCardModal(${idx})" class="text-xs bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-xl font-medium transition flex items-center gap-1.5 shadow-2xs">
+                                                <i class="fa-solid fa-paintbrush text-amber-500"></i> Social Card
                                             </button>
-                                            <button onclick="openVideoModal(${idx})" class="text-xs bg-pink-600/20 hover:bg-pink-600/30 text-pink-300 border border-pink-500/30 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5" title="สร้างคลิปวิดีโอสั้น TikTok/Reels พร้อมเสียงพากย์ Google TTS">
-                                                <i class="fa-solid fa-video text-pink-400"></i> <span>Reels/TikTok</span>
+                                            <button onclick="openVideoModal(${idx})" class="text-xs bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-xl font-medium transition flex items-center gap-1.5 shadow-2xs">
+                                                <i class="fa-solid fa-video text-pink-500"></i> Reels/TikTok
                                             </button>
-                                            <button onclick="regenerateCaption(${idx}, '${art.url}')" class="text-xs bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
-                                                <i class="fa-solid fa-wand-magic-sparkles text-lfc-gold"></i> AI เขียนใหม่
+                                            <button onclick="regenerateCaption(${art.id}, ${idx})" class="text-xs bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-stone-700 px-2.5 py-1.5 rounded-xl font-medium transition flex items-center gap-1.5 shadow-2xs">
+                                                <i class="fa-solid fa-wand-magic-sparkles text-purple-500"></i> AI ปรับแต่งใหม่
                                             </button>
-                                            <button onclick="saveCaption(${idx}, '${art.url}')" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-lg border border-zinc-700 transition flex items-center gap-1.5">
-                                                <i class="fa-solid fa-floppy-disk"></i> บันทึก
+                                            <button onclick="saveCaption(${art.id}, ${idx})" class="text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white px-2 py-1.5 flex items-center gap-1">
+                                                <i class="fa-regular fa-floppy-disk"></i> บันทึก
                                             </button>
-                                            <button onclick="copyCaption(${idx})" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-lg border border-zinc-700 transition flex items-center gap-1.5">
+                                            <button onclick="copyCaption(${idx})" class="text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white px-2 py-1.5 flex items-center gap-1">
                                                 <i class="fa-regular fa-copy"></i> คัดลอก
                                             </button>
-                                            <a href="${art.url}" target="_blank" class="text-xs text-zinc-400 hover:text-white px-2 py-1.5 flex items-center gap-1">
+                                            <a href="${art.url}" target="_blank" class="text-xs text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 px-2 py-1.5 flex items-center gap-1">
                                                 <i class="fa-solid fa-arrow-up-right-from-square"></i> ดูต้นฉบับ
                                             </a>
                                             ${isPosted ? `
-                                            <a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-600/20 hover:bg-blue-600/35 text-blue-300 hover:text-white border border-blue-500/40 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm" title="เปิดดูโพสต์บน Facebook ในแท็บใหม่">
-                                                <i class="fa-brands fa-facebook text-blue-400 text-sm"></i>
+                                            <a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/30 px-3 py-1.5 rounded-xl font-medium transition flex items-center gap-1.5 shadow-2xs" title="เปิดดูโพสต์บน Facebook ในแท็บใหม่">
+                                                <i class="fa-brands fa-facebook text-blue-500 text-sm"></i>
                                                 <span>เปิดดูบน Facebook</span>
-                                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70"></i>
+                                                <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
                                             </a>
                                             ` : ''}
                                         </div>
 
-                                        <div class="flex items-center space-x-2 w-full sm:w-auto justify-end pt-2 sm:pt-0">
+                                        <div class="flex items-center space-x-2 w-full sm:w-auto justify-end pt-1 sm:pt-0">
                                             ${isPosted ? `
-                                            <!-- Button Repost -->
-                                            <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 font-medium px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="โพสต์ข่าวนี้ซ้ำอีกครั้ง">
-                                                <i class="fa-solid fa-repeat text-zinc-400"></i> โพสต์ซ้ำ
+                                            <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-stone-700 font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+                                                <i class="fa-solid fa-repeat"></i> โพสต์ซ้ำ
                                             </button>
-
-                                            <!-- Button View on Facebook -->
-                                            <a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-initial justify-center text-xs bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-blue-600/30 hover:scale-102">
+                                            <a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 sm:flex-initial justify-center text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs hover:scale-102">
                                                 <i class="fa-brands fa-facebook text-base"></i> ไปที่โพสต์ Facebook <i class="fa-solid fa-arrow-up-right-from-square text-[10px] ml-0.5"></i>
                                             </a>
                                             ` : `
-                                            <!-- Button Schedule -->
-                                            <button onclick="openScheduleModal(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
-                                                <i class="fa-solid fa-calendar-plus text-amber-400"></i> ตั้งเวลา
+                                            <button onclick="openScheduleModal(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+                                                <i class="fa-solid fa-calendar-plus text-amber-500"></i> ตั้งเวลา
                                             </button>
-
-                                            <!-- Button Post Now -->
-                                            <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-lfc-red hover:bg-lfc-darkred text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-lfc-red/20">
+                                            <button onclick="publishPost(${idx}, '${art.url}', '${art.image_url || ''}')" class="flex-1 sm:flex-initial justify-center text-xs bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-200 text-white dark:text-stone-950 font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs">
                                                 <i class="fa-solid fa-paper-plane"></i> โพสต์ทันที
                                             </button>
                                             `}
@@ -6051,6 +6284,7 @@
                     `;
                 }).join('');
 
+                renderPagination();
             } catch (e) {
                 console.error("Error loading news:", e);
             }
@@ -6812,20 +7046,47 @@
         }
 
         // INITIALIZE
+        // THAID SAAS DROPDOWN HELPER
+        function toggleThaiDSaasMenu() {
+            const menu = document.getElementById('thaidSaasMenu');
+            const chevron = document.getElementById('thaidSaasChevron');
+            if (!menu) return;
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+        document.addEventListener('click', (e) => {
+            const wrap = document.getElementById('thaidSaasDropdownWrap');
+            const menu = document.getElementById('thaidSaasMenu');
+            const chevron = document.getElementById('thaidSaasChevron');
+            if (wrap && !wrap.contains(e.target) && menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // INITIALIZE
         document.addEventListener('DOMContentLoaded', async () => {
             await loadAuthUser();
             await loadUserApiKeys();
             await loadPages();
             loadStatus();
-            loadNews();
+            loadNews(1);
             loadLogs();
             loadPostingAnalytics();
 
-            // Auto refresh logs & schedules every 5 seconds
+            // Refresh status & logs gently (every 20s instead of aggressive 5s)
             setInterval(() => {
-                loadLogs();
-                loadStatus();
-            }, 5000);
+                if (!document.hidden) {
+                    loadLogs();
+                    loadStatus();
+                }
+            }, 20000);
         });
     </script>
 

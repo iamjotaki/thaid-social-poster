@@ -29,6 +29,7 @@ from database import (
     toggle_feed,
     delete_feed,
     get_recent_articles,
+    get_paginated_articles,
     is_article_seen,
     mark_as_posted,
     build_fb_post_url,
@@ -407,42 +408,57 @@ def serve_video(filename):
 # -------------------------------------------------------------
 # API: STATUS & OVERVIEW
 # -------------------------------------------------------------
+_STATUS_CACHE = {"data": None, "ts": 0, "page_id": None}
+
 @app.route("/api/status")
 def get_status():
-    """ดึงสถานะระบบปัจจุบันและสถิติภาพรวม"""
+    """ดึงสถานะระบบปัจจุบันและสถิติภาพรวม (Optimized Single-Query & 3s In-Memory Cache)"""
     page_id = request.args.get("page_id")
+    now_ts = time.time()
+    
+    # Cache hit check (3 seconds TTL)
+    if _STATUS_CACHE["data"] and _STATUS_CACHE["page_id"] == page_id and (now_ts - _STATUS_CACHE["ts"] < 3):
+        return jsonify(_STATUS_CACHE["data"])
+        
     with get_connection() as conn:
         cursor = conn.cursor()
         
-        if page_id:
-            cursor.execute("SELECT COUNT(*) FROM articles WHERE page_id = ?", (page_id,))
-            total_news = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM articles WHERE status = 'posted' AND page_id = ?", (page_id,))
-            posted_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM articles WHERE status != 'posted' AND page_id = ?", (page_id,))
-            pending_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM page_feeds WHERE page_id = ? AND is_enabled = 1", (page_id,))
-            sources_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM page_feeds WHERE page_id = ?", (page_id,))
-            total_sources = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM scheduled_posts WHERE page_id = ? AND status = 'scheduled'", (page_id,))
-            scheduled_count = cursor.fetchone()[0]
-        else:
-            cursor.execute("SELECT COUNT(*) FROM articles")
-            total_news = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM articles WHERE status = 'posted'")
-            posted_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM articles WHERE status != 'posted'")
-            pending_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM page_feeds WHERE is_enabled = 1")
-            sources_count = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM page_feeds")
-            total_sources = cursor.fetchone()[0]
-            cursor.execute("SELECT COUNT(*) FROM scheduled_posts WHERE status = 'scheduled'")
-            scheduled_count = cursor.fetchone()[0]
+        art_filter = "WHERE page_id = ?" if page_id else ""
+        feed_filter = "WHERE page_id = ?" if page_id else ""
+        sched_filter = "AND page_id = ?" if page_id else ""
+        
+        params = (page_id,) if page_id else ()
+        
+        # 1. Articles count in 1 aggregate query
+        cursor.execute(f"""
+            SELECT 
+                COUNT(*),
+                COALESCE(SUM(CASE WHEN status = 'posted' THEN 1 ELSE 0 END), 0),
+                COALESCE(SUM(CASE WHEN status != 'posted' THEN 1 ELSE 0 END), 0)
+            FROM articles {art_filter}
+        """, params)
+        art_row = cursor.fetchone()
+        total_news = int(art_row[0] or 0)
+        posted_count = int(art_row[1] or 0)
+        pending_count = int(art_row[2] or 0)
+        
+        # 2. Feeds count in 1 aggregate query
+        cursor.execute(f"""
+            SELECT 
+                COUNT(*),
+                COALESCE(SUM(CASE WHEN is_enabled = 1 THEN 1 ELSE 0 END), 0)
+            FROM page_feeds {feed_filter}
+        """, params)
+        feed_row = cursor.fetchone()
+        total_sources = int(feed_row[0] or 0)
+        sources_count = int(feed_row[1] or 0)
+        
+        # 3. Scheduled count
+        cursor.execute(f"SELECT COUNT(*) FROM scheduled_posts WHERE status = 'scheduled' {sched_filter}", params)
+        scheduled_count = int(cursor.fetchone()[0] or 0)
 
     pages = get_all_pages()
-    return jsonify({
+    res_data = {
         "gemini_ready": bool(config.GEMINI_API_KEY),
         "fb_ready": len(pages) > 0,
         "pages_count": len(pages),
@@ -457,7 +473,11 @@ def get_status():
             "total_sources": total_sources,
             "scheduled_count": scheduled_count
         }
-    })
+    }
+    _STATUS_CACHE["data"] = res_data
+    _STATUS_CACHE["ts"] = now_ts
+    _STATUS_CACHE["page_id"] = page_id
+    return jsonify(res_data)
 
 # -------------------------------------------------------------
 # API: GENERAL SETTINGS (GEMINI KEY, DRY RUN, INTERVAL)
@@ -1123,21 +1143,19 @@ def api_delete_schedule(post_id):
 # -------------------------------------------------------------
 @app.route("/api/news")
 def get_news():
-    """ดึงรายการข่าวล่าสุด (สามารถกรองตาม page_id ได้)"""
-    limit = request.args.get("limit", 30, type=int)
+    """ดึงรายการข่าวล่าสุดพร้อมระบบแบ่งหน้า Pagination และ Filter ค้นหา (ความเร็วสูง ไร้ Glob I/O)"""
+    page = request.args.get("page", 1, type=int)
+    limit = request.args.get("limit", 15, type=int)
+    limit = max(1, min(limit, 50))
     page_id = request.args.get("page_id")
-    articles = get_recent_articles(limit=limit, page_id=page_id)
+    filter_status = request.args.get("status")
+    search_q = request.args.get("q", "").strip()
     
-    for art in articles:
+    paginated = get_paginated_articles(page=page, limit=limit, page_id=page_id, status=filter_status, search=search_q)
+    
+    for art in paginated["items"]:
         img = art.get("image_url")
-        if img:
-            matching = list((config.BASE_DIR / "downloads" / "images").glob(f"*{art.get('source', '')}*"))
-            if matching:
-                art["local_image"] = f"/images/{matching[0].name}"
-            else:
-                art["local_image"] = img
-        else:
-            art["local_image"] = None
+        art["local_image"] = art.get("card_image_path") or img
 
         if art.get("status") == "posted" and not art.get("fb_post_url"):
             art["fb_post_url"] = build_fb_post_url(art.get("fb_post_id"), art.get("page_id") or page_id)
@@ -1148,7 +1166,9 @@ def get_news():
         art["detected_theme"] = c_theme
         art["raw_category"] = cat_type
 
-    return jsonify(articles)
+    if request.args.get("format") == "legacy":
+        return jsonify(paginated["items"])
+    return jsonify(paginated)
 
 @app.route("/api/logs")
 def get_logs():

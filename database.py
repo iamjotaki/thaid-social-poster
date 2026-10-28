@@ -581,20 +581,65 @@ def update_card_image(article_id: int, card_image_path: str):
         """, (card_image_path, article_id))
         conn.commit()
 
-def get_recent_articles(limit: int = 30, page_id: Optional[str] = None) -> List[Dict]:
-    """ดึงรายการข่าวล่าสุด (กรองตาม page_id ได้)"""
+def get_paginated_articles(
+    page: int = 1,
+    limit: int = 15,
+    page_id: Optional[str] = None,
+    status: Optional[str] = None,
+    search: Optional[str] = None
+) -> Dict:
+    """ดึงรายการข่าวล่าสุดพร้อมระบบแบ่งหน้า Pagination และ Filter"""
+    import math
     with get_connection() as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
+        
+        where = ["1=1"]
+        params = []
         if page_id:
-            cursor.execute("SELECT * FROM articles WHERE page_id = ? ORDER BY id DESC LIMIT ?", (page_id, limit))
-        else:
-            cursor.execute("SELECT * FROM articles ORDER BY id DESC LIMIT ?", (limit,))
-        rows = [dict(row) for row in cursor.fetchall()]
+            where.append("page_id = ?")
+            params.append(page_id)
+        if status and status != 'all':
+            if status == 'posted':
+                where.append("status = 'posted'")
+            elif status == 'pending':
+                where.append("status != 'posted'")
+        if search:
+            where.append("(title LIKE ? OR summary LIKE ? OR source LIKE ?)")
+            s_param = f"%{search}%"
+            params.extend([s_param, s_param, s_param])
+            
+        where_sql = " AND ".join(where)
+        
+        count_sql = f"SELECT COUNT(*) FROM articles WHERE {where_sql}"
+        cursor.execute(count_sql, tuple(params))
+        total = cursor.fetchone()[0] or 0
+        
+        offset = max(0, (page - 1) * limit)
+        fetch_sql = f"SELECT * FROM articles WHERE {where_sql} ORDER BY id DESC LIMIT ? OFFSET ?"
+        fetch_params = tuple(params + [limit, offset])
+        cursor.execute(fetch_sql, fetch_params)
+        
+        rows = [dict(r) for r in cursor.fetchall()]
         for art in rows:
             if art.get("status") == "posted" and not art.get("fb_post_url"):
                 art["fb_post_url"] = build_fb_post_url(art.get("fb_post_id"), art.get("page_id") or page_id)
-        return rows
+                
+        total_pages = max(1, math.ceil(total / limit)) if total > 0 else 1
+        
+        return {
+            "items": rows,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": total_pages,
+            "has_more": page < total_pages
+        }
+
+def get_recent_articles(limit: int = 30, page_id: Optional[str] = None) -> List[Dict]:
+    """ดึงรายการข่าวล่าสุด (สำหรับ backward compatibility)"""
+    res = get_paginated_articles(page=1, limit=limit, page_id=page_id)
+    return res["items"]
 
 # -------------------------------------------------------------
 # จัดการระบบตั้งเวลาโพสต์ (Scheduled Posts Queue)
@@ -809,107 +854,89 @@ def record_post_history(
 
 def get_posting_analytics(page_id: Optional[str] = None, user_id: Optional[int] = None) -> Dict:
     """
-    คำนวณสถิติจำนวนการโพสต์:
+    คำนวณสถิติจำนวนการโพสต์แบบ Single-Query ประสิทธิภาพสูง:
     - วันนี้ (Today)
     - 7 วันที่ผ่านมา (Last 7 Days)
     - เดือนนี้ (This Month)
     - ทั้งหมด (All Time)
     - คิวรอปล่อยบน Facebook (FB Scheduled Queue)
+    - สรุปรายวัน 7 วันล่าสุด (Daily Breakdown)
     """
+    now = datetime.datetime.now()
+    today_str = now.strftime('%Y-%m-%d')
+    d7_start = now - datetime.timedelta(days=6)
+    d7_str = d7_start.strftime('%Y-%m-%d')
+    month_str = now.strftime('%Y-%m')
+
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        base_filter = " WHERE 1=1"
-        params = []
+        params = [today_str, today_str, today_str, d7_str, month_str]
+        extra_where = []
+        extra_params = []
         if page_id:
-            base_filter += " AND page_id = ?"
-            params.append(page_id)
+            extra_where.append("page_id = ?")
+            extra_params.append(page_id)
         if user_id:
-            base_filter += " AND user_id = ?"
-            params.append(user_id)
+            extra_where.append("user_id = ?")
+            extra_params.append(user_id)
 
-        # 1. วันนี้ (Today - นับเฉพาะที่เผยแพร่แล้ว)
-        cursor.execute(f"""
-            SELECT COUNT(*),
-                   SUM(CASE WHEN post_type = 'reel' THEN 1 ELSE 0 END) as reels_count,
-                   SUM(CASE WHEN post_type != 'reel' THEN 1 ELSE 0 END) as posts_count
+        all_params = tuple(params + extra_params)
+        where_filter = (" AND " + " AND ".join(extra_where)) if extra_where else ""
+
+        # 1. รวมสถิติหลักทั้งหมดใน 1 Query
+        sql_summary = f"""
+            SELECT
+                COALESCE(SUM(CASE WHEN status = 'posted' AND substr(COALESCE(published_at, created_at || ''), 1, 10) = ? THEN 1 ELSE 0 END), 0) AS today_total,
+                COALESCE(SUM(CASE WHEN status = 'posted' AND post_type = 'reel' AND substr(COALESCE(published_at, created_at || ''), 1, 10) = ? THEN 1 ELSE 0 END), 0) AS today_reels,
+                COALESCE(SUM(CASE WHEN status = 'posted' AND post_type != 'reel' AND substr(COALESCE(published_at, created_at || ''), 1, 10) = ? THEN 1 ELSE 0 END), 0) AS today_posts,
+                COALESCE(SUM(CASE WHEN status = 'posted' AND substr(COALESCE(published_at, created_at || ''), 1, 10) >= ? THEN 1 ELSE 0 END), 0) AS days7_total,
+                COALESCE(SUM(CASE WHEN status = 'posted' AND substr(COALESCE(published_at, created_at || ''), 1, 7) = ? THEN 1 ELSE 0 END), 0) AS month_total,
+                COALESCE(SUM(CASE WHEN status = 'posted' THEN 1 ELSE 0 END), 0) AS all_time_total,
+                COALESCE(SUM(CASE WHEN status = 'fb_scheduled' THEN 1 ELSE 0 END), 0) AS scheduled_fb_total,
+                COALESCE(SUM(CASE WHEN status IN ('fb_scheduled', 'scheduled') THEN 1 ELSE 0 END), 0) AS total_scheduled_queue
             FROM scheduled_posts
-            {base_filter} AND status = 'posted' AND DATE(COALESCE(published_at, created_at)) = DATE('now', 'localtime')
-        """, params)
-        row_today = cursor.fetchone()
-        today_total = row_today[0] or 0
-        today_reels = row_today[1] or 0
-        today_posts = row_today[2] or 0
+            WHERE 1=1 {where_filter}
+        """
+        cursor.execute(sql_summary, all_params)
+        row = cursor.fetchone()
 
-        # 2. 7 วันที่ผ่านมา (Last 7 Days)
-        cursor.execute(f"""
-            SELECT COUNT(*)
+        # 2. รวมสถิติรายวัน 7 วันล่าสุดใน 1 Query ผ่าน GROUP BY
+        sql_daily = f"""
+            SELECT 
+                substr(COALESCE(published_at, created_at || ''), 1, 10) AS p_date,
+                COUNT(*) AS total,
+                COALESCE(SUM(CASE WHEN post_type = 'reel' THEN 1 ELSE 0 END), 0) AS reels,
+                COALESCE(SUM(CASE WHEN post_type != 'reel' THEN 1 ELSE 0 END), 0) AS posts
             FROM scheduled_posts
-            {base_filter} AND status = 'posted' AND DATE(COALESCE(published_at, created_at)) >= DATE('now', '-6 days', 'localtime')
-        """, params)
-        days7_total = cursor.fetchone()[0] or 0
+            WHERE status = 'posted' 
+              AND substr(COALESCE(published_at, created_at || ''), 1, 10) >= ?
+              {where_filter}
+            GROUP BY substr(COALESCE(published_at, created_at || ''), 1, 10)
+        """
+        cursor.execute(sql_daily, tuple([d7_str] + extra_params))
+        daily_map = {r[0]: {"total": int(r[1]), "reels": int(r[2]), "posts": int(r[3])} for r in cursor.fetchall() if r[0]}
 
-        # 3. เดือนนี้ (This Month)
-        cursor.execute(f"""
-            SELECT COUNT(*)
-            FROM scheduled_posts
-            {base_filter} AND status = 'posted' AND strftime('%Y-%m', COALESCE(published_at, created_at)) = strftime('%Y-%m', 'now', 'localtime')
-        """, params)
-        month_total = cursor.fetchone()[0] or 0
-
-        # 4. ทั้งหมด (All-Time)
-        cursor.execute(f"""
-            SELECT COUNT(*)
-            FROM scheduled_posts
-            {base_filter} AND status = 'posted'
-        """, params)
-        all_time_total = cursor.fetchone()[0] or 0
-
-        # 5. คิวที่ตั้งเวลาอยู่บน Facebook (FB Scheduled Queue)
-        cursor.execute(f"""
-            SELECT COUNT(*)
-            FROM scheduled_posts
-            {base_filter} AND status = 'fb_scheduled'
-        """, params)
-        scheduled_fb_total = cursor.fetchone()[0] or 0
-
-        # 6. คิวที่ตั้งเวลาทั้งหมด (FB + Host)
-        cursor.execute(f"""
-            SELECT COUNT(*)
-            FROM scheduled_posts
-            {base_filter} AND status IN ('fb_scheduled', 'scheduled')
-        """, params)
-        scheduled_queue_total = cursor.fetchone()[0] or 0
-
-        # 7. สรุปรายวัน 7 วันล่าสุด (Daily Breakdown)
         daily_breakdown = []
         for d in range(6, -1, -1):
-            cursor.execute(f"""
-                SELECT COUNT(*),
-                       SUM(CASE WHEN post_type = 'reel' THEN 1 ELSE 0 END) as reels,
-                       SUM(CASE WHEN post_type != 'reel' THEN 1 ELSE 0 END) as posts
-                FROM scheduled_posts
-                {base_filter} AND status = 'posted' AND DATE(COALESCE(published_at, created_at)) = DATE('now', '-{d} days', 'localtime')
-            """, params)
-            day_r = cursor.fetchone()
-            cursor.execute(f"SELECT DATE('now', '-{d} days', 'localtime')")
-            d_label = cursor.fetchone()[0]
+            day_date = (now - datetime.timedelta(days=d)).strftime('%Y-%m-%d')
+            day_data = daily_map.get(day_date, {"total": 0, "reels": 0, "posts": 0})
             daily_breakdown.append({
-                "date": d_label,
-                "total": day_r[0] or 0,
-                "reels": day_r[1] or 0,
-                "posts": day_r[2] or 0
+                "date": day_date,
+                "total": day_data["total"],
+                "reels": day_data["reels"],
+                "posts": day_data["posts"]
             })
 
         return {
-            "today_total": today_total,
-            "today_posts": today_posts,
-            "today_reels": today_reels,
-            "days7_total": days7_total,
-            "month_total": month_total,
-            "all_time_total": all_time_total,
-            "scheduled_fb_total": scheduled_fb_total,
-            "scheduled_queue_total": scheduled_queue_total,
+            "today_total": int(row[0] or 0),
+            "today_posts": int(row[2] or 0),
+            "today_reels": int(row[1] or 0),
+            "days7_total": int(row[3] or 0),
+            "month_total": int(row[4] or 0),
+            "all_time_total": int(row[5] or 0),
+            "scheduled_fb_total": int(row[6] or 0),
+            "scheduled_queue_total": int(row[7] or 0),
             "daily_breakdown": daily_breakdown
         }
 
@@ -922,6 +949,7 @@ def get_post_history(
     user_id: Optional[int] = None
 ) -> List[Dict]:
     """ดึงรายการประวัติการโพสต์ย้อนหลัง พร้อมฟิลเตอร์ค้นหา"""
+    now = datetime.datetime.now()
     with get_connection() as conn:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
@@ -946,11 +974,14 @@ def get_post_history(
             params.append(status)
 
         if date_filter == "today":
-            query += " AND DATE(COALESCE(sp.published_at, sp.created_at)) = DATE('now', 'localtime')"
+            query += " AND substr(COALESCE(sp.published_at, sp.created_at || ''), 1, 10) = ?"
+            params.append(now.strftime('%Y-%m-%d'))
         elif date_filter == "7days":
-            query += " AND DATE(COALESCE(sp.published_at, sp.created_at)) >= DATE('now', '-6 days', 'localtime')"
+            query += " AND substr(COALESCE(sp.published_at, sp.created_at || ''), 1, 10) >= ?"
+            params.append((now - datetime.timedelta(days=6)).strftime('%Y-%m-%d'))
         elif date_filter == "month":
-            query += " AND strftime('%Y-%m', COALESCE(sp.published_at, sp.created_at)) = strftime('%Y-%m', 'now', 'localtime')"
+            query += " AND substr(COALESCE(sp.published_at, sp.created_at || ''), 1, 7) = ?"
+            params.append(now.strftime('%Y-%m'))
 
         query += " ORDER BY COALESCE(sp.scheduled_time, sp.created_at) DESC LIMIT ?"
         params.append(limit)
