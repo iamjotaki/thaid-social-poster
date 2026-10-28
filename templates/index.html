@@ -7071,14 +7071,17 @@
         });
 
         // INITIALIZE
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadAuthUser();
-            await loadUserApiKeys();
-            await loadPages();
-            loadStatus();
-            loadNews(1);
-            loadLogs();
-            loadPostingAnalytics();
+        async function initDashboard() {
+            // Fetch core data in parallel for instantaneous rendering
+            Promise.allSettled([
+                loadAuthUser(),
+                loadUserApiKeys(),
+                loadPages(),
+                loadStatus(),
+                loadNews(1),
+                loadLogs(),
+                loadPostingAnalytics()
+            ]);
 
             // Refresh status & logs gently (every 20s instead of aggressive 5s)
             setInterval(() => {
@@ -7087,7 +7090,13 @@
                     loadStatus();
                 }
             }, 20000);
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboard);
+        } else {
+            initDashboard();
+        }
     </script>
 
     <!-- GOOGLE LOGIN MOCKUP MODAL -->
