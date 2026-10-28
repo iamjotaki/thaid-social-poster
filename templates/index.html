@@ -259,9 +259,6 @@
                     <button onclick="switchTab('tab-news')" id="nav-tab-news" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-stone-900 dark:bg-white text-white dark:text-stone-950 shadow-xs transition shrink-0 whitespace-nowrap" title="รายการข่าวสาร & เตรียมโพสต์">
                         <i class="fa-solid fa-newspaper text-xs text-blue-500"></i> <span>ข่าวสาร</span>
                     </button>
-                    <button onclick="switchTab('tab-match')" id="nav-tab-match" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="Match Center (พรีวิว & ตัดเกรดนักเตะ)">
-                        <i class="fa-solid fa-futbol text-emerald-500 text-xs"></i> <span>Match Center</span>
-                    </button>
                     <button onclick="switchTab('tab-community')" id="nav-tab-community" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition shrink-0 whitespace-nowrap" title="Community & ตอบคอมเมนต์เพจ">
                         <i class="fa-solid fa-comments text-violet-500 text-xs"></i> <span>Community</span>
                     </button>
@@ -3047,7 +3044,11 @@
             if (tabId === 'tab-feeds') loadPageFeeds();
             if (tabId === 'tab-pages') loadPagesTab();
             if (tabId === 'tab-apikeys') loadUserApiKeys();
-            if (tabId === 'tab-news') loadNews();
+            if (tabId === 'tab-news') {
+                if (!currentArticles || currentArticles.length === 0) {
+                    loadNews();
+                }
+            }
         }
 
         // ==========================================
@@ -6271,6 +6272,9 @@
                                             <a href="${art.url}" target="_blank" class="text-xs text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 px-2 py-1.5 flex items-center gap-1">
                                                 <i class="fa-solid fa-arrow-up-right-from-square"></i> ดูต้นฉบับ
                                             </a>
+                                            <button onclick="deleteArticle(${art.id}, ${idx})" class="text-xs text-rose-500 hover:text-rose-600 dark:text-rose-400 dark:hover:text-rose-300 px-2 py-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition flex items-center gap-1" title="ลบรายการข่าวนี้">
+                                                <i class="fa-regular fa-trash-can"></i> ลบ
+                                            </button>
                                             ${isPosted ? `
                                             <a href="${fbPostUrl}" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/30 px-3 py-1.5 rounded-xl font-medium transition flex items-center gap-1.5 shadow-2xs" title="เปิดดูโพสต์บน Facebook ในแท็บใหม่">
                                                 <i class="fa-brands fa-facebook text-blue-500 text-sm"></i>
@@ -6307,6 +6311,33 @@
                 renderPagination();
             } catch (e) {
                 console.error("Error loading news:", e);
+            }
+        }
+
+        
+        async function deleteArticle(id, idx) {
+            if (!id) return;
+            const item = currentArticles && currentArticles[idx] ? currentArticles[idx] : null;
+            const titleSnippet = item && item.title ? ` "${item.title.substring(0, 35)}..."` : ` ID #${id}`;
+            if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบข่าว${titleSnippet} ออกจากระบบ?`)) {
+                return;
+            }
+            try {
+                const res = await fetch(`/api/news/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message || "ลบข่าวเรียบร้อยแล้ว");
+                    if (currentArticles && currentArticles.length === 1 && currentNewsPage > 1) {
+                        currentNewsPage--;
+                    }
+                    await loadNews(currentNewsPage);
+                    loadStatus();
+                } else {
+                    showToast(data.error || "ไม่สามารถลบข่าวได้", false);
+                }
+            } catch (err) {
+                console.error("Delete article failed:", err);
+                showToast("เกิดข้อผิดพลาดในการลบข่าว", false);
             }
         }
 
@@ -7251,13 +7282,6 @@
                     <div>
                         <div class="text-xs font-semibold text-zinc-200">ข่าวสาร</div>
                         <div class="text-[9px] text-zinc-500">ฟีด & เตรียมโพสต์</div>
-                    </div>
-                </button>
-                <button onclick="selectMobileTab('tab-match')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">
-                    <i class="fa-solid fa-futbol text-emerald-400 text-base w-5 text-center"></i>
-                    <div>
-                        <div class="text-xs font-semibold text-zinc-200">Match Center</div>
-                        <div class="text-[9px] text-zinc-500">ผลบอล & ตัดเกรด</div>
                     </div>
                 </button>
                 <button onclick="selectMobileTab('tab-community')" class="bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 transition">

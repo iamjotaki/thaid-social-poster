@@ -30,6 +30,7 @@ from database import (
     delete_feed,
     get_recent_articles,
     get_paginated_articles,
+    delete_article,
     is_article_seen,
     mark_as_posted,
     build_fb_post_url,
@@ -1141,15 +1142,26 @@ def api_delete_schedule(post_id):
 # -------------------------------------------------------------
 # API: NEWS & POSTING
 # -------------------------------------------------------------
+_NEWS_CACHE = {}
+_NEWS_CACHE_TTL = 8.0  # seconds
+
 @app.route("/api/news")
 def get_news():
-    """ดึงรายการข่าวล่าสุดพร้อมระบบแบ่งหน้า Pagination และ Filter ค้นหา (ความเร็วสูง ไร้ Glob I/O)"""
+    """ดึงรายการข่าวล่าสุดพร้อมระบบแบ่งหน้า Pagination และ Filter ค้นหา (ความเร็วสูง ไร้ Glob I/O + In-Memory Cache)"""
     page = request.args.get("page", 1, type=int)
     limit = request.args.get("limit", 15, type=int)
     limit = max(1, min(limit, 50))
     page_id = request.args.get("page_id")
     filter_status = request.args.get("status")
     search_q = request.args.get("q", "").strip()
+    fmt = request.args.get("format")
+
+    cache_key = f"{page}:{limit}:{page_id}:{filter_status}:{search_q}:{fmt}"
+    now_ts = time.time()
+    if cache_key in _NEWS_CACHE:
+        entry = _NEWS_CACHE[cache_key]
+        if now_ts - entry["ts"] < _NEWS_CACHE_TTL:
+            return jsonify(entry["data"])
     
     paginated = get_paginated_articles(page=page, limit=limit, page_id=page_id, status=filter_status, search=search_q)
     
@@ -1166,9 +1178,26 @@ def get_news():
         art["detected_theme"] = c_theme
         art["raw_category"] = cat_type
 
-    if request.args.get("format") == "legacy":
-        return jsonify(paginated["items"])
-    return jsonify(paginated)
+    res_data = paginated["items"] if fmt == "legacy" else paginated
+    if len(_NEWS_CACHE) > 100:
+        _NEWS_CACHE.clear()
+    _NEWS_CACHE[cache_key] = {"ts": now_ts, "data": res_data}
+    return jsonify(res_data)
+
+@app.route("/api/news/<int:article_id>", methods=["DELETE"])
+def api_delete_article(article_id):
+    """ลบรายการข่าวออกจากระบบ"""
+    try:
+        success = delete_article(article_id)
+        if success:
+            _NEWS_CACHE.clear()
+            _STATUS_CACHE["ts"] = 0
+            add_log(f"🗑️ ลบรายการข่าว ID #{article_id} ออกจากระบบเรียบร้อย", "info")
+            return jsonify({"success": True, "message": f"ลบข่าว ID #{article_id} สำเร็จแล้ว"})
+        else:
+            return jsonify({"success": False, "error": f"ไม่พบข่าว ID #{article_id} หรืออาจถูกลบไปแล้ว"}), 404
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/api/logs")
 def get_logs():
@@ -1184,6 +1213,7 @@ def update_news_caption():
         return jsonify({"success": False, "error": "Missing url or text"}), 400
     
     update_rewritten(url, text)
+    _NEWS_CACHE.clear()
     add_log(f"💾 บันทึกการแก้ไขข้อความข่าว: {url[:35]}...", "info")
     return jsonify({"success": True})
 
@@ -1423,6 +1453,8 @@ def post_single_news():
         fb_id = res.get("post_id") or "sim_post"
         fb_url = build_fb_post_url(fb_id, target_page_id)
         mark_as_posted(url, post_id=fb_id, fb_post_url=fb_url, page_id=target_page_id)
+        _NEWS_CACHE.clear()
+        _STATUS_CACHE["ts"] = 0
         user_id = session.get("user_id", 1)
         record_post_history(
             page_id=target_page_id or config.FB_PAGE_ID,

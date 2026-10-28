@@ -10,6 +10,7 @@ import config
 try:
     import psycopg2
     import psycopg2.extras
+    from psycopg2.pool import ThreadedConnectionPool
     HAS_PSYCOPG2 = True
 except ImportError:
     HAS_PSYCOPG2 = False
@@ -69,8 +70,10 @@ class PostgresCursorWrapper:
         self._cur.close()
 
 class PostgresConnectionWrapper:
-    def __init__(self, raw_conn):
+    def __init__(self, raw_conn, pool=None):
         self._conn = raw_conn
+        self._pool = pool
+        self._closed = False
         self._row_factory = None
 
     @property
@@ -85,30 +88,77 @@ class PostgresConnectionWrapper:
         return PostgresCursorWrapper(self._conn.cursor(cursor_factory=psycopg2.extras.DictCursor))
 
     def commit(self):
-        self._conn.commit()
+        if not self._closed and self._conn and not getattr(self._conn, 'closed', 0):
+            self._conn.commit()
 
     def rollback(self):
-        self._conn.rollback()
+        if not self._closed and self._conn and not getattr(self._conn, 'closed', 0):
+            self._conn.rollback()
 
     def close(self):
-        self._conn.close()
+        if not self._closed:
+            self._closed = True
+            if self._pool and self._conn:
+                try:
+                    self._pool.putconn(self._conn)
+                except Exception:
+                    pass
+            elif self._conn:
+                try:
+                    self._conn.close()
+                except Exception:
+                    pass
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type:
-            self._conn.rollback()
-        else:
-            self._conn.commit()
+        try:
+            if exc_type:
+                self.rollback()
+            else:
+                self.commit()
+        finally:
+            self.close()
+
+_PG_POOL = None
+_PG_POOL_DSN = ""
+
+def get_pg_pool(db_url: str):
+    global _PG_POOL, _PG_POOL_DSN
+    if _PG_POOL is None or getattr(_PG_POOL, 'closed', False) or _PG_POOL_DSN != db_url:
+        if _PG_POOL and not getattr(_PG_POOL, 'closed', False):
+            try:
+                _PG_POOL.closeall()
+            except Exception:
+                pass
+        _PG_POOL = ThreadedConnectionPool(minconn=1, maxconn=10, dsn=db_url)
+        _PG_POOL_DSN = db_url
+    return _PG_POOL
 
 def get_connection():
     db_url = getattr(config, 'DATABASE_URL', '') or os.getenv('DATABASE_URL', '').strip()
     if db_url and HAS_PSYCOPG2:
         if db_url.startswith("postgres://"):
             db_url = db_url.replace("postgres://", "postgresql://", 1)
-        raw_conn = psycopg2.connect(db_url)
-        return PostgresConnectionWrapper(raw_conn)
+        pool = get_pg_pool(db_url)
+        try:
+            raw_conn = pool.getconn()
+            if getattr(raw_conn, 'closed', 0) != 0:
+                pool.putconn(raw_conn, close=True)
+                raw_conn = pool.getconn()
+        except Exception:
+            # Recreate pool if stale or broken
+            global _PG_POOL
+            try:
+                if _PG_POOL:
+                    _PG_POOL.closeall()
+            except Exception:
+                pass
+            _PG_POOL = ThreadedConnectionPool(minconn=1, maxconn=10, dsn=db_url)
+            _PG_POOL_DSN = db_url
+            raw_conn = _PG_POOL.getconn()
+        return PostgresConnectionWrapper(raw_conn, pool=pool)
     return sqlite3.connect(DB_PATH)
 
 def init_db():
@@ -610,17 +660,33 @@ def get_paginated_articles(
             params.extend([s_param, s_param, s_param])
             
         where_sql = " AND ".join(where)
-        
-        count_sql = f"SELECT COUNT(*) FROM articles WHERE {where_sql}"
-        cursor.execute(count_sql, tuple(params))
-        total = cursor.fetchone()[0] or 0
-        
         offset = max(0, (page - 1) * limit)
-        fetch_sql = f"SELECT * FROM articles WHERE {where_sql} ORDER BY id DESC LIMIT ? OFFSET ?"
+
+        # Single-query execution with window function for high performance (reduces DB roundtrips)
+        fetch_sql = f"SELECT *, count(*) OVER() as full_count FROM articles WHERE {where_sql} ORDER BY id DESC LIMIT ? OFFSET ?"
         fetch_params = tuple(params + [limit, offset])
         cursor.execute(fetch_sql, fetch_params)
+        raw_rows = cursor.fetchall()
+
+        if raw_rows:
+            first_row = dict(raw_rows[0])
+            total = int(first_row.get("full_count", len(raw_rows)))
+            rows = []
+            for r in raw_rows:
+                d = dict(r)
+                d.pop("full_count", None)
+                rows.append(d)
+        else:
+            if page == 1:
+                total = 0
+                rows = []
+            else:
+                count_sql = f"SELECT COUNT(*) FROM articles WHERE {where_sql}"
+                cursor.execute(count_sql, tuple(params))
+                res = cursor.fetchone()
+                total = (res[0] if res else 0) or 0
+                rows = []
         
-        rows = [dict(r) for r in cursor.fetchall()]
         for art in rows:
             if art.get("status") == "posted" and not art.get("fb_post_url"):
                 art["fb_post_url"] = build_fb_post_url(art.get("fb_post_id"), art.get("page_id") or page_id)
@@ -640,6 +706,28 @@ def get_recent_articles(limit: int = 30, page_id: Optional[str] = None) -> List[
     """ดึงรายการข่าวล่าสุด (สำหรับ backward compatibility)"""
     res = get_paginated_articles(page=1, limit=limit, page_id=page_id)
     return res["items"]
+
+def delete_article(article_id: int) -> bool:
+    """ลบข่าวออกจากฐานข้อมูลตาม article_id พร้อมลบไฟล์ Social Card ที่เกี่ยวข้อง"""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT card_image_path FROM articles WHERE id = ?", (article_id,))
+        row = cursor.fetchone()
+        if not row:
+            return False
+        card_img = row[0] if row else None
+        cursor.execute("DELETE FROM articles WHERE id = ?", (article_id,))
+        conn.commit()
+        
+        # ลบไฟล์ภาพ Social Card ที่เกี่ยวข้องในโฟลเดอร์ static หากมี
+        if card_img and isinstance(card_img, str) and not card_img.startswith("http"):
+            try:
+                local_path = Path(__file__).resolve().parent / card_img.lstrip("/")
+                if local_path.is_file():
+                    local_path.unlink()
+            except Exception:
+                pass
+        return True
 
 # -------------------------------------------------------------
 # จัดการระบบตั้งเวลาโพสต์ (Scheduled Posts Queue)
