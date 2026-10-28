@@ -250,24 +250,9 @@
                 <div id="thaidUserEmailLarge" class="text-[10px] text-stone-400 truncate"></div>
               </div>
             </div>
-            <div class="py-2 text-[11px] space-y-1">
-              <div class="flex items-center justify-between px-2 py-1 rounded-lg bg-stone-50">
-                <span class="text-stone-500">สถานะสมาชิก:</span>
-                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px]">Active Pro</span>
-              </div>
-              <a href="https://thaid.online" class="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-700 text-xs transition-colors">
-                <span>หน้าหลัก ThaiD Hub</span>
-                <span class="text-[10px] text-stone-400">→</span>
-              </a>
-              <a href="https://novel.thaid.online" class="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-700 text-xs transition-colors">
-                <span>ไปที่ Novel Studio</span>
-                <span class="text-[10px] text-stone-400">→</span>
-              </a>
-              <a href="https://social.thaid.online" class="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-700 text-xs transition-colors">
-                <span>ไปที่ Social Dashboard</span>
-                <span class="text-[10px] text-stone-400">→</span>
-              </a>
-              </div>
+            <div id="thaidProfileMenuContent" class="py-2 text-[11px] space-y-1">
+              <!-- Dynamically populated by renderThaiDProfileMenu -->
+            </div>
             <button type="button" onclick="thaiDLogout()" class="w-full mt-1 pt-2 border-t border-black/[0.06] text-left text-xs font-semibold text-rose-600 hover:text-rose-700 flex items-center justify-between px-2 py-1 rounded-lg hover:bg-rose-50/50 cursor-pointer transition-colors">
               <span>ออกจากระบบ</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1026,6 +1011,7 @@
           if (avL) avL.src = user.avatar || '';
           if (nmL) nmL.textContent = user.name || '';
           if (emL) emL.textContent = user.email || '';
+          renderThaiDProfileMenu(user);
         }
       } else {
         if (loginBtn) loginBtn.classList.remove('hidden');
