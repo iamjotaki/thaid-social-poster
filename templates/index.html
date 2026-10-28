@@ -92,39 +92,8 @@
             <!-- Zone 2: Center - Clean Open Space -->
             <div class="hidden md:block"></div>
 
-            <!-- Zone 3: Right - Page Selector, Quick Controls, SaaS Selector, Profile -->
-            <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                <!-- Page Selector Dropdown -->
-                <div class="flex items-center bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-full px-2.5 py-1 max-w-[125px] sm:max-w-[170px] shrink-0">
-                    <i class="fa-brands fa-facebook text-blue-500 mr-1.5 text-xs shrink-0"></i>
-                    <select id="active-page-select" onchange="onPageChange()" class="bg-transparent text-[11px] sm:text-xs font-semibold text-stone-700 dark:text-stone-200 focus:outline-none cursor-pointer pr-1 truncate w-full">
-                        <option value="">ทุกเพจ (All Pages)</option>
-                    </select>
-                </div>
-
-                <!-- Quick Action: Fetch News -->
-                <button onclick="triggerFetch()" id="btn-fetch" class="bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs px-3 py-1.5 rounded-full font-medium transition flex items-center gap-1.5 shadow-xs shrink-0" title="ดึงข่าวทันที">
-                    <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
-                    <span class="hidden lg:inline">ดึงข่าว</span>
-                </button>
-
-                <!-- Quick Action: Auto-Bot -->
-                <button onclick="toggleAutoBot()" id="btn-auto" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-full font-medium transition flex items-center gap-1.5 shadow-xs shrink-0" title="เปิด/ปิด Auto-Bot">
-                    <i class="fa-solid fa-clock text-xs"></i>
-                    <span id="auto-btn-text" class="hidden md:inline">เริ่ม Auto-Bot</span>
-                </button>
-
-                <!-- Settings Gear -->
-                <button onclick="openSettingsModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 flex items-center justify-center transition border border-stone-200/80 dark:border-stone-700 text-xs shrink-0" title="ตั้งค่าระบบ">
-                    <i class="fa-solid fa-gear"></i>
-                </button>
-
-                <!-- Admin Portal Button (Visible only to Admin) -->
-                <a href="/admin" id="btn-admin-portal" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3 py-1.5 rounded-full transition flex items-center gap-1.5 shadow-sm shrink-0 hidden" title="เข้าสู่ระบบหลังบ้าน Superadmin">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span class="hidden xl:inline">Admin</span>
-                </a>
-
+            <!-- Zone 3: Right - ThaiD SaaS Selector Dropdown -->
+            <div class="flex items-center gap-2 shrink-0">
                 <!-- SaaS Services Selector Dropdown (Standard ThaiD Unified) -->
                 <div class="relative" id="thaidSaasDropdownWrap">
                     <button
@@ -221,11 +190,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Google Account Login / Profile Indicator -->
-                <div id="auth-container" class="shrink-0">
-                    <!-- Loading or Injected by JS -->
-                </div>
             </div>
         </div>
     </header>
@@ -243,6 +207,48 @@
             <button onclick="stopImpersonate()" class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold px-3 py-1 rounded-xl text-xs transition flex items-center gap-1 shadow-xs">
                 <i class="fa-solid fa-arrow-rotate-left"></i> สลับกลับแอดมิน
             </button>
+        </div>
+
+        <!-- APP CONTROLS & USER PROFILE BAR (NEW BAR) -->
+        <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 rounded-2xl p-2 sm:p-2.5 shadow-xs flex items-center justify-between flex-wrap gap-2.5 relative z-20">
+            <!-- Left: Page Selector & Quick Action Controls -->
+            <div class="flex items-center flex-wrap gap-2">
+                <!-- Page Selector Dropdown -->
+                <div class="flex items-center bg-stone-100 hover:bg-stone-200/70 dark:bg-stone-800 dark:hover:bg-stone-700/70 border border-stone-200 dark:border-stone-700 rounded-full px-3 py-1.5 shrink-0 transition shadow-2xs">
+                    <i class="fa-brands fa-facebook text-blue-500 mr-2 text-xs shrink-0"></i>
+                    <select id="active-page-select" onchange="onPageChange()" class="bg-transparent text-xs font-semibold text-stone-700 dark:text-stone-200 focus:outline-none cursor-pointer pr-1">
+                        <option value="">ทุกเพจ (All Pages)</option>
+                    </select>
+                </div>
+
+                <!-- Quick Action: Fetch News -->
+                <button onclick="triggerFetch()" id="btn-fetch" class="bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs px-3.5 py-1.5 rounded-full font-medium transition flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer" title="ดึงข่าวทันที">
+                    <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
+                    <span>ดึงข่าว</span>
+                </button>
+
+                <!-- Quick Action: Auto-Bot -->
+                <button onclick="toggleAutoBot()" id="btn-auto" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3.5 py-1.5 rounded-full font-medium transition flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer" title="เปิด/ปิด Auto-Bot">
+                    <i class="fa-solid fa-clock text-xs"></i>
+                    <span id="auto-btn-text">เริ่ม Auto-Bot</span>
+                </button>
+
+                <!-- Settings Gear -->
+                <button onclick="openSettingsModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 flex items-center justify-center transition border border-stone-200/80 dark:border-stone-700 text-xs shrink-0 cursor-pointer" title="ตั้งค่าระบบ">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+
+                <!-- Admin Portal Button (Visible only to Admin) -->
+                <a href="/admin" id="btn-admin-portal" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-full transition flex items-center gap-1.5 shadow-xs shrink-0 hidden" title="เข้าสู่ระบบหลังบ้าน Superadmin">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+
+            <!-- Right: User Account Profile / Login Indicator -->
+            <div id="auth-container" class="shrink-0">
+                <!-- Loading or Injected by JS -->
+            </div>
         </div>
 
         <!-- NAVIGATION TABS (SEGMENTED CONTROL STANDARD) -->
