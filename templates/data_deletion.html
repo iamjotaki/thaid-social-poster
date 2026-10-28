@@ -3,86 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คำแนะนำการลบข้อมูลผู้ใช้ (User Data Deletion Instructions) - Auto-Poster Pro</title>
+    <title>คำแนะนำการลบข้อมูลผู้ใช้ (User Data Deletion) — ThaiD Social Poster</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts: Prompt -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Prompt & Google Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        lfc: {
-                            red: '#C8102E',
-                            darkred: '#9B0014',
-                            gold: '#F6EB61',
-                            teal: '#00B2A9'
-                        }
+                        'thai-brand': '#2b313b',
+                        'thai-blue': '#0569ff',
+                        'thai-border': 'rgba(0, 0, 0, 0.08)'
                     },
                     fontFamily: {
-                        sans: ['Prompt', 'sans-serif'],
+                        sans: ['"Google Sans"', '"Prompt"', '"Noto Sans Thai"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Prompt', sans-serif; }
+        body { font-family: 'Prompt', 'Google Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col selection:bg-lfc-red selection:text-white">
+<body class="min-h-screen bg-stone-50 dark:bg-[#0c0d0e] text-stone-900 dark:text-stone-100 font-sans antialiased selection:bg-[#1f242d]/15 selection:text-[#0569ff]">
 
-    <!-- HEADER / NAVIGATION -->
-    <header class="bg-zinc-900/90 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-40">
-        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="/" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-xl bg-lfc-red flex items-center justify-center font-black text-white text-xl shadow-lg shadow-lfc-red/30 group-hover:scale-105 transition">
-                    LFC
+    <!-- 1. THAID FLOATING TOP NAVBAR -->
+    <header class="fixed top-0 inset-x-0 z-50 pt-3 px-3 sm:px-6 pointer-events-none">
+        <div class="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-black/[0.08] dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-full px-4 sm:px-5 py-2.5 relative">
+
+            <!-- Zone 1: Left - Brand Logo -->
+            <a href="https://thaid.online" class="flex items-center gap-2.5 text-stone-800 dark:text-white hover:opacity-85 transition-opacity group flex-shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-[#2b313b] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6.5H15M9.5 6.5V19" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 10.5C14 10.5 18 10.8 18 14.5C18 18.2 14 18.5 14 18.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
                 </div>
-                <div>
-                    <div class="font-bold text-base text-zinc-100 group-hover:text-lfc-red transition">Auto-Poster Pro</div>
-                    <div class="text-[11px] text-zinc-400">ระบบจัดการโพสต์เพจ Facebook อัตโนมัติ</div>
+                <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-lg tracking-tight text-stone-900 dark:text-white">ThaiD</span>
+                    <span class="text-xs text-stone-300 dark:text-stone-600 font-light">/</span>
+                    <span class="text-xs font-semibold text-stone-600 dark:text-stone-300">Data Deletion</span>
                 </div>
             </a>
-            <div class="flex items-center space-x-3 text-xs">
-                <a href="/privacy" class="text-zinc-400 hover:text-white transition">นโยบายความเป็นส่วนตัว</a>
-                <a href="/" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-xl border border-zinc-700 transition">
-                    <i class="fa-solid fa-arrow-left mr-1"></i> กลับหน้าหลัก
+
+            <!-- Zone 2: Center -->
+            <div class="hidden md:block"></div>
+
+            <!-- Zone 3: Right -->
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="/privacy" class="text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white px-3 py-1.5 rounded-full transition">นโยบายความเป็นส่วนตัว</a>
+                <a href="/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/[0.08] dark:border-white/10 bg-white/90 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-xs font-semibold text-stone-700 dark:text-stone-200 transition-all shadow-2xs">
+                    <i class="fa-solid fa-arrow-left text-xs text-stone-400"></i>
+                    <span>กลับหน้าหลัก</span>
                 </a>
             </div>
         </div>
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="max-w-4xl mx-auto px-4 py-10 sm:py-14 flex-1 w-full space-y-8">
+    <main class="max-w-4xl mx-auto px-4 pt-24 pb-16 space-y-6">
         
         <!-- Document Title Card -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-3 relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-rose-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="inline-flex items-center gap-2 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs px-3 py-1 rounded-full font-semibold">
-                <i class="fa-solid fa-user-xmark"></i> การขอลบข้อมูลผู้ใช้งาน (User Data Deletion)
+        <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-8 space-y-3 shadow-xs">
+            <div class="inline-flex items-center gap-2 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs px-3 py-1 rounded-full font-bold">
+                <i class="fa-solid fa-user-xmark text-rose-500"></i> การขอลบข้อมูลผู้ใช้งาน (User Data Deletion)
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">คำแนะนำและวิธีการขอลบข้อมูลผู้ใช้งาน</h1>
-            <p class="text-xs sm:text-sm text-zinc-400">
-                Auto-Poster Pro ให้ความสำคัญและเคารพสิทธิความเป็นส่วนตัวของผู้ใช้ตามนโยบาย Meta Platform Data Deletion Guidelines
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-white">คำแนะนำและวิธีการขอลบข้อมูลผู้ใช้งาน</h1>
+            <p class="text-xs sm:text-sm text-stone-600 dark:text-stone-400">
+                ThaiD Social Poster ให้ความสำคัญและเคารพสิทธิความเป็นส่วนตัวของผู้ใช้ตามนโยบาย Meta Platform Data Deletion Guidelines
             </p>
         </div>
 
         {% if code %}
         <!-- Deletion Confirmation Banner (If requested via Facebook callback) -->
-        <div class="bg-emerald-950/40 border border-emerald-500/50 rounded-2xl p-5 space-y-2">
-            <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+        <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/50 rounded-2xl p-5 space-y-2 shadow-xs">
+            <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
                 <i class="fa-solid fa-circle-check text-base"></i>
                 <span>ได้รับคำขอลบข้อมูลเรียบร้อยแล้ว</span>
             </div>
-            <p class="text-xs text-zinc-300">
-                รหัสยืนยันคำขอของคุณคือ: <span class="font-mono bg-zinc-900 border border-emerald-500/40 text-emerald-300 px-2 py-0.5 rounded text-xs font-bold">{{ code }}</span>
+            <p class="text-xs text-stone-700 dark:text-stone-300">
+                รหัสยืนยันคำขอของคุณคือ: <span class="font-mono bg-white dark:bg-stone-900 border border-emerald-300 dark:border-emerald-500/40 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-xs font-bold">{{ code }}</span>
             </p>
-            <p class="text-[11px] text-zinc-400">
+            <p class="text-[11px] text-stone-500 dark:text-stone-400">
                 ระบบได้ดำเนินการเพิกถอน Token และกำลังลบข้อมูลที่เกี่ยวข้องออกจากฐานข้อมูลภายใน 24 ชั่วโมง
             </p>
         </div>
@@ -92,108 +107,108 @@
         <div class="space-y-6">
 
             <!-- Method 1: Self-Service Deletion via Dashboard -->
-            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-4">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xs">
                 <div class="flex items-center gap-3">
-                    <span class="w-9 h-9 rounded-xl bg-lfc-red/20 text-lfc-red flex items-center justify-center font-bold text-sm shrink-0">
+                    <span class="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 flex items-center justify-center font-bold text-sm shrink-0">
                         <i class="fa-solid fa-trash-can"></i>
                     </span>
                     <div>
-                        <h2 class="text-base sm:text-lg font-bold text-white">วิธีที่ 1: ลบข้อมูลด้วยตนเองผ่านหน้าแดชบอร์ด (Self-Service)</h2>
-                        <p class="text-xs text-zinc-400">ลบข้อมูลทันทีผ่านเมนูจัดการในระบบ</p>
+                        <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white">วิธีที่ 1: ลบข้อมูลด้วยตนเองผ่านหน้าแดชบอร์ด (Self-Service)</h2>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">ลบข้อมูลทันทีผ่านเมนูจัดการในระบบ</p>
                     </div>
                 </div>
 
-                <div class="space-y-3 text-xs sm:text-sm text-zinc-300 pl-2">
+                <div class="space-y-3 text-xs sm:text-sm text-stone-700 dark:text-stone-300 pl-2">
                     <div class="flex items-start gap-2.5">
-                        <span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded text-xs font-bold mt-0.5">1</span>
+                        <span class="bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-2 py-0.5 rounded text-xs font-bold mt-0.5">1</span>
                         <span>เข้าสู่ระบบแดชบอร์ด แล้วไปที่แท็บ <strong>"เพจ FB"</strong></span>
                     </div>
                     <div class="flex items-start gap-2.5">
-                        <span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded text-xs font-bold mt-0.5">2</span>
-                        <span>ค้นหาเพจ Facebook ที่ต้องการลบ จากนั้นกดปุ่ม <strong><i class="fa-solid fa-trash text-rose-400"></i> ลบเพจ</strong> เพื่อลบข้อมูลเพจและ Page Access Token ออกจากระบบถาวร</span>
+                        <span class="bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-2 py-0.5 rounded text-xs font-bold mt-0.5">2</span>
+                        <span>ค้นหาเพจ Facebook ที่ต้องการลบ จากนั้นกดปุ่ม <strong><i class="fa-solid fa-trash text-rose-500"></i> ลบเพจ</strong> เพื่อลบข้อมูลเพจและ Page Access Token ออกจากระบบถาวร</span>
                     </div>
                     <div class="flex items-start gap-2.5">
-                        <span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded text-xs font-bold mt-0.5">3</span>
+                        <span class="bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-2 py-0.5 rounded text-xs font-bold mt-0.5">3</span>
                         <span>ไปที่แท็บ <strong>"API Keys"</strong> เพื่อลบ Google Gemini API Key ที่บันทึกไว้ (ถ้ามี)</span>
                     </div>
                 </div>
             </div>
 
             <!-- Method 2: Via Facebook Apps and Websites Settings -->
-            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-4">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xs">
                 <div class="flex items-center gap-3">
-                    <span class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm shrink-0">
+                    <span class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 flex items-center justify-center font-bold text-sm shrink-0">
                         <i class="fa-brands fa-facebook-f"></i>
                     </span>
                     <div>
-                        <h2 class="text-base sm:text-lg font-bold text-white">วิธีที่ 2: ลบการอนุญาตผ่านการตั้งค่า Facebook (Facebook Settings)</h2>
-                        <p class="text-xs text-zinc-400">เพิกถอนสิทธิ์การเข้าถึงผ่านระบบของ Facebook โดยตรง</p>
+                        <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white">วิธีที่ 2: ลบการอนุญาตผ่านการตั้งค่า Facebook (Facebook Settings)</h2>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">เพิกถอนสิทธิ์การเข้าถึงผ่านระบบของ Facebook โดยตรง</p>
                     </div>
                 </div>
 
-                <div class="space-y-3 text-xs sm:text-sm text-zinc-300 pl-2">
+                <div class="space-y-3 text-xs sm:text-sm text-stone-700 dark:text-stone-300 pl-2">
                     <div class="flex items-start gap-2.5">
-                        <span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded text-xs font-bold mt-0.5">1</span>
+                        <span class="bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-2 py-0.5 rounded text-xs font-bold mt-0.5">1</span>
                         <span>เปิดแอปพลิเคชันหรือเว็บไซต์ Facebook แล้วไปที่ <strong>การตั้งค่าและความเป็นส่วนตัว (Settings & Privacy) &gt; การตั้งค่า (Settings)</strong></span>
                     </div>
                     <div class="flex items-start gap-2.5">
-                        <span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded text-xs font-bold mt-0.5">2</span>
+                        <span class="bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-2 py-0.5 rounded text-xs font-bold mt-0.5">2</span>
                         <span>ในเมนูด้านซ้าย เลือก <strong>แอปและเว็บไซต์ (Apps and Websites)</strong></span>
                     </div>
                     <div class="flex items-start gap-2.5">
-                        <span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded text-xs font-bold mt-0.5">3</span>
-                        <span>ค้นหาแอป <strong>"Auto-Poster Pro"</strong> (หรือ LFC Auto News Pro) แล้วคลิกปุ่ม <strong>ลบออก (Remove)</strong></span>
+                        <span class="bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-2 py-0.5 rounded text-xs font-bold mt-0.5">3</span>
+                        <span>ค้นหาแอป <strong>"ThaiD Social Poster"</strong> แล้วคลิกปุ่ม <strong>ลบออก (Remove)</strong></span>
                     </div>
                     <div class="flex items-start gap-2.5">
-                        <span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded text-xs font-bold mt-0.5">4</span>
+                        <span class="bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-2 py-0.5 rounded text-xs font-bold mt-0.5">4</span>
                         <span>(ไม่บังคับ) คุณสามารถคลิก <strong>ดูแอปที่ลบออกแล้ว (View Removed Apps)</strong> แล้วกด <strong>ส่งคำขอ (Send Request)</strong> เพื่อส่งคำขอลบข้อมูลมายังเซิร์ฟเวอร์ของเราโดยอัตโนมัติ</span>
                     </div>
                 </div>
             </div>
 
             <!-- Method 3: Direct Email Request -->
-            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-4">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xs">
                 <div class="flex items-center gap-3">
-                    <span class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-sm shrink-0">
+                    <span class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800 flex items-center justify-center font-bold text-sm shrink-0">
                         <i class="fa-solid fa-envelope"></i>
                     </span>
                     <div>
-                        <h2 class="text-base sm:text-lg font-bold text-white">วิธีที่ 3: ส่งคำขอลบข้อมูลผ่านทางอีเมล (Direct Email Request)</h2>
-                        <p class="text-xs text-zinc-400">ติดต่อทีมงานเพื่อขอลบข้อมูลบัญชีและประวัติทั้งหมด</p>
+                        <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white">วิธีที่ 3: ส่งคำขอลบข้อมูลผ่านทางอีเมล (Direct Email Request)</h2>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">ติดต่อทีมงานเพื่อขอลบข้อมูลบัญชีและประวัติทั้งหมด</p>
                     </div>
                 </div>
 
-                <p class="text-xs sm:text-sm text-zinc-300">
+                <p class="text-xs sm:text-sm text-stone-700 dark:text-stone-300">
                     หากคุณไม่สามารถเข้าถึงหน้าแดชบอร์ดได้ คุณสามารถส่งคำขอลบข้อมูลมายังฝ่ายสนับสนุนของเราได้โดยตรง:
                 </p>
 
-                <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 space-y-2 text-xs">
-                    <div><strong>ส่งอีเมลถึง:</strong> <a href="mailto:support@lfcautonews.com" class="text-lfc-gold hover:underline">support@lfcautonews.com</a></div>
+                <div class="bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 space-y-2 text-xs text-stone-800 dark:text-stone-200 shadow-2xs">
+                    <div><strong>ส่งอีเมลถึง:</strong> <a href="mailto:support@thaid.online" class="text-blue-600 dark:text-blue-400 hover:underline">support@thaid.online</a></div>
                     <div><strong>หัวข้ออีเมล:</strong> ขอลบข้อมูลผู้ใช้งาน (Data Deletion Request)</div>
                     <div><strong>ข้อมูลที่ต้องระบุ:</strong>
-                        <ul class="list-disc list-inside pl-2 text-zinc-400 mt-1 space-y-0.5">
+                        <ul class="list-disc list-inside pl-2 text-stone-600 dark:text-stone-400 mt-1 space-y-0.5">
                             <li>อีเมลที่ใช้สมัครหรือเชื่อมต่อระบบ</li>
                             <li>Page ID หรือชื่อเพจ Facebook ที่ต้องการลบ</li>
                         </ul>
                     </div>
                 </div>
 
-                <p class="text-xs text-zinc-400">
+                <p class="text-xs text-stone-500 dark:text-stone-400">
                     ⏱️ ทีมงานจะทำการลบข้อมูลทั้งหมดของคุณออกจากเซิร์ฟเวอร์และฐานข้อมูลภายใน <strong>24 ถึง 48 ชั่วโมง</strong> พร้อมตอบกลับยืนยันการลบข้อมูลผ่านทางอีเมล
                 </p>
             </div>
 
             <!-- Check Deletion Status -->
-            <div class="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-magnifying-glass text-cyan-400"></i> ตรวจสอบสถานะคำขอลบข้อมูล (Check Deletion Status)
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-8 space-y-3 shadow-xs">
+                <h3 class="text-sm font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass text-cyan-600 dark:text-cyan-400"></i> ตรวจสอบสถานะคำขอลบข้อมูล (Check Deletion Status)
                 </h3>
-                <p class="text-xs text-zinc-400">
+                <p class="text-xs text-stone-600 dark:text-stone-400">
                     หากคุณได้รับรหัสยืนยันคำขอ (Confirmation Code) จาก Facebook หรืออีเมล สามารถป้อนรหัสเพื่อตรวจสอบสถานะ:
                 </p>
                 <div class="flex items-center gap-2 max-w-md">
-                    <input type="text" id="check-code-input" placeholder="ตัวอย่าง: DEL-1792580000" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-zinc-100 focus:outline-none focus:border-cyan-500">
-                    <button onclick="checkDeletionStatus()" class="bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition">
+                    <input type="text" id="check-code-input" placeholder="ตัวอย่าง: DEL-1792580000" class="flex-1 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl px-3.5 py-2 text-xs text-stone-900 dark:text-white focus:outline-none focus:border-cyan-500 shadow-2xs">
+                    <button onclick="checkDeletionStatus()" class="bg-stone-900 hover:bg-stone-800 text-white dark:bg-white dark:hover:bg-stone-100 dark:text-stone-900 font-bold text-xs px-4 py-2 rounded-xl transition shadow-xs">
                         ตรวจสอบ
                     </button>
                 </div>
@@ -204,15 +219,15 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-zinc-900 border-t border-zinc-800 py-6 text-center text-xs text-zinc-500">
+    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 py-6 text-center text-xs text-stone-500">
         <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div>&copy; 2026 Auto-Poster Pro. All rights reserved.</div>
+            <div>&copy; 2026 ThaiD.online. All rights reserved.</div>
             <div class="flex items-center space-x-4">
-                <a href="/privacy" class="text-zinc-400 hover:text-white transition">นโยบายความเป็นส่วนตัว</a>
-                <span class="text-zinc-700">·</span>
-                <a href="/data-deletion" class="text-zinc-400 hover:text-white transition">การลบข้อมูล</a>
-                <span class="text-zinc-700">·</span>
-                <a href="/" class="text-zinc-400 hover:text-white transition">หน้าหลัก</a>
+                <a href="/privacy" class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition">นโยบายความเป็นส่วนตัว</a>
+                <span class="text-stone-300 dark:text-stone-700">·</span>
+                <a href="/data-deletion" class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition">การลบข้อมูล</a>
+                <span class="text-stone-300 dark:text-stone-700">·</span>
+                <a href="/" class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition">หน้าหลัก</a>
             </div>
         </div>
     </footer>
@@ -223,10 +238,10 @@
             const res = document.getElementById('check-status-result');
             res.classList.remove('hidden');
             if (!code) {
-                res.innerHTML = '<span class="text-amber-400">กรุณากรอกรหัสยืนยันคำขอก่อน</span>';
+                res.innerHTML = '<span class="text-amber-600 dark:text-amber-400 font-bold">กรุณากรอกรหัสยืนยันคำขอก่อน</span>';
                 return;
             }
-            res.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-check mr-1"></i> คำขอรหัส <strong>${code}</strong>: ข้อมูลของผู้ใช้และเพจได้รับการเพิกถอน Token และลบออกจากฐานข้อมูลเรียบร้อยแล้ว</span>`;
+            res.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-check mr-1"></i> คำขอรหัส <strong>${code}</strong>: ข้อมูลของผู้ใช้และเพจได้รับการเพิกถอน Token และลบออกจากฐานข้อมูลเรียบร้อยแล้ว</span>`;
         }
     </script>
 </body>

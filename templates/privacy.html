@@ -3,97 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>นโยบายความเป็นส่วนตัว (Privacy Policy) - Auto-Poster Pro</title>
+    <title>นโยบายความเป็นส่วนตัว (Privacy Policy) — ThaiD Social Poster</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts: Prompt -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Prompt & Google Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        lfc: {
-                            red: '#C8102E',
-                            darkred: '#9B0014',
-                            gold: '#F6EB61',
-                            teal: '#00B2A9'
-                        }
+                        'thai-brand': '#2b313b',
+                        'thai-blue': '#0569ff',
+                        'thai-border': 'rgba(0, 0, 0, 0.08)'
                     },
                     fontFamily: {
-                        sans: ['Prompt', 'sans-serif'],
+                        sans: ['"Google Sans"', '"Prompt"', '"Noto Sans Thai"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Prompt', sans-serif; }
+        body { font-family: 'Prompt', 'Google Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col selection:bg-lfc-red selection:text-white">
+<body class="min-h-screen bg-stone-50 dark:bg-[#0c0d0e] text-stone-900 dark:text-stone-100 font-sans antialiased selection:bg-[#1f242d]/15 selection:text-[#0569ff]">
 
-    <!-- HEADER / NAVIGATION -->
-    <header class="bg-zinc-900/90 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-40">
-        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="/" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-xl bg-lfc-red flex items-center justify-center font-black text-white text-xl shadow-lg shadow-lfc-red/30 group-hover:scale-105 transition">
-                    LFC
+    <!-- 1. THAID FLOATING TOP NAVBAR -->
+    <header class="fixed top-0 inset-x-0 z-50 pt-3 px-3 sm:px-6 pointer-events-none">
+        <div class="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-black/[0.08] dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-full px-4 sm:px-5 py-2.5 relative">
+
+            <!-- Zone 1: Left - Brand Logo -->
+            <a href="https://thaid.online" class="flex items-center gap-2.5 text-stone-800 dark:text-white hover:opacity-85 transition-opacity group flex-shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-[#2b313b] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6.5H15M9.5 6.5V19" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 10.5C14 10.5 18 10.8 18 14.5C18 18.2 14 18.5 14 18.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
                 </div>
-                <div>
-                    <div class="font-bold text-base text-zinc-100 group-hover:text-lfc-red transition">Auto-Poster Pro</div>
-                    <div class="text-[11px] text-zinc-400">ระบบจัดการโพสต์เพจ Facebook อัตโนมัติ</div>
+                <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-lg tracking-tight text-stone-900 dark:text-white">ThaiD</span>
+                    <span class="text-xs text-stone-300 dark:text-stone-600 font-light">/</span>
+                    <span class="text-xs font-semibold text-stone-600 dark:text-stone-300">Privacy Policy</span>
                 </div>
             </a>
-            <div class="flex items-center space-x-3 text-xs">
-                <a href="/data-deletion" class="text-zinc-400 hover:text-white transition">การลบข้อมูล</a>
-                <a href="/" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-xl border border-zinc-700 transition">
-                    <i class="fa-solid fa-arrow-left mr-1"></i> กลับหน้าหลัก
+
+            <!-- Zone 2: Center -->
+            <div class="hidden md:block"></div>
+
+            <!-- Zone 3: Right -->
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="/data-deletion" class="text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white px-3 py-1.5 rounded-full transition">การลบข้อมูล</a>
+                <a href="/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/[0.08] dark:border-white/10 bg-white/90 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-xs font-semibold text-stone-700 dark:text-stone-200 transition-all shadow-2xs">
+                    <i class="fa-solid fa-arrow-left text-xs text-stone-400"></i>
+                    <span>กลับหน้าหลัก</span>
                 </a>
             </div>
         </div>
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="max-w-4xl mx-auto px-4 py-10 sm:py-14 flex-1 w-full space-y-8">
+    <main class="max-w-4xl mx-auto px-4 pt-24 pb-16 space-y-6">
         
         <!-- Document Title Card -->
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-3 relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-lfc-red/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="inline-flex items-center gap-2 bg-lfc-red/10 border border-lfc-red/30 text-lfc-red text-xs px-3 py-1 rounded-full font-semibold">
-                <i class="fa-solid fa-shield-halved"></i> นโยบายความเป็นส่วนตัว (Privacy Policy)
+        <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-8 space-y-3 shadow-xs">
+            <div class="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full font-bold">
+                <i class="fa-solid fa-shield-halved text-blue-500"></i> นโยบายความเป็นส่วนตัว (Privacy Policy)
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">นโยบายความเป็นส่วนตัวของ Auto-Poster Pro</h1>
-            <p class="text-xs sm:text-sm text-zinc-400">
-                อัปเดตล่าสุด: 22 ตุลาคม 2026 · มีผลบังคับใช้สำหรับการใช้งานเว็บไซต์และแอปพลิเคชัน Auto-Poster Pro
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-white">นโยบายความเป็นส่วนตัวของ ThaiD Social Poster</h1>
+            <p class="text-xs sm:text-sm text-stone-600 dark:text-stone-400">
+                อัปเดตล่าสุด: ตุลาคม 2026 · มีผลบังคับใช้สำหรับการใช้งานเว็บไซต์และแอปพลิเคชัน ThaiD Social Poster (https://social.thaid.online)
             </p>
         </div>
 
         <!-- Content Sections -->
-        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-10 space-y-8 text-sm leading-relaxed text-zinc-300">
+        <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-3xl p-6 sm:p-10 space-y-8 text-sm leading-relaxed text-stone-700 dark:text-stone-300 shadow-xs">
             
             <!-- Section 1 -->
             <section class="space-y-3">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-zinc-800 text-lfc-gold flex items-center justify-center text-xs">1</span>
+                <h2 class="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-center text-xs font-bold">1</span>
                     ภาพรวมและขอบเขต (Overview & Scope)
                 </h2>
                 <p>
-                    <strong>Auto-Poster Pro</strong> ("เรา", "ผู้ให้บริการ") ให้ความสำคัญสูงสุดต่อการคุ้มครองข้อมูลส่วนบุคคลและความเป็นส่วนตัวของผู้ใช้งาน เอกสารนโยบายความเป็นส่วนตัวฉบับนี้จัดทำขึ้นเพื่อชี้แจงประเภทของข้อมูลที่เรารวบรวม วัตถุประสงค์ในการประมวลผล วิธีการรักษาความปลอดภัยของข้อมูล และสิทธิ์ของผู้ใช้ตามกฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA) รวมถึงข้อกำหนดและนโยบายสำหรับนักพัฒนาของแพลตฟอร์ม Meta (Meta Platform Terms & Developer Policies)
+                    <strong>ThaiD Social Poster</strong> ("เรา", "ผู้ให้บริการ") ภายใต้แพลตฟอร์ม ThaiD.online ให้ความสำคัญสูงสุดต่อการคุ้มครองข้อมูลส่วนบุคคลและความเป็นส่วนตัวของผู้ใช้งาน เอกสารนโยบายความเป็นส่วนตัวฉบับนี้จัดทำขึ้นเพื่อชี้แจงประเภทของข้อมูลที่เรารวบรวม วัตถุประสงค์ในการประมวลผล วิธีการรักษาความปลอดภัยของข้อมูล และสิทธิ์ของผู้ใช้ตามกฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA) รวมถึงข้อกำหนดและนโยบายสำหรับนักพัฒนาของแพลตฟอร์ม Meta (Meta Platform Terms & Developer Policies)
                 </p>
             </section>
 
             <!-- Section 2 -->
             <section class="space-y-3">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-zinc-800 text-lfc-gold flex items-center justify-center text-xs">2</span>
+                <h2 class="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-center text-xs font-bold">2</span>
                     ข้อมูลที่เราจัดเก็บ (Information We Collect)
                 </h2>
                 <p>ในการให้บริการระบบเผยแพร่เนื้อหาและจัดการเพจ เราอาจจัดเก็บข้อมูลต่อไปนี้เฉพาะเท่าที่จำเป็นต่อการให้บริการ:</p>
-                <ul class="list-disc list-inside space-y-1.5 pl-2 text-zinc-300">
+                <ul class="list-disc list-inside space-y-1.5 pl-2 text-stone-600 dark:text-stone-300">
                     <li><strong>ข้อมูลบัญชีผู้ใช้งาน:</strong> ชื่อ-นามสกุล, ที่อยู่อีเมล, รูปโปรไฟล์ ที่ได้จากการเข้าสู่ระบบผ่าน Google Account เพื่อใช้ในการระบุตัวตนและบันทึกสิทธิ์การใช้งาน</li>
                     <li><strong>ข้อมูลการเชื่อมต่อเพจ Facebook (Meta Platform Data):</strong> หมายเลขประจำเพจ (Page ID), ชื่อเพจ (Page Name), และโทเค็นการเข้าถึง (Page Access Token) ที่ได้รับความยินยอมจากผู้ใช้ เพื่อใช้ในการโพสต์ข้อความ รูปภาพ วิดีโอ และดึงสถิติการเข้าถึงของเพจที่ผู้ใช้จัดการ</li>
                     <li><strong>ข้อมูลการตั้งค่าและประวัติการโพสต์:</strong> แหล่งข่าว RSS Feed ที่ผู้ใช้เลือก, ประวัติการตั้งเวลาโพสต์ล่วงหน้า (Scheduled Posts), ข้อความแคปชัน และประวัติเนื้อหาที่สร้างขึ้น</li>
@@ -103,35 +118,35 @@
 
             <!-- Section 3 -->
             <section class="space-y-3">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-zinc-800 text-lfc-gold flex items-center justify-center text-xs">3</span>
+                <h2 class="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-center text-xs font-bold">3</span>
                     วัตถุประสงค์ในการใช้ข้อมูล (Purpose of Data Use)
                 </h2>
                 <p>เราใช้ข้อมูลที่รวบรวมเพื่อวัตถุประสงค์ดังต่อไปนี้เท่านั้น:</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                    <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 space-y-1.5">
-                        <div class="font-bold text-white text-xs flex items-center gap-1.5 text-emerald-400">
+                    <div class="bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-2xs">
+                        <div class="font-bold text-xs flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                             <i class="fa-solid fa-paper-plane"></i> การเผยแพร่เนื้อหาอัตโนมัติ
                         </div>
-                        <p class="text-xs text-zinc-400">ใช้ Page Access Token ในการโพสต์ข่าวสาร รูปภาพ และวิดีโอสั้นลงบนเพจตามคำสั่งหรือเวลาที่ผู้ใช้ตั้งไว้</p>
+                        <p class="text-xs text-stone-600 dark:text-stone-400">ใช้ Page Access Token ในการโพสต์ข่าวสาร รูปภาพ และวิดีโอสั้นลงบนเพจตามคำสั่งหรือเวลาที่ผู้ใช้ตั้งไว้</p>
                     </div>
-                    <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 space-y-1.5">
-                        <div class="font-bold text-white text-xs flex items-center gap-1.5 text-cyan-400">
+                    <div class="bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-2xs">
+                        <div class="font-bold text-xs flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400">
                             <i class="fa-solid fa-chart-line"></i> วิเคราะห์และให้คำแนะนำ
                         </div>
-                        <p class="text-xs text-zinc-400">ดึงข้อมูลสถิติภาพรวม (Engagement) เพื่อแสดงช่วงเวลาโพสต์ที่ได้ผลดีที่สุด (Golden Slots) ในแดชบอร์ด</p>
+                        <p class="text-xs text-stone-600 dark:text-stone-400">ดึงข้อมูลสถิติภาพรวม (Engagement) เพื่อแสดงช่วงเวลาโพสต์ที่ได้ผลดีที่สุด (Golden Slots) ในแดชบอร์ด</p>
                     </div>
                 </div>
-                <div class="p-3.5 bg-emerald-950/20 border border-emerald-500/30 rounded-xl text-emerald-300 text-xs">
-                    <i class="fa-solid fa-circle-check mr-1 text-emerald-400"></i>
+                <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-500/30 rounded-xl text-emerald-800 dark:text-emerald-300 text-xs">
+                    <i class="fa-solid fa-circle-check mr-1 text-emerald-600 dark:text-emerald-400"></i>
                     <strong>คำยืนยันขั้นเด็ดขาด:</strong> เราไม่มีการขาย (Sell), เช่า, แลกเปลี่ยน หรือส่งต่อข้อมูลส่วนบุคคลและข้อมูลเพจ Facebook ของผู้ใช้งานแก่บุคคลภายนอกหรือนายหน้าค้าข้อมูล (Data Brokers) โดยเด็ดขาด 100%
                 </div>
             </section>
 
             <!-- Section 4 -->
             <section class="space-y-3">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-zinc-800 text-lfc-gold flex items-center justify-center text-xs">4</span>
+                <h2 class="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-center text-xs font-bold">4</span>
                     การรักษาความปลอดภัยของข้อมูล (Data Security)
                 </h2>
                 <p>
@@ -141,8 +156,8 @@
 
             <!-- Section 5 -->
             <section class="space-y-3">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-zinc-800 text-lfc-gold flex items-center justify-center text-xs">5</span>
+                <h2 class="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-center text-xs font-bold">5</span>
                     การปฏิบัติตามนโยบายของ Meta (Meta Platform Policy Compliance)
                 </h2>
                 <p>
@@ -152,19 +167,19 @@
 
             <!-- Section 6 -->
             <section class="space-y-3">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-zinc-800 text-lfc-gold flex items-center justify-center text-xs">6</span>
+                <h2 class="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-center text-xs font-bold">6</span>
                     สิทธิ์ของผู้ใช้และการขอลบข้อมูล (User Rights & Data Deletion)
                 </h2>
                 <p>
                     ผู้ใช้มีสิทธิ์เข้าถึง แก้ไข ถอนความยินยอม หรือขอให้ลบข้อมูลส่วนบุคคลและข้อมูลเพจทั้งหมดออกจากระบบได้ทันที โดยสามารถดำเนินการได้หลายช่องทาง:
                 </p>
-                <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
                     <div>
-                        <div class="font-bold text-white text-xs">ต้องการลบข้อมูลของคุณออกจากระบบ?</div>
-                        <div class="text-xs text-zinc-400">คุณสามารถอ่านขั้นตอนการขอลบข้อมูลอย่างละเอียดได้ที่หน้าคำแนะนำการลบข้อมูล</div>
+                        <div class="font-bold text-stone-900 dark:text-white text-xs">ต้องการลบข้อมูลของคุณออกจากระบบ?</div>
+                        <div class="text-xs text-stone-600 dark:text-stone-400">คุณสามารถอ่านขั้นตอนการขอลบข้อมูลอย่างละเอียดได้ที่หน้าคำแนะนำการลบข้อมูล</div>
                     </div>
-                    <a href="/data-deletion" class="bg-lfc-red hover:bg-lfc-darkred text-white text-xs font-semibold px-4 py-2 rounded-xl transition shrink-0 flex items-center gap-1.5">
+                    <a href="/data-deletion" class="bg-stone-900 hover:bg-stone-800 text-white dark:bg-white dark:hover:bg-stone-100 dark:text-stone-900 text-xs font-semibold px-4 py-2 rounded-xl transition shrink-0 flex items-center gap-1.5 shadow-xs">
                         <i class="fa-solid fa-trash-can"></i> ไปที่หน้านโยบายการลบข้อมูล
                     </a>
                 </div>
@@ -172,15 +187,15 @@
 
             <!-- Section 7 -->
             <section class="space-y-3">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-zinc-800 text-lfc-gold flex items-center justify-center text-xs">7</span>
+                <h2 class="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-center text-xs font-bold">7</span>
                     ข้อมูลติดต่อผู้ให้บริการ (Contact Information)
                 </h2>
                 <p>หากคุณมีคำถาม ข้อเสนอแนะ หรือต้องการใช้สิทธิ์ตามนโยบายความเป็นส่วนตัว สามารถติดต่อเราได้ที่:</p>
-                <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 space-y-1 text-xs text-zinc-300">
-                    <div><strong>ผู้ให้บริการ:</strong> ทีมพัฒนา Auto-Poster Pro (LFC Auto News Team)</div>
-                    <div><strong>อีเมลติดต่อ:</strong> <a href="mailto:support@lfcautonews.com" class="text-lfc-gold hover:underline">support@lfcautonews.com</a></div>
-                    <div><strong>เว็บไซต์:</strong> <a href="https://lfc-auto-news.onrender.com" class="text-blue-400 hover:underline">https://lfc-auto-news.onrender.com</a></div>
+                <div class="bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 space-y-1 text-xs text-stone-700 dark:text-stone-300 shadow-2xs">
+                    <div><strong>ผู้ให้บริการ:</strong> ThaiD Platform (ThaiD.online)</div>
+                    <div><strong>อีเมลติดต่อ:</strong> <a href="mailto:support@thaid.online" class="text-blue-600 dark:text-blue-400 hover:underline">support@thaid.online</a></div>
+                    <div><strong>เว็บไซต์:</strong> <a href="https://social.thaid.online" class="text-blue-600 dark:text-blue-400 hover:underline">https://social.thaid.online</a></div>
                 </div>
             </section>
 
@@ -188,15 +203,15 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-zinc-900 border-t border-zinc-800 py-6 text-center text-xs text-zinc-500">
+    <footer class="bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 py-6 text-center text-xs text-stone-500">
         <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div>&copy; 2026 Auto-Poster Pro. All rights reserved.</div>
+            <div>&copy; 2026 ThaiD.online. All rights reserved.</div>
             <div class="flex items-center space-x-4">
-                <a href="/privacy" class="text-zinc-400 hover:text-white transition">นโยบายความเป็นส่วนตัว</a>
-                <span class="text-zinc-700">·</span>
-                <a href="/data-deletion" class="text-zinc-400 hover:text-white transition">การลบข้อมูล</a>
-                <span class="text-zinc-700">·</span>
-                <a href="/" class="text-zinc-400 hover:text-white transition">หน้าหลัก</a>
+                <a href="/privacy" class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition">นโยบายความเป็นส่วนตัว</a>
+                <span class="text-stone-300 dark:text-stone-700">·</span>
+                <a href="/data-deletion" class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition">การลบข้อมูล</a>
+                <span class="text-stone-300 dark:text-stone-700">·</span>
+                <a href="/" class="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition">หน้าหลัก</a>
             </div>
         </div>
     </footer>

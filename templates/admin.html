@@ -3,76 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛡️ SaaS Admin Super Dashboard - LFC Auto News</title>
+    <title>SaaS Admin Super Portal — ThaiD Luxury AI</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts: Prompt -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Prompt & Google Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        lfc: {
-                            red: '#C8102E',
-                            darkred: '#9B0014',
-                            gold: '#F6EB61',
-                            teal: '#00B2A9'
-                        }
+                        'thai-brand': '#2b313b',
+                        'thai-blue': '#0569ff',
+                        'thai-border': 'rgba(0, 0, 0, 0.08)'
                     },
                     fontFamily: {
-                        sans: ['Prompt', 'sans-serif'],
+                        sans: ['"Google Sans"', '"Prompt"', '"Noto Sans Thai"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Prompt', sans-serif; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #18181b; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        body { font-family: 'Prompt', 'Google Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col">
+<body class="min-h-screen bg-stone-50 dark:bg-[#0c0d0e] text-stone-900 dark:text-stone-100 font-sans antialiased selection:bg-[#1f242d]/15 selection:text-[#0569ff]">
 
-    <!-- TOP NAVBAR -->
-    <header class="bg-zinc-900/95 backdrop-blur border-b border-zinc-800 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <!-- Brand -->
-            <div class="flex items-center space-x-3">
-                <a href="/" class="flex items-center gap-2 group">
-                    <div class="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center font-black text-white text-lg shadow-lg shadow-purple-600/30 shrink-0 group-hover:scale-105 transition">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-base sm:text-lg leading-tight flex items-center gap-2">
-                            <span>SaaS Admin Portal</span>
-                            <span class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold">SUPERADMIN</span>
-                        </h1>
-                        <p class="text-[11px] text-zinc-400">ระบบควบคุมส่วนกลาง · สมาชิก · การเงิน · คลัง AI</p>
-                    </div>
+    <!-- ======================================================== -->
+    <!-- 1. THAID FLOATING TOP NAVBAR (MASTER TEMPLATE STANDARD)   -->
+    <!-- ======================================================== -->
+    <header class="fixed top-0 inset-x-0 z-50 pt-3 px-3 sm:px-6 pointer-events-none">
+        <div class="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto bg-white/90 dark:bg-stone-900/90 backdrop-blur-xl border border-black/[0.08] dark:border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-full px-4 sm:px-5 py-2.5 relative">
+
+            <!-- Zone 1: Left - Brand Logo + ThaiD Monogram -->
+            <a href="https://thaid.online" class="flex items-center gap-2.5 text-stone-800 dark:text-white hover:opacity-85 transition-opacity group flex-shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-[#2b313b] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6.5H15M9.5 6.5V19" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 10.5C14 10.5 18 10.8 18 14.5C18 18.2 14 18.5 14 18.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-lg tracking-tight text-stone-900 dark:text-white">ThaiD</span>
+                    <span class="text-xs text-stone-300 dark:text-stone-600 font-light">/</span>
+                    <a href="/dashboard" class="text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition">Social Poster</a>
+                    <span class="text-xs text-stone-300 dark:text-stone-600 font-light">/</span>
+                    <span class="text-xs font-bold text-purple-600 dark:text-purple-400">Admin Portal</span>
+                </div>
+            </a>
+
+            <!-- Zone 2: Center - Clean Open Space -->
+            <div class="hidden md:block"></div>
+
+            <!-- Zone 3: Right - Return to User Dashboard + ThaiD SaaS Selector Dropdown + User Pill -->
+            <div class="flex items-center gap-2 shrink-0">
+                <!-- Return to Dashboard -->
+                <a href="/dashboard" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/[0.08] dark:border-white/10 bg-white/90 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-xs font-semibold text-stone-700 dark:text-stone-200 transition-all shadow-2xs">
+                    <i class="fa-solid fa-arrow-left text-xs text-stone-400"></i>
+                    <span class="hidden sm:inline">หน้าแดชบอร์ด</span>
                 </a>
-            </div>
 
-            <!-- Right Actions -->
-            <div class="flex items-center space-x-3">
-                <a href="/" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition border border-zinc-700 flex items-center gap-1.5">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span>กลับหน้าเว็บหลัก</span>
-                </a>
+                <!-- SaaS Services Selector Dropdown (Standard ThaiD Unified) -->
+                <div class="relative" id="thaidSaasDropdownWrap">
+                    <button
+                        type="button"
+                        id="thaidSaasBtn" onclick="toggleThaiDSaasMenu()"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/[0.08] dark:border-white/10 bg-white/90 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-xs font-semibold text-stone-700 dark:text-stone-200 transition-all shadow-2xs cursor-pointer shrink-0"
+                    >
+                        <span class="text-[#0569ff] font-bold text-xs">✦</span>
+                        <span class="hidden sm:inline">เลือกบริการ SaaS</span>
+                        <svg id="thaidSaasChevron" width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" class="text-stone-400 transition-transform duration-200">
+                            <path d="m4.5 6 3.5 3.5L11.5 6" />
+                        </svg>
+                    </button>
 
-                <div id="admin-user-profile" class="flex items-center gap-2.5 bg-zinc-800/80 border border-zinc-700/80 rounded-xl px-3 py-1.5">
-                    <img id="admin-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss" alt="Admin" class="w-7 h-7 rounded-full bg-zinc-700">
+                    <!-- Dropdown Menu -->
+                    <div id="thaidSaasMenu" class="hidden absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white/95 dark:bg-stone-900/95 backdrop-blur-2xl border border-black/[0.08] dark:border-white/10 rounded-2xl shadow-2xl p-2 z-50 text-left">
+                        <div class="px-3 py-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider border-b border-black/[0.05] dark:border-white/[0.05] mb-1 flex items-center justify-between">
+                            <span>ThaiD SaaS Ecosystem</span>
+                            <span class="text-emerald-600 font-semibold">6 เครื่องมือ</span>
+                        </div>
+                        <div class="grid grid-cols-1 gap-1 max-h-[380px] overflow-y-auto">
+                            <a href="https://novel.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-[#0569ff]">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Novel Studio</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">แต่งนิยาย AI 10 ตอนจบ</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">10 ตอนจบ</span>
+                            </a>
+                            <a href="https://social.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-emerald-600">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Social Auto-Poster</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">ดึงข่าว RSS & โพสต์ Facebook 24 ชม.</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">Auto 24h</span>
+                            </a>
+                            <a href="https://sticker.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-pink-500">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">LINE Sticker Creator</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สร้างชุดสติกเกอร์ไลน์ 40 แอ็กชัน</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">40 แอ็กชัน</span>
+                            </a>
+                            <a href="https://clip.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-purple-500">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Clip AI & Reels</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สคริปต์คลิปสั้น 9:16 สไตล์ไวรัล</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">9:16 Shorts</span>
+                            </a>
+                            <a href="https://chat.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-teal-600">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Smart Chat AI</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">บอทแอดมินตอบแชทบน LINE OA 24/7</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">ตอบ 0.8 วิ</span>
+                            </a>
+                            <a href="https://mockup.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors group text-left">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-blue-500">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#0569ff] transition-colors">Mockup Studio</div>
+                                        <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สตูดิโอภาพถ่ายสินค้าลักชัวรี ไดคัต AI</div>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 font-medium">Studio 4K</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Profile Pill -->
+                <div id="admin-user-profile" class="flex items-center gap-2 bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-full px-2.5 py-1 shadow-2xs">
+                    <img id="admin-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss" alt="Admin" class="w-6 h-6 rounded-full bg-stone-200 dark:bg-stone-700">
                     <div class="text-left hidden sm:block">
-                        <div id="admin-name" class="text-xs font-bold leading-tight">Admin Boss</div>
-                        <div id="admin-email" class="text-[10px] text-zinc-400 leading-tight">admin@lfcautonews.com</div>
+                        <div id="admin-name" class="text-xs font-bold text-stone-900 dark:text-white leading-tight">Admin Boss</div>
                     </div>
-                    <button onclick="logoutAdmin()" class="text-zinc-400 hover:text-red-400 ml-1 p-1 transition" title="ออกจากระบบ">
+                    <span class="text-[9px] bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 font-bold px-1.5 py-0.2 rounded-full border border-purple-200 dark:border-purple-800">SUPER</span>
+                    <button onclick="logoutAdmin()" class="text-stone-400 hover:text-rose-500 transition px-1" title="ออกจากระบบ">
                         <i class="fa-solid fa-right-from-bracket text-xs"></i>
                     </button>
                 </div>
@@ -80,81 +188,140 @@
         </div>
     </header>
 
-    <!-- ADMIN NAVIGATION TABS -->
-    <nav class="bg-zinc-900 border-b border-zinc-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-2 py-2 overflow-x-auto">
-            <button onclick="switchAdminTab('users')" id="tab-btn-users" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 bg-purple-600 text-white transition">
-                <i class="fa-solid fa-users"></i> จัดการสมาชิก
-                <span id="badge-total-users" class="bg-white/20 text-white text-[10px] px-1.5 py-0.2 rounded-full">0</span>
+    <!-- MAIN CONTAINER (MAX-W-6XL STANDARD) -->
+    <main class="max-w-6xl mx-auto px-3 sm:px-6 pt-20 sm:pt-24 pb-20 space-y-5">
+
+        <!-- 2. HERO HEADER (ADMIN OVERVIEW BANNER) -->
+        <div class="flex items-center justify-between flex-wrap gap-4 bg-white dark:bg-stone-900 p-5 rounded-2xl border border-stone-200/80 dark:border-stone-800 shadow-xs">
+            <div class="space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2.5 py-0.5 rounded-lg font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved text-purple-500"></i> SaaS Admin Super Portal
+                    </span>
+                    <span class="text-[11px] bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2 py-0.5 rounded-md border border-stone-200 dark:border-stone-700 font-mono">ThaiD Management Hub</span>
+                </div>
+                <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <span>ระบบควบคุมส่วนกลาง · สมาชิก · การเงิน & สลิป · คลัง AI</span>
+                </h2>
+                <p class="text-xs text-stone-600 dark:text-stone-400">จัดการข้อมูลผู้ใช้งาน ควบคุมแพ็กเกจ ตรวจสอบสลิปโอนเงิน PromptPay และสลับหน้าจอดูมุมมองผู้ใช้ (Impersonate)</p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+                <a href="/dashboard" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold px-3.5 py-2 rounded-xl transition border border-stone-200 dark:border-stone-700 flex items-center gap-1.5 shadow-2xs">
+                    <i class="fa-solid fa-arrow-left"></i> กลับแดชบอร์ด
+                </a>
+                <button onclick="openAddUserModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs">
+                    <i class="fa-solid fa-user-plus"></i> เพิ่มสมาชิกใหม่
+                </button>
+                <button onclick="initAdminDashboard()" class="text-xs text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white flex items-center gap-1 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 border border-stone-200 dark:border-stone-700 px-3 py-2 rounded-xl transition shadow-2xs">
+                    <i class="fa-solid fa-arrows-rotate"></i> รีเฟรช
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. ADMIN NAVIGATION TABS (SEGMENTED BAR) -->
+        <div class="flex items-center gap-1.5 bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 p-1.5 rounded-2xl shadow-xs overflow-x-auto">
+            <button onclick="switchAdminTab('users')" id="tab-btn-users" class="admin-tab px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 bg-stone-900 text-white dark:bg-white dark:text-stone-900 transition shadow-xs">
+                <i class="fa-solid fa-users text-purple-400 dark:text-purple-600"></i> จัดการสมาชิก
+                <span id="badge-total-users" class="bg-white/20 dark:bg-stone-900/10 text-xs px-2 py-0.2 rounded-full font-bold">0</span>
             </button>
-            <button onclick="switchAdminTab('finance')" id="tab-btn-finance" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
-                <i class="fa-solid fa-receipt text-emerald-400"></i> สลิป & รายได้
-                <span id="badge-pending-slips" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] px-1.5 py-0.2 rounded-full">2 รอตรวจ</span>
+            <button onclick="switchAdminTab('finance')" id="tab-btn-finance" class="admin-tab px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-800 transition">
+                <i class="fa-solid fa-receipt text-emerald-500"></i> สลิป & รายได้
+                <span id="badge-pending-slips" class="bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold">2 รอตรวจ</span>
             </button>
-            <button onclick="switchAdminTab('plans')" id="tab-btn-plans" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
-                <i class="fa-solid fa-tags text-cyan-400"></i> จัดการแพ็กเกจ (Plans)
+            <button onclick="switchAdminTab('plans')" id="tab-btn-plans" class="admin-tab px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-800 transition">
+                <i class="fa-solid fa-tags text-cyan-500"></i> จัดการแพ็กเกจ (Plans)
             </button>
-            <button onclick="switchAdminTab('ai-pool')" id="tab-btn-ai-pool" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
-                <i class="fa-solid fa-microchip text-yellow-400"></i> คลังคีย์ AI & โมเดล
+            <button onclick="switchAdminTab('ai-pool')" id="tab-btn-ai-pool" class="admin-tab px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-800 transition">
+                <i class="fa-solid fa-microchip text-amber-500"></i> คลังคีย์ AI & โมเดล
             </button>
-            <button onclick="switchAdminTab('audit')" id="tab-btn-audit" class="admin-tab px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
-                <i class="fa-solid fa-shield-check text-rose-400"></i> Audit Logs
+            <button onclick="switchAdminTab('audit')" id="tab-btn-audit" class="admin-tab px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-800 transition">
+                <i class="fa-solid fa-shield-check text-rose-500"></i> Audit Logs
             </button>
         </div>
-    </nav>
 
-    <!-- MAIN BODY -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
-
-        <!-- METRICS CARDS -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
-                <div class="w-11 h-11 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl shrink-0">
-                    <i class="fa-solid fa-users"></i>
+        <!-- 4. METRICS 5 SOLID COUNTER CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <!-- 1. สมาชิกทั้งหมด -->
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
+                <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
+                    <span>สมาชิกทั้งหมด (คน)</span>
+                    <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200/80 dark:border-purple-800 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
                 </div>
-                <div>
-                    <div id="stat-total-users" class="text-xl sm:text-2xl font-black">0</div>
-                    <div class="text-[11px] text-zinc-400">สมาชิกทั้งหมด (คน)</div>
+                <div class="flex items-baseline gap-1.5">
+                    <span id="stat-total-users" class="text-2xl font-black text-purple-600 dark:text-purple-400">0</span>
+                    <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">บัญชี</span>
+                </div>
+                <div class="text-[11px] text-stone-500 dark:text-stone-400 truncate pt-0.5">
+                    ลงทะเบียนในระบบทั้งหมด
                 </div>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
-                <div class="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl shrink-0">
-                    <i class="fa-solid fa-sack-dollar"></i>
+            <!-- 2. MRR/เดือน -->
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
+                <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
+                    <span>ประมาณการ MRR/เดือน</span>
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
                 </div>
-                <div>
-                    <div id="stat-mrr" class="text-xl sm:text-2xl font-black text-emerald-400">฿0</div>
-                    <div class="text-[11px] text-zinc-400">ประมาณการ MRR/เดือน</div>
+                <div class="flex items-baseline gap-1.5">
+                    <span id="stat-mrr" class="text-2xl font-black text-emerald-600 dark:text-emerald-400">฿0</span>
                 </div>
-            </div>
-
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
-                <div class="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl shrink-0">
-                    <i class="fa-brands fa-facebook"></i>
-                </div>
-                <div>
-                    <div id="stat-total-pages" class="text-xl sm:text-2xl font-black">0</div>
-                    <div class="text-[11px] text-zinc-400">เพจในระบบทั้งหมด</div>
+                <div class="text-[11px] text-stone-500 dark:text-stone-400 truncate pt-0.5">
+                    รายได้ประจำรายเดือน
                 </div>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
-                <div class="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl shrink-0">
-                    <i class="fa-solid fa-clock"></i>
+            <!-- 3. เพจในระบบทั้งหมด -->
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
+                <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
+                    <span>เพจในระบบทั้งหมด</span>
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800 flex items-center justify-center text-xs">
+                        <i class="fa-brands fa-facebook"></i>
+                    </div>
                 </div>
-                <div>
-                    <div id="stat-total-scheduled" class="text-xl sm:text-2xl font-black">0</div>
-                    <div class="text-[11px] text-zinc-400">โพสต์ในคิวตั้งเวลา</div>
+                <div class="flex items-baseline gap-1.5">
+                    <span id="stat-total-pages" class="text-2xl font-black text-blue-600 dark:text-blue-400">0</span>
+                    <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">เพจ</span>
+                </div>
+                <div class="text-[11px] text-stone-500 dark:text-stone-400 truncate pt-0.5">
+                    เชื่อมต่อ Facebook Page
                 </div>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex items-center space-x-3.5">
-                <div class="w-11 h-11 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl shrink-0">
-                    <i class="fa-solid fa-clapperboard"></i>
+            <!-- 4. โพสต์ในคิวตั้งเวลา -->
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
+                <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
+                    <span>โพสต์ในคิวตั้งเวลา</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
                 </div>
-                <div>
-                    <div id="stat-total-credits" class="text-xl sm:text-2xl font-black text-rose-400">0</div>
-                    <div class="text-[11px] text-zinc-400">เครดิตวิดีโอคงเหลือรวม</div>
+                <div class="flex items-baseline gap-1.5">
+                    <span id="stat-total-scheduled" class="text-2xl font-black text-amber-600 dark:text-amber-400">0</span>
+                    <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">คิว</span>
+                </div>
+                <div class="text-[11px] text-stone-500 dark:text-stone-400 truncate pt-0.5">
+                    รอปล่อยบน Facebook
+                </div>
+            </div>
+
+            <!-- 5. เครดิตวิดีโอคงเหลือรวม -->
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition col-span-2 md:col-span-1">
+                <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
+                    <span>เครดิตวิดีโอคงเหลือรวม</span>
+                    <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-clapperboard"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-1.5">
+                    <span id="stat-total-credits" class="text-2xl font-black text-rose-600 dark:text-rose-400">0</span>
+                    <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">คลิป</span>
+                </div>
+                <div class="text-[11px] text-stone-500 dark:text-stone-400 truncate pt-0.5">
+                    รวมทุกบัญชีสมาชิก
                 </div>
             </div>
         </div>
@@ -163,32 +330,32 @@
         <!-- TAB 1: จัดการสมาชิก (USERS MANAGEMENT) -->
         <!-- ======================================================== -->
         <section id="pane-users" class="admin-pane space-y-4">
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 shadow-xs">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                     <div>
-                        <h2 class="text-base font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-users text-purple-400"></i>
+                        <h2 class="text-base font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-users text-purple-600 dark:text-purple-400"></i>
                             <span>รายชื่อสมาชิกและสิทธิ์การใช้งาน (User Directory)</span>
                         </h2>
-                        <p class="text-xs text-zinc-400">ค้นหา, ปรับแพ็กเกจ, เติมเครดิตสร้างคลิปวิดีโอ, และสลับหน้าจอ (Impersonate)</p>
+                        <p class="text-xs text-stone-600 dark:text-stone-400">ค้นหา, ปรับแพ็กเกจ, เติมเครดิตสร้างคลิปวิดีโอ, และสลับหน้าจอ (Impersonate)</p>
                     </div>
 
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <div class="relative">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-zinc-500 text-xs"></i>
-                            <input type="text" id="user-search-input" onkeyup="filterUsersTable()" placeholder="ค้นหาชื่อ, อีเมล, แพ็กเกจ..." class="bg-zinc-950 border border-zinc-700/80 rounded-xl pl-8 pr-3 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-500 w-48 sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-xs"></i>
+                            <input type="text" id="user-search-input" onkeyup="filterUsersTable()" placeholder="ค้นหาชื่อ, อีเมล, แพ็กเกจ..." class="bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 focus:outline-none focus:border-purple-500 w-48 sm:w-64 shadow-2xs">
                         </div>
-                        <button onclick="openAddUserModal()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-purple-600/20">
+                        <button onclick="openAddUserModal()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs">
                             <i class="fa-solid fa-user-plus"></i> เพิ่มสมาชิก
                         </button>
                     </div>
                 </div>
 
                 <!-- Users Table -->
-                <div class="overflow-x-auto rounded-xl border border-zinc-800">
+                <div class="overflow-x-auto rounded-xl border border-stone-200/80 dark:border-stone-800 shadow-2xs">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr class="bg-zinc-950/80 text-zinc-400 border-b border-zinc-800 uppercase font-semibold">
+                            <tr class="bg-stone-50 dark:bg-stone-800/80 text-stone-600 dark:text-stone-400 border-b border-stone-200 dark:border-stone-800 uppercase font-bold text-[10px] tracking-wider">
                                 <th class="py-3 px-4">สมาชิก</th>
                                 <th class="py-3 px-3">สิทธิ์ (Role)</th>
                                 <th class="py-3 px-3">แพ็กเกจ (Plan)</th>
@@ -199,7 +366,7 @@
                                 <th class="py-3 px-4 text-right">การจัดการ</th>
                             </tr>
                         </thead>
-                        <tbody id="users-table-body" class="divide-y divide-zinc-800">
+                        <tbody id="users-table-body" class="divide-y divide-stone-200/60 dark:divide-stone-800/60">
                             <!-- Injected by JS -->
                         </tbody>
                     </table>
@@ -211,74 +378,74 @@
         <!-- TAB 2: สลิป & การเงิน (FINANCE & SLIPS) -->
         <!-- ======================================================== -->
         <section id="pane-finance" class="admin-pane hidden space-y-4">
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5">
-                <div class="flex items-center justify-between mb-4">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 shadow-xs">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <div>
-                        <h2 class="text-base font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-receipt text-emerald-400"></i>
+                        <h2 class="text-base font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-emerald-500"></i>
                             <span>รายการสลิปโอนเงินรอตรวจสอบ (Pending Payment Slips)</span>
                         </h2>
-                        <p class="text-xs text-zinc-400">ตรวจสอบความถูกต้องของสลิปโอนเงิน PromptPay เพื่ออนุมัติแพ็กเกจและเติมเครดิต</p>
+                        <p class="text-xs text-stone-600 dark:text-stone-400">ตรวจสอบความถูกต้องของสลิปโอนเงิน PromptPay เพื่ออนุมัติแพ็กเกจและเติมเครดิต</p>
                     </div>
-                    <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-xl font-semibold">
+                    <span class="text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-xl font-bold shadow-2xs">
                         PromptPay Slip Verifier Mockup
                     </span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Slip 1 -->
-                    <div id="slip-card-1" class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                    <div id="slip-card-1" class="bg-stone-50 dark:bg-stone-950 border border-stone-200/80 dark:border-stone-800 rounded-xl p-4 flex flex-col justify-between space-y-3 shadow-2xs">
                         <div class="flex items-start justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-12 h-16 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xl font-bold">
-                                    <i class="fa-solid fa-file-invoice-dollar text-emerald-400"></i>
+                                <div class="w-12 h-16 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg flex items-center justify-center text-stone-400 text-xl font-bold shadow-2xs">
+                                    <i class="fa-solid fa-file-invoice-dollar text-emerald-500"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-bold text-zinc-100">คุณกฤต (thekop@fanpage.com)</div>
-                                    <div class="text-xs text-zinc-400">สมัครแพ็กเกจ: <span class="text-purple-400 font-semibold">Pro Plan (รายเดือน)</span></div>
-                                    <div class="text-xs text-emerald-400 font-bold mt-1">ยอดโอน: ฿490.00 บาท</div>
+                                    <div class="text-sm font-bold text-stone-900 dark:text-white">คุณกฤต (thekop@fanpage.com)</div>
+                                    <div class="text-xs text-stone-600 dark:text-stone-400">สมัครแพ็กเกจ: <span class="text-purple-600 dark:text-purple-400 font-bold">Pro Plan (รายเดือน)</span></div>
+                                    <div class="text-xs text-emerald-600 dark:text-emerald-400 font-bold mt-1">ยอดโอน: ฿490.00 บาท</div>
                                 </div>
                             </div>
-                            <span class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">รอตรวจสอบ</span>
+                            <span class="text-[10px] bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-full font-bold">รอตรวจสอบ</span>
                         </div>
-                        <div class="text-[11px] text-zinc-400 bg-zinc-900 p-2.5 rounded-lg border border-zinc-800 flex justify-between">
+                        <div class="text-[11px] text-stone-600 dark:text-stone-400 bg-white dark:bg-stone-900 p-2.5 rounded-lg border border-stone-200 dark:border-stone-800 flex justify-between">
                             <span>ธนาคารกสิกรไทย · Ref: 2026102198421</span>
                             <span>เวลา: วันนี้ 12:15 น.</span>
                         </div>
                         <div class="flex items-center gap-2 pt-1">
-                            <button onclick="approveSlip('slip-card-1', 'thekop@fanpage.com', 'Pro', 30)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                            <button onclick="approveSlip('slip-card-1', 'thekop@fanpage.com', 'Pro', 30)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-xs">
                                 <i class="fa-solid fa-check"></i> อนุมัติสลิป & เติมเครดิต
                             </button>
-                            <button onclick="rejectSlip('slip-card-1')" class="bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 text-zinc-400 font-semibold py-1.5 px-3 rounded-xl text-xs transition border border-zinc-700">
+                            <button onclick="rejectSlip('slip-card-1')" class="bg-stone-200 hover:bg-rose-50 hover:text-rose-600 dark:bg-stone-800 dark:hover:bg-rose-950/50 text-stone-700 dark:text-stone-300 font-semibold py-1.5 px-3 rounded-xl text-xs transition border border-stone-200 dark:border-stone-700">
                                 ปฏิเสธ
                             </button>
                         </div>
                     </div>
 
                     <!-- Slip 2 -->
-                    <div id="slip-card-2" class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                    <div id="slip-card-2" class="bg-stone-50 dark:bg-stone-950 border border-stone-200/80 dark:border-stone-800 rounded-xl p-4 flex flex-col justify-between space-y-3 shadow-2xs">
                         <div class="flex items-start justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-12 h-16 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center text-zinc-400 text-xl font-bold">
-                                    <i class="fa-solid fa-file-invoice-dollar text-emerald-400"></i>
+                                <div class="w-12 h-16 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg flex items-center justify-center text-stone-400 text-xl font-bold shadow-2xs">
+                                    <i class="fa-solid fa-file-invoice-dollar text-emerald-500"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-bold text-zinc-100">บอลเต็ง แฟนคลับ (newbie@gmail.com)</div>
-                                    <div class="text-xs text-zinc-400">อัปเกรดเป็น: <span class="text-yellow-400 font-semibold">VIP Agency Plan</span></div>
-                                    <div class="text-xs text-emerald-400 font-bold mt-1">ยอดโอน: ฿990.00 บาท</div>
+                                    <div class="text-sm font-bold text-stone-900 dark:text-white">บอลเต็ง แฟนคลับ (newbie@gmail.com)</div>
+                                    <div class="text-xs text-stone-600 dark:text-stone-400">อัปเกรดเป็น: <span class="text-amber-600 dark:text-amber-400 font-bold">VIP Agency Plan</span></div>
+                                    <div class="text-xs text-emerald-600 dark:text-emerald-400 font-bold mt-1">ยอดโอน: ฿990.00 บาท</div>
                                 </div>
                             </div>
-                            <span class="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">รอตรวจสอบ</span>
+                            <span class="text-[10px] bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-full font-bold">รอตรวจสอบ</span>
                         </div>
-                        <div class="text-[11px] text-zinc-400 bg-zinc-900 p-2.5 rounded-lg border border-zinc-800 flex justify-between">
+                        <div class="text-[11px] text-stone-600 dark:text-stone-400 bg-white dark:bg-stone-900 p-2.5 rounded-lg border border-stone-200 dark:border-stone-800 flex justify-between">
                             <span>ธนาคารไทยพาณิชย์ · Ref: 2026102100412</span>
                             <span>เวลา: วันนี้ 12:28 น.</span>
                         </div>
                         <div class="flex items-center gap-2 pt-1">
-                            <button onclick="approveSlip('slip-card-2', 'newbie@gmail.com', 'VIP Agency', 100)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                            <button onclick="approveSlip('slip-card-2', 'newbie@gmail.com', 'VIP Agency', 100)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-xs">
                                 <i class="fa-solid fa-check"></i> อนุมัติสลิป & เติมเครดิต
                             </button>
-                            <button onclick="rejectSlip('slip-card-2')" class="bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 text-zinc-400 font-semibold py-1.5 px-3 rounded-xl text-xs transition border border-zinc-700">
+                            <button onclick="rejectSlip('slip-card-2')" class="bg-stone-200 hover:bg-rose-50 hover:text-rose-600 dark:bg-stone-800 dark:hover:bg-rose-950/50 text-stone-700 dark:text-stone-300 font-semibold py-1.5 px-3 rounded-xl text-xs transition border border-stone-200 dark:border-stone-700">
                                 ปฏิเสธ
                             </button>
                         </div>
@@ -293,58 +460,58 @@
         <section id="pane-plans" class="admin-pane hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Free Plan -->
-                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex flex-col justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
                     <div>
-                        <span class="text-[10px] bg-zinc-800 text-zinc-300 font-bold px-2 py-0.5 rounded-full">ทดลองใช้</span>
-                        <h3 class="text-lg font-bold mt-2">Free Trial</h3>
-                        <div class="text-2xl font-black mt-1">฿0 <span class="text-xs font-normal text-zinc-400">/ 14 วัน</span></div>
-                        <ul class="mt-4 space-y-2 text-xs text-zinc-300">
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เชื่อมได้ 1 เพจ Facebook</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>ดึงข่าว AI ไม่จำกัด</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เครดิตคลิปวิดีโอ 5 คลิป</li>
-                            <li><i class="fa-solid fa-xmark text-zinc-600 mr-2"></i>ระบบตรวจผลบอลสด (Match Center)</li>
+                        <span class="text-[10px] bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-bold px-2 py-0.5 rounded-full">ทดลองใช้</span>
+                        <h3 class="text-base font-bold text-stone-900 dark:text-white mt-2">Free Trial</h3>
+                        <div class="text-2xl font-black text-stone-900 dark:text-white mt-1">฿0 <span class="text-xs font-normal text-stone-500">/ 14 วัน</span></div>
+                        <ul class="mt-4 space-y-2 text-xs text-stone-600 dark:text-stone-300">
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>เชื่อมได้ 1 เพจ Facebook</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>ดึงข่าว AI ไม่จำกัด</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>เครดิตคลิปวิดีโอ 5 คลิป</li>
+                            <li><i class="fa-solid fa-xmark text-stone-400 mr-2"></i>ระบบตรวจผลบอลสด (Match Center)</li>
                         </ul>
                     </div>
-                    <button class="mt-5 w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold py-2 rounded-xl transition">
+                    <button class="mt-5 w-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold py-2 rounded-xl transition border border-stone-200 dark:border-stone-700 shadow-2xs">
                         แก้ไขเงื่อนไขแพ็กเกจ
                     </button>
                 </div>
 
                 <!-- Pro Plan -->
-                <div class="bg-zinc-900 border-2 border-purple-500/50 rounded-2xl p-5 flex flex-col justify-between relative shadow-xl shadow-purple-500/10">
-                    <span class="absolute -top-3 right-4 text-[10px] bg-purple-600 text-white font-bold px-2.5 py-0.5 rounded-full shadow">ยอดนิยม</span>
+                <div class="bg-white dark:bg-stone-900 border-2 border-purple-500 dark:border-purple-500 rounded-2xl p-5 flex flex-col justify-between relative shadow-sm">
+                    <span class="absolute -top-3 right-4 text-[10px] bg-purple-600 text-white font-bold px-2.5 py-0.5 rounded-full shadow-xs">ยอดนิยม</span>
                     <div>
-                        <span class="text-[10px] bg-purple-500/20 text-purple-400 font-bold px-2 py-0.5 rounded-full">สายเพจจริงจัง</span>
-                        <h3 class="text-lg font-bold mt-2 text-purple-300">Pro Creator</h3>
-                        <div class="text-2xl font-black mt-1 text-purple-400">฿490 <span class="text-xs font-normal text-zinc-400">/ เดือน</span></div>
-                        <ul class="mt-4 space-y-2 text-xs text-zinc-300">
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เชื่อมได้ 3 เพจ Facebook</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เครดิตคลิปวิดีโอ 30 คลิป/เดือน</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เสียงพากย์ Google AI Studio TTS</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>ระบบ Social Graphic Card</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>ระบบ Affiliate แทรกอัตโนมัติ</li>
+                        <span class="text-[10px] bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 font-bold px-2 py-0.5 rounded-full">สายเพจจริงจัง</span>
+                        <h3 class="text-base font-bold text-stone-900 dark:text-white mt-2">Pro Creator</h3>
+                        <div class="text-2xl font-black text-purple-600 dark:text-purple-400 mt-1">฿490 <span class="text-xs font-normal text-stone-500">/ เดือน</span></div>
+                        <ul class="mt-4 space-y-2 text-xs text-stone-600 dark:text-stone-300">
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>เชื่อมได้ 3 เพจ Facebook</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>เครดิตคลิปวิดีโอ 30 คลิป/เดือน</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>เสียงพากย์ Google AI Studio TTS</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>ระบบ Social Graphic Card</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>ระบบ Affiliate แทรกอัตโนมัติ</li>
                         </ul>
                     </div>
-                    <button class="mt-5 w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2 rounded-xl transition">
+                    <button class="mt-5 w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2 rounded-xl transition shadow-xs">
                         แก้ไขเงื่อนไขแพ็กเกจ
                     </button>
                 </div>
 
                 <!-- VIP Plan -->
-                <div class="bg-zinc-900 border border-amber-500/30 rounded-2xl p-5 flex flex-col justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-amber-300/80 dark:border-amber-800/60 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
                     <div>
-                        <span class="text-[10px] bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded-full">เอเจนซี่ & หลายเพจ</span>
-                        <h3 class="text-lg font-bold mt-2 text-amber-300">VIP Agency</h3>
-                        <div class="text-2xl font-black mt-1 text-amber-400">฿990 <span class="text-xs font-normal text-zinc-400">/ เดือน</span></div>
-                        <ul class="mt-4 space-y-2 text-xs text-zinc-300">
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เชื่อมได้ 10 เพจ Facebook</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>เครดิตคลิปวิดีโอ 100 คลิป/เดือน</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>Match Center & วิเคราะห์ก่อนเกม</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>Community Manager ตอบคอมเมนต์ AI</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i>คิวประมวลผลด่วนพิเศษ (Priority Queue)</li>
+                        <span class="text-[10px] bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 font-bold px-2 py-0.5 rounded-full">เอเจนซี่ & หลายเพจ</span>
+                        <h3 class="text-base font-bold text-stone-900 dark:text-white mt-2">VIP Agency</h3>
+                        <div class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">฿990 <span class="text-xs font-normal text-stone-500">/ เดือน</span></div>
+                        <ul class="mt-4 space-y-2 text-xs text-stone-600 dark:text-stone-300">
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>เชื่อมได้ 10 เพจ Facebook</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>เครดิตคลิปวิดีโอ 100 คลิป/เดือน</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>Match Center & วิเคราะห์ก่อนเกม</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>Community Manager ตอบคอมเมนต์ AI</li>
+                            <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>คิวประมวลผลด่วนพิเศษ (Priority Queue)</li>
                         </ul>
                     </div>
-                    <button class="mt-5 w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold py-2 rounded-xl transition">
+                    <button class="mt-5 w-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold py-2 rounded-xl transition border border-stone-200 dark:border-stone-700 shadow-2xs">
                         แก้ไขเงื่อนไขแพ็กเกจ
                     </button>
                 </div>
@@ -355,44 +522,44 @@
         <!-- TAB 4: AI KEY POOL -->
         <!-- ======================================================== -->
         <section id="pane-ai-pool" class="admin-pane hidden space-y-4">
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5">
-                <div class="flex items-center justify-between mb-4">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 shadow-xs">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <div>
-                        <h2 class="text-base font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-microchip text-yellow-400"></i>
+                        <h2 class="text-base font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-microchip text-amber-500"></i>
                             <span>คลัง Google Gemini API Keys (Load Balancer & Auto-Failover)</span>
                         </h2>
-                        <p class="text-xs text-zinc-400">กระจายการเรียกใช้งาน AI หลายคีย์ เพื่อป้องกัน Rate Limit 429 และเพิ่มความเสถียร</p>
+                        <p class="text-xs text-stone-600 dark:text-stone-400">กระจายการเรียกใช้งาน AI หลายคีย์ เพื่อป้องกัน Rate Limit 429 และเพิ่มความเสถียร</p>
                     </div>
-                    <button onclick="alert('ฟังก์ชันเพิ่ม API Key จำลอง')" class="bg-yellow-500 hover:bg-yellow-600 text-zinc-950 font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
+                    <button onclick="alert('ฟังก์ชันเพิ่ม API Key จำลอง')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs">
                         <i class="fa-solid fa-plus"></i> เพิ่ม API Key สำรอง
                     </button>
                 </div>
 
                 <div class="space-y-2.5">
-                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 flex items-center justify-between">
+                    <div class="bg-stone-50 dark:bg-stone-950 border border-stone-200/80 dark:border-stone-800 rounded-xl p-3.5 flex items-center justify-between shadow-2xs">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xs">#1</div>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center font-bold text-xs">#1</div>
                             <div>
-                                <div class="text-xs font-bold text-zinc-100 font-mono">AIzaSyB9...W842X (Primary Production Key)</div>
-                                <div class="text-[10px] text-zinc-400">โมเดล: gemini-3.8-flash, gemini-3.8-flash-tts · เรียกใช้งานแล้ว: 1,420 ครั้ง</div>
+                                <div class="text-xs font-bold text-stone-900 dark:text-white font-mono">AIzaSyB9...W842X (Primary Production Key)</div>
+                                <div class="text-[11px] text-stone-500 dark:text-stone-400">โมเดล: gemini-2.5-flash, gemini-2.5-flash-tts · เรียกใช้งานแล้ว: 1,420 ครั้ง</div>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">ทำงานปกติ (Active)</span>
+                            <span class="text-[10px] bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-full font-bold">ทำงานปกติ (Active)</span>
                         </div>
                     </div>
 
-                    <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 flex items-center justify-between">
+                    <div class="bg-stone-50 dark:bg-stone-950 border border-stone-200/80 dark:border-stone-800 rounded-xl p-3.5 flex items-center justify-between shadow-2xs">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold text-xs">#2</div>
+                            <div class="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800 flex items-center justify-center font-bold text-xs">#2</div>
                             <div>
-                                <div class="text-xs font-bold text-zinc-100 font-mono">AIzaSyD7...K190P (Failover Backup Key 1)</div>
-                                <div class="text-[10px] text-zinc-400">โมเดล: gemini-2.5-flash-preview-tts · สำรองพร้อมใช้งาน</div>
+                                <div class="text-xs font-bold text-stone-900 dark:text-white font-mono">AIzaSyD7...K190P (Failover Backup Key 1)</div>
+                                <div class="text-[11px] text-stone-500 dark:text-stone-400">โมเดล: gemini-2.5-flash-preview-tts · สำรองพร้อมใช้งาน</div>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full font-bold">สแตนด์บาย (Standby)</span>
+                            <span class="text-[10px] bg-cyan-50 dark:bg-cyan-950/50 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800 px-2 py-0.5 rounded-full font-bold">สแตนด์บาย (Standby)</span>
                         </div>
                     </div>
                 </div>
@@ -403,23 +570,23 @@
         <!-- TAB 5: AUDIT LOGS -->
         <!-- ======================================================== -->
         <section id="pane-audit" class="admin-pane hidden space-y-4">
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5">
-                <h2 class="text-base font-bold flex items-center gap-2 mb-3">
-                    <i class="fa-solid fa-shield-check text-rose-400"></i>
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 shadow-xs">
+                <h2 class="text-base font-bold text-stone-900 dark:text-white flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-shield-check text-rose-500"></i>
                     <span>บันทึกความปลอดภัย & กิจกรรมแอดมิน (Admin Audit Trail)</span>
                 </h2>
                 <div class="space-y-2 text-xs font-mono">
-                    <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 text-zinc-300 flex items-center justify-between">
-                        <span><span class="text-purple-400 font-bold">[12:35:10]</span> Admin เข้าสู่ระบบผ่าน Google Account Mockup</span>
-                        <span class="text-zinc-500">IP: 127.0.0.1</span>
+                    <div class="bg-stone-50 dark:bg-stone-950 p-3 rounded-xl border border-stone-200/80 dark:border-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-between shadow-2xs">
+                        <span><span class="text-purple-600 dark:text-purple-400 font-bold">[12:35:10]</span> Admin เข้าสู่ระบบผ่าน Google Account Mockup</span>
+                        <span class="text-stone-500">IP: 127.0.0.1</span>
                     </div>
-                    <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 text-zinc-300 flex items-center justify-between">
-                        <span><span class="text-emerald-400 font-bold">[12:30:00]</span> ระบบตรวจสอบสถานะ Facebook Page Access Token ทั้งหมด: ผ่าน 100%</span>
-                        <span class="text-zinc-500">System Bot</span>
+                    <div class="bg-stone-50 dark:bg-stone-950 p-3 rounded-xl border border-stone-200/80 dark:border-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-between shadow-2xs">
+                        <span><span class="text-emerald-600 dark:text-emerald-400 font-bold">[12:30:00]</span> ระบบตรวจสอบสถานะ Facebook Page Access Token ทั้งหมด: ผ่าน 100%</span>
+                        <span class="text-stone-500">System Bot</span>
                     </div>
-                    <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 text-zinc-300 flex items-center justify-between">
-                        <span><span class="text-yellow-400 font-bold">[12:25:48]</span> สมาชิก thekop@fanpage.com สร้างคลิปวิดีโอสั้นสำเร็จ (หัก 1 เครดิต)</span>
-                        <span class="text-zinc-500">Worker #1</span>
+                    <div class="bg-stone-50 dark:bg-stone-950 p-3 rounded-xl border border-stone-200/80 dark:border-stone-800 text-stone-800 dark:text-stone-200 flex items-center justify-between shadow-2xs">
+                        <span><span class="text-amber-600 dark:text-amber-400 font-bold">[12:25:48]</span> สมาชิก thekop@fanpage.com สร้างคลิปวิดีโอสั้นสำเร็จ (หัก 1 เครดิต)</span>
+                        <span class="text-stone-500">Worker #1</span>
                     </div>
                 </div>
             </div>
@@ -428,39 +595,39 @@
     </main>
 
     <!-- EDIT USER MODAL -->
-    <div id="modal-edit-user" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-zinc-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
-                <h3 class="text-base font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-user-gear text-purple-400"></i>
+    <div id="modal-edit-user" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800">
+                <h3 class="text-base font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-purple-600 dark:text-purple-400"></i>
                     <span>แก้ไขข้อมูลสมาชิก & สิทธิ์</span>
                 </h3>
-                <button onclick="closeEditUserModal()" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeEditUserModal()" class="text-stone-400 hover:text-stone-900 dark:hover:text-white transition"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <input type="hidden" id="edit-user-id">
 
             <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1">อีเมลสมาชิก:</label>
-                <input type="text" id="edit-user-email" readonly class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-400 cursor-not-allowed">
+                <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">อีเมลสมาชิก:</label>
+                <input type="text" id="edit-user-email" readonly class="w-full bg-stone-100 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-500 cursor-not-allowed">
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1">ชื่อสมาชิก:</label>
-                <input type="text" id="edit-user-name" readonly class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-400 cursor-not-allowed">
+                <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">ชื่อสมาชิก:</label>
+                <input type="text" id="edit-user-name" readonly class="w-full bg-stone-100 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-500 cursor-not-allowed">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-300 mb-1">สิทธิ์ (Role):</label>
-                    <select id="edit-user-role" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                    <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">สิทธิ์ (Role):</label>
+                    <select id="edit-user-role" class="w-full bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-900 dark:text-white focus:outline-none focus:border-purple-500">
                         <option value="member">Member (สมาชิกทั่วไป)</option>
                         <option value="admin">Admin (ผู้ดูแลระบบ)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-300 mb-1">แพ็กเกจ (Plan):</label>
-                    <select id="edit-user-plan" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                    <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">แพ็กเกจ (Plan):</label>
+                    <select id="edit-user-plan" class="w-full bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-900 dark:text-white focus:outline-none focus:border-purple-500">
                         <option value="Free Trial">Free Trial</option>
                         <option value="Pro">Pro Creator</option>
                         <option value="VIP Agency">VIP Agency</option>
@@ -470,12 +637,12 @@
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-300 mb-1">เครดิตสร้างคลิปวิดีโอ:</label>
-                    <input type="number" id="edit-user-credits" min="0" max="9999" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                    <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">เครดิตสร้างคลิปวิดีโอ:</label>
+                    <input type="number" id="edit-user-credits" min="0" max="9999" class="w-full bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-900 dark:text-white focus:outline-none focus:border-purple-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-zinc-300 mb-1">สถานะบัญชี:</label>
-                    <select id="edit-user-status" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
+                    <label class="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">สถานะบัญชี:</label>
+                    <select id="edit-user-status" class="w-full bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-900 dark:text-white focus:outline-none focus:border-purple-500">
                         <option value="active">Active (ใช้งานได้ปกติ)</option>
                         <option value="suspended">Suspended (ระงับชั่วคราว)</option>
                         <option value="banned">Banned (แบนถาวร)</option>
@@ -483,11 +650,11 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 pt-3 border-t border-zinc-800">
-                <button onclick="saveUserEdit()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-xl text-xs transition">
+            <div class="flex items-center gap-2 pt-3 border-t border-stone-200 dark:border-stone-800">
+                <button onclick="saveUserEdit()" class="flex-1 bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-900 font-bold py-2 rounded-xl text-xs transition shadow-xs">
                     บันทึกการเปลี่ยนแปลง
                 </button>
-                <button onclick="closeEditUserModal()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 py-2 px-4 rounded-xl text-xs transition">
+                <button onclick="closeEditUserModal()" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 py-2 px-4 rounded-xl text-xs transition border border-stone-200 dark:border-stone-700">
                     ยกเลิก
                 </button>
             </div>
@@ -497,6 +664,33 @@
     <!-- JAVASCRIPT -->
     <script>
         let allUsersData = [];
+
+        // SaaS dropdown toggle
+        function toggleThaiDSaasMenu() {
+            const menu = document.getElementById('thaidSaasMenu');
+            const chevron = document.getElementById('thaidSaasChevron');
+            if (menu) {
+                const isHidden = menu.classList.contains('hidden');
+                if (isHidden) {
+                    menu.classList.remove('hidden');
+                    if (chevron) chevron.style.transform = 'rotate(180deg)';
+                } else {
+                    menu.classList.add('hidden');
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        // Close SaaS menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const wrap = document.getElementById('thaidSaasDropdownWrap');
+            const menu = document.getElementById('thaidSaasMenu');
+            const chevron = document.getElementById('thaidSaasChevron');
+            if (wrap && menu && !wrap.contains(e.target)) {
+                menu.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+        });
 
         async function initAdminDashboard() {
             await loadAdminMetrics();
@@ -540,49 +734,49 @@
 
             users.forEach(u => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-zinc-900/60 transition';
+                tr.className = 'hover:bg-stone-50/80 dark:hover:bg-stone-800/40 transition';
 
                 const roleBadge = u.role === 'admin' 
-                    ? `<span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]"><i class="fa-solid fa-crown mr-1 text-[9px]"></i>Admin</span>`
-                    : `<span class="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded-full text-[10px]">Member</span>`;
+                    ? `<span class="bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2 py-0.5 rounded-full font-bold text-[10px]"><i class="fa-solid fa-crown mr-1 text-[9px]"></i>Admin</span>`
+                    : `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2 py-0.5 rounded-full text-[10px]">Member</span>`;
 
-                let planBadge = `<span class="bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full text-[10px]">${u.plan_name || 'Free Trial'}</span>`;
+                let planBadge = `<span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2 py-0.5 rounded-full text-[10px]">${u.plan_name || 'Free Trial'}</span>`;
                 if (u.plan_name === 'Pro') {
-                    planBadge = `<span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">Pro</span>`;
+                    planBadge = `<span class="bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2 py-0.5 rounded-full font-bold text-[10px]">Pro</span>`;
                 } else if (u.plan_name === 'VIP Agency') {
-                    planBadge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">VIP Agency</span>`;
+                    planBadge = `<span class="bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-full font-bold text-[10px]">VIP Agency</span>`;
                 }
 
                 const statusBadge = u.status === 'active'
-                    ? `<span class="text-emerald-400 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> ปกติ</span>`
-                    : `<span class="text-red-400 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> ${u.status}</span>`;
+                    ? `<span class="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ปกติ</span>`
+                    : `<span class="text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ${u.status}</span>`;
 
                 tr.innerHTML = `
                     <td class="py-3 px-4">
                         <div class="flex items-center gap-2.5">
-                            <img src="${u.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + u.id}" class="w-8 h-8 rounded-full bg-zinc-800 shrink-0">
+                            <img src="${u.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + u.id}" class="w-8 h-8 rounded-full bg-stone-200 dark:bg-stone-800 shrink-0">
                             <div>
-                                <div class="font-bold text-zinc-200">${u.name}</div>
-                                <div class="text-[11px] text-zinc-400">${u.email}</div>
+                                <div class="font-bold text-stone-900 dark:text-white">${u.name}</div>
+                                <div class="text-[11px] text-stone-500 dark:text-stone-400">${u.email}</div>
                             </div>
                         </div>
                     </td>
                     <td class="py-3 px-3">${roleBadge}</td>
                     <td class="py-3 px-3">${planBadge}</td>
-                    <td class="py-3 px-3 font-bold text-rose-400">${u.video_credits} คลิป</td>
-                    <td class="py-3 px-3 text-center font-bold text-blue-400">${u.pages_count || 0}</td>
+                    <td class="py-3 px-3 font-bold text-rose-600 dark:text-rose-400">${u.video_credits} คลิป</td>
+                    <td class="py-3 px-3 text-center font-bold text-blue-600 dark:text-blue-400">${u.pages_count || 0}</td>
                     <td class="py-3 px-3">${statusBadge}</td>
-                    <td class="py-3 px-3 text-zinc-400 text-[11px]">${(u.plan_expires_at || '').substring(0, 10) || 'ไม่มี'}</td>
+                    <td class="py-3 px-3 text-stone-500 dark:text-stone-400 text-[11px]">${(u.plan_expires_at || '').substring(0, 10) || 'ไม่มี'}</td>
                     <td class="py-3 px-4 text-right">
                         <div class="flex items-center justify-end gap-1.5">
-                            <button onclick="impersonateUser(${u.id}, '${u.name}')" class="bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border border-blue-500/30" title="เข้าสู่ระบบในนามสมาชิกนี้ (Impersonate)">
+                            <button onclick="impersonateUser(${u.id}, '${u.name}')" class="bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition shadow-2xs" title="เข้าสู่ระบบในนามสมาชิกนี้ (Impersonate)">
                                 <i class="fa-solid fa-eye mr-1"></i> ดูหน้า User
                             </button>
-                            <button onclick="openEditUserModal(${u.id})" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border border-zinc-700" title="แก้ไขสิทธิ์/เติมเครดิต">
+                            <button onclick="openEditUserModal(${u.id})" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border border-stone-200 dark:border-stone-700 shadow-2xs" title="แก้ไขสิทธิ์/เติมเครดิต">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             ${u.role !== 'admin' ? `
-                            <button onclick="deleteUser(${u.id}, '${u.name}')" class="bg-zinc-800 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border border-zinc-700" title="ลบสมาชิก">
+                            <button onclick="deleteUser(${u.id}, '${u.name}')" class="bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition shadow-2xs" title="ลบสมาชิก">
                                 <i class="fa-solid fa-trash"></i>
                             </button>` : ''}
                         </div>
@@ -610,15 +804,15 @@
         function switchAdminTab(tabKey) {
             document.querySelectorAll('.admin-pane').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.admin-tab').forEach(el => {
-                el.classList.remove('bg-purple-600', 'text-white');
-                el.classList.add('text-zinc-400');
+                el.classList.remove('bg-stone-900', 'text-white', 'dark:bg-white', 'dark:text-stone-900', 'shadow-xs', 'font-bold');
+                el.classList.add('text-stone-600', 'dark:text-stone-400', 'font-semibold');
             });
 
             document.getElementById(`pane-${tabKey}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`tab-btn-${tabKey}`);
             if (activeBtn) {
-                activeBtn.classList.remove('text-zinc-400');
-                activeBtn.classList.add('bg-purple-600', 'text-white');
+                activeBtn.classList.remove('text-stone-600', 'dark:text-stone-400', 'font-semibold');
+                activeBtn.classList.add('bg-stone-900', 'text-white', 'dark:bg-white', 'dark:text-stone-900', 'shadow-xs', 'font-bold');
             }
         }
 
@@ -687,7 +881,7 @@
                 const res = await fetch(`/api/auth/impersonate/${userId}`, { method: 'POST' });
                 const data = await res.json();
                 if (data.success) {
-                    window.location.href = '/';
+                    window.location.href = '/dashboard';
                 }
             } catch (err) {
                 alert('เกิดข้อผิดพลาด: ' + err.message);
@@ -699,7 +893,7 @@
             const el = document.getElementById(cardId);
             if (el) {
                 el.innerHTML = `
-                    <div class="p-6 text-center text-emerald-400 font-bold">
+                    <div class="p-6 text-center text-emerald-600 dark:text-emerald-400 font-bold">
                         <i class="fa-solid fa-circle-check text-3xl mb-2"></i>
                         <div>อนุมัติสลิปสำเร็จเรียบร้อยแล้ว</div>
                     </div>
