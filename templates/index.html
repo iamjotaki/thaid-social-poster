@@ -430,47 +430,47 @@
 
             <!-- ANALYTICS CARDS (OVERVIEW) -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-1">
-                    <div class="text-xs text-zinc-400 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1 shadow-xs">
+                    <div class="text-xs font-semibold text-stone-600 dark:text-stone-400 flex items-center justify-between">
                         <span>ผู้ติดตามเพจ (Followers)</span>
-                        <i class="fa-solid fa-user-plus text-blue-400"></i>
+                        <i class="fa-solid fa-user-plus text-blue-500"></i>
                     </div>
-                    <div id="ana-followers" class="text-2xl font-black text-white">0</div>
-                    <div class="text-[10px] text-zinc-500">คนติดตามเพจปัจจุบัน</div>
+                    <div id="ana-followers" class="text-2xl font-bold text-stone-900 dark:text-white">0</div>
+                    <div class="text-[10px] text-stone-500 dark:text-stone-400">คนติดตามเพจปัจจุบัน</div>
                 </div>
 
-                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-1">
-                    <div class="text-xs text-zinc-400 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1 shadow-xs">
+                    <div class="text-xs font-semibold text-stone-600 dark:text-stone-400 flex items-center justify-between">
                         <span>คนกดถูกใจเพจ (Fans)</span>
-                        <i class="fa-solid fa-thumbs-up text-emerald-400"></i>
+                        <i class="fa-solid fa-thumbs-up text-emerald-500"></i>
                     </div>
-                    <div id="ana-fans" class="text-2xl font-black text-emerald-400">0</div>
-                    <div class="text-[10px] text-zinc-500">ยอด Page Likes</div>
+                    <div id="ana-fans" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">0</div>
+                    <div class="text-[10px] text-stone-500 dark:text-stone-400">ยอด Page Likes</div>
                 </div>
 
-                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-1">
-                    <div class="text-xs text-zinc-400 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1 shadow-xs">
+                    <div class="text-xs font-semibold text-stone-600 dark:text-stone-400 flex items-center justify-between">
                         <span>รีแอคชันรวม (Reactions)</span>
                         <i class="fa-solid fa-heart text-rose-500"></i>
                     </div>
-                    <div id="ana-reactions" class="text-2xl font-black text-rose-400">0</div>
-                    <div class="text-[10px] text-zinc-500">จากโพสต์ล่าสุดทั้งหมด</div>
+                    <div id="ana-reactions" class="text-2xl font-bold text-rose-600 dark:text-rose-400">0</div>
+                    <div class="text-[10px] text-stone-500 dark:text-stone-400">จากโพสต์ล่าสุดทั้งหมด</div>
                 </div>
 
-                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-1">
-                    <div class="text-xs text-zinc-400 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1 shadow-xs">
+                    <div class="text-xs font-semibold text-stone-600 dark:text-stone-400 flex items-center justify-between">
                         <span>แชร์ & คอมเมนต์ (Engagement)</span>
-                        <i class="fa-solid fa-share-nodes text-purple-400"></i>
+                        <i class="fa-solid fa-share-nodes text-purple-500"></i>
                     </div>
-                    <div id="ana-engagement" class="text-2xl font-black text-purple-400">0</div>
-                    <div class="text-[10px] text-zinc-500">ยอดการมีส่วนร่วมกับโพสต์</div>
+                    <div id="ana-engagement" class="text-2xl font-bold text-purple-600 dark:text-purple-400">0</div>
+                    <div class="text-[10px] text-stone-500 dark:text-stone-400">ยอดการมีส่วนร่วมกับโพสต์</div>
                 </div>
             </div>
 
             <!-- ============================================================== -->
             <!-- 1. AI GOLDEN HOURS & 24-HOUR PEAK HEATMAP (ช่วงเวลาทองคำ AI) -->
             <!-- ============================================================== -->
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 space-y-4 shadow-xs">
                 <div class="flex items-center justify-between flex-wrap gap-2">
                     <div>
                         <h3 class="font-bold text-sm text-zinc-100 flex items-center gap-2">
@@ -503,7 +503,7 @@
                             <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-500"></span> ไพรม์ไทม์ (Super Peak)</span>
                         </div>
                     </div>
-                    <div id="golden-heatmap-bars" class="grid grid-cols-12 md:grid-cols-24 gap-1 p-2 bg-zinc-950/80 rounded-xl border border-zinc-800/60 overflow-x-auto">
+                    <div id="golden-heatmap-bars" class="grid grid-cols-12 md:grid-cols-24 gap-1 p-2 bg-stone-50 dark:bg-stone-950/80 rounded-xl border border-stone-200 dark:border-stone-800/60 overflow-x-auto">
                         <!-- Populated by JS -->
                     </div>
                 </div>
@@ -514,19 +514,19 @@
             <!-- ============================================================== -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 <!-- Left: Content Mix Distribution & Health Gauge -->
-                <div class="lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl">
+                <div class="lg:col-span-7 bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 space-y-4 shadow-xs">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="font-bold text-sm text-zinc-100 flex items-center gap-2">
-                                <i class="fa-solid fa-chart-pie text-emerald-400"></i>
+                            <h3 class="font-bold text-sm text-stone-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-emerald-500"></i>
                                 <span>กลยุทธ์สัดส่วนคอนเทนต์ (Content Mix Strategy)</span>
                             </h3>
-                            <p class="text-xs text-zinc-400">สัดส่วนคอนเทนต์ 30 วันล่าสุด เทียบกับสัดส่วนมาตรฐานที่อัลกอริทึมชอบ</p>
+                            <p class="text-xs text-stone-600 dark:text-stone-400">สัดส่วนคอนเทนต์ 30 วันล่าสุด เทียบกับสัดส่วนมาตรฐานที่อัลกอริทึมชอบ</p>
                         </div>
                         <div class="text-right">
-                            <div class="text-xs text-zinc-400">คะแนนสุขภาพเพจ</div>
-                            <div class="text-xl font-black text-emerald-400 flex items-center justify-end gap-1">
-                                <span id="strategy-health-score">85</span><span class="text-xs text-zinc-500">/100</span>
+                            <div class="text-xs text-stone-500 dark:text-stone-400">คะแนนสุขภาพเพจ</div>
+                            <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-end gap-1">
+                                <span id="strategy-health-score">85</span><span class="text-xs text-stone-400">/100</span>
                             </div>
                         </div>
                     </div>
@@ -538,26 +538,26 @@
                 </div>
 
                 <!-- Right: AI Strategy Advisor Recommendations -->
-                <div class="lg:col-span-5 bg-gradient-to-br from-zinc-900 via-zinc-900 to-purple-950/20 border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl flex flex-col justify-between">
+                <div class="lg:col-span-5 bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 space-y-4 shadow-xs flex flex-col justify-between">
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <h3 class="font-bold text-sm text-purple-300 flex items-center gap-2">
-                                <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i>
+                            <h3 class="font-bold text-sm text-stone-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-purple-500"></i>
                                 <span>AI Strategy Advisor (คำแนะนำเชิงรุก)</span>
                             </h3>
-                            <span id="strategy-health-label" class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold">
+                            <span id="strategy-health-label" class="text-[10px] bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2 py-0.5 rounded-full font-bold">
                                 Healthy Mix
                             </span>
                         </div>
-                        <p class="text-xs text-zinc-400">ข้อเสนอแนะปรับกลยุทธ์เพื่อดัน Engagement และป้องกันไม่ให้ถูกลด Reach</p>
+                        <p class="text-xs text-stone-600 dark:text-stone-400">ข้อเสนอแนะปรับกลยุทธ์เพื่อดัน Engagement และป้องกันไม่ให้ถูกลด Reach</p>
                         <div id="strategy-recommendations-list" class="space-y-2.5 pt-1">
                             <!-- Populated by JS -->
                         </div>
                     </div>
 
-                    <div class="pt-3 border-t border-zinc-800 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">วิเคราะห์อัตโนมัติตามสถิติเพจ</span>
-                        <button onclick="loadContentStrategy()" class="text-xs text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1">
+                    <div class="pt-3 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between text-xs">
+                        <span class="text-stone-500 dark:text-stone-400">วิเคราะห์อัตโนมัติตามสถิติเพจ</span>
+                        <button onclick="loadContentStrategy()" class="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 font-semibold flex items-center gap-1">
                             <i class="fa-solid fa-arrows-rotate"></i> รีเฟรชคำแนะนำ
                         </button>
                     </div>
@@ -565,15 +565,15 @@
             </div>
 
             <!-- NOTICE BOX ON INSIGHTS SCOPES -->
-            <div id="insights-notice-box" class="bg-blue-950/30 border border-blue-500/30 rounded-2xl p-4 flex items-start space-x-3">
-                <i class="fa-solid fa-circle-info text-blue-400 text-lg mt-0.5 shrink-0"></i>
-                <div class="text-xs space-y-1 text-zinc-300">
-                    <div class="font-bold text-blue-300 flex items-center gap-1.5">
+            <div id="insights-notice-box" class="bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60 rounded-2xl p-4 flex items-start space-x-3 shadow-xs">
+                <i class="fa-solid fa-circle-info text-blue-600 dark:text-blue-400 text-lg mt-0.5 shrink-0"></i>
+                <div class="text-xs space-y-1.5">
+                    <div class="font-bold text-sm text-blue-950 dark:text-blue-100 flex items-center gap-1.5">
                         <span>ต้องการดูยอดวิว (Views/Reach) และยอดคลิก (Post Clicks) อย่างละเอียด?</span>
                     </div>
-                    <p class="text-zinc-400 leading-relaxed">
-                        Facebook บังคับให้เพิ่มสิทธิ์ <code class="bg-zinc-800 text-amber-300 px-1 py-0.5 rounded font-mono">read_insights</code> ให้กับ Token ของคุณ 
-                        (สามารถเข้าไปที่ <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-blue-400 underline">Meta Graph API Explorer</a> แล้วติ๊กเพิ่มสิทธิ์ <strong>read_insights</strong> จากนั้นกด Generate Token แล้วนำมาอัปเดตที่เพจของคุณในแท็บ 'จัดการเพจ' ได้ทันทีครับ)
+                    <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-xs">
+                        Facebook บังคับให้เพิ่มสิทธิ์ <code class="bg-blue-100 dark:bg-blue-900/60 text-blue-900 dark:text-blue-200 px-1.5 py-0.5 rounded font-mono font-semibold text-[11px]">read_insights</code> ให้กับ Token ของคุณ 
+                        (สามารถเข้าไปที่ <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-blue-600 dark:text-blue-400 font-semibold underline hover:text-blue-800">Meta Graph API Explorer</a> แล้วติ๊กเพิ่มสิทธิ์ <strong>read_insights</strong> จากนั้นกด Generate Token แล้วนำมาอัปเดตที่เพจของคุณในแท็บ 'จัดการเพจ' ได้ทันทีครับ)
                     </p>
                 </div>
             </div>
@@ -600,24 +600,24 @@
         <section id="tab-match" class="tab-content hidden space-y-6">
             
             <!-- Hero Header -->
-            <div class="flex items-center justify-between flex-wrap gap-3 bg-gradient-to-r from-emerald-950/40 via-zinc-900 to-zinc-900 p-5 rounded-2xl border border-emerald-900/40 shadow-xl">
-                <div class="space-y-1">
+            <div class="flex items-center justify-between flex-wrap gap-4 bg-white dark:bg-stone-900 p-5 rounded-2xl border border-stone-200/80 dark:border-stone-800 shadow-xs">
+                <div class="space-y-1.5">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> MATCH CENTER PRO
+                        <span class="text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-lg font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-[8px] text-emerald-500 animate-pulse"></i> MATCH CENTER PRO
                         </span>
-                        <span class="text-xs text-zinc-400">All Competitions • Premier League & Champions League</span>
+                        <span class="text-xs text-stone-600 dark:text-stone-400">All Competitions • Premier League & Champions League</span>
                     </div>
-                    <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                    <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
                         <span>ศูนย์ข้อมูลการแข่งขัน & AI คอลัมนิสต์</span>
                     </h2>
-                    <p class="text-xs text-zinc-400">พรีวิววิเคราะห์ก่อนเกม · ตัดเกรดคะแนนผู้เล่น 1-10 หลังเกม · ตารางคะแนนสด</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-400">พรีวิววิเคราะห์ก่อนเกม · ตัดเกรดคะแนนผู้เล่น 1-10 หลังเกม · ตารางคะแนนสด</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="loadMatchCenter()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs px-3.5 py-2 rounded-xl transition border border-zinc-700 flex items-center gap-1.5">
+                    <button onclick="loadMatchCenter()" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold px-3.5 py-2 rounded-xl transition border border-stone-200 dark:border-stone-700 flex items-center gap-1.5 shadow-2xs">
                         <i class="fa-solid fa-arrows-rotate"></i> อัปเดตข้อมูลสด
                     </button>
-                    <button onclick="toggleCustomMatchBox()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-emerald-600/20">
+                    <button onclick="toggleCustomMatchBox()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs">
                         <i class="fa-solid fa-sliders"></i> กำหนดแมตช์เอง
                     </button>
                 </div>
@@ -853,17 +853,17 @@
         <!-- ============================================================== -->
         <section id="tab-community" class="tab-content hidden space-y-6">
             <!-- Header -->
-            <div class="flex items-center justify-between flex-wrap gap-3 bg-gradient-to-r from-violet-950/40 via-zinc-900 to-zinc-900 p-5 rounded-2xl border border-violet-900/40 shadow-xl">
-                <div class="space-y-1">
+            <div class="flex items-center justify-between flex-wrap gap-3 bg-white dark:bg-stone-900 p-5 rounded-2xl border border-stone-200/80 dark:border-stone-800 shadow-xs">
+                <div class="space-y-1.5">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs bg-violet-500/20 text-violet-400 border border-violet-500/30 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
-                            <i class="fa-solid fa-sparkles"></i> AI COMMUNITY MANAGER
+                        <span class="text-xs bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800 px-2.5 py-0.5 rounded-lg font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-sparkles text-violet-500"></i> AI COMMUNITY MANAGER
                         </span>
                     </div>
-                    <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                    <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
                         <span>บอทสร้าง Engagement & ผู้ช่วยตอบคอมเมนต์ลูกเพจ</span>
                     </h2>
-                    <p class="text-xs text-zinc-400">สร้างโพสต์โพลล์ชวนคุยให้เพจคึกคัก · อ่านและให้ AI ร่างคำตอบคอมเมนต์ลูกเพจสไตล์คอลัมนิสต์</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-400">สร้างโพสต์โพลล์ชวนคุยให้เพจคึกคัก · อ่านและให้ AI ร่างคำตอบคอมเมนต์ลูกเพจสไตล์คอลัมนิสต์</p>
                 </div>
             </div>
 
@@ -947,29 +947,29 @@
         <!-- ============================================================== -->
         <section id="tab-affiliate" class="tab-content hidden space-y-6">
             <!-- Header -->
-            <div class="flex items-center justify-between flex-wrap gap-4 bg-gradient-to-r from-amber-950/40 via-zinc-900 to-zinc-900 p-5 rounded-2xl border border-amber-900/40 shadow-xl">
-                <div class="space-y-1">
+                        <div class="flex items-center justify-between flex-wrap gap-4 bg-white dark:bg-stone-900 p-5 rounded-2xl border border-stone-200/80 dark:border-stone-800 shadow-xs">
+                <div class="space-y-1.5">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
-                            <i class="fa-solid fa-coins"></i> AFFILIATE REVENUE & COMMISSIONS
+                        <span class="text-xs bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2.5 py-0.5 rounded-lg font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-coins text-amber-500"></i> AFFILIATE REVENUE & COMMISSIONS
                         </span>
-                        <span class="text-[10px] bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded-md border border-zinc-700 font-mono">Shopee · Lazada · TikTok</span>
+                        <span class="text-[11px] bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 px-2 py-0.5 rounded-md border border-stone-200 dark:border-stone-700 font-mono">Shopee · Lazada · TikTok</span>
                     </div>
-                    <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                    <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
                         <span>ระบบ AI โพสต์สินค้า Shopee + Lazada + TikTok รับค่าคอมมิชชัน</span>
                     </h2>
-                    <p class="text-xs text-zinc-400">ดึงข้อมูลสินค้าอัตโนมัติ ติดลิงก์ Affiliate ของเรา ให้ Gemini AI คิดคำป้ายยาหยุดนิ้วโป้ง และตั้งเวลาโพสต์ลง Facebook ได้ทันที</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-400">ดึงข้อมูลสินค้าอัตโนมัติ ติดลิงก์ Affiliate ของเรา ให้ Gemini AI คิดคำป้ายยาหยุดนิ้วโป้ง และตั้งเวลาโพสต์ลง Facebook ได้ทันที</p>
                 </div>
                 <!-- Quick Portals -->
                 <div class="flex items-center gap-2 flex-wrap">
-                    <a href="https://affiliate.shopee.co.th/" target="_blank" rel="noopener noreferrer" class="text-xs bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-bag-shopping"></i> Shopee Affiliate ↗
+                    <a href="https://affiliate.shopee.co.th/" target="_blank" rel="noopener noreferrer" class="text-xs bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-2xs">
+                        <i class="fa-solid fa-bag-shopping text-orange-500"></i> Shopee Affiliate ↗
                     </a>
-                    <a href="https://affiliate.lazada.co.th/" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-heart"></i> Lazada Affiliate ↗
+                    <a href="https://affiliate.lazada.co.th/" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-2xs">
+                        <i class="fa-solid fa-heart text-blue-500"></i> Lazada Affiliate ↗
                     </a>
-                    <a href="https://affiliate.tiktok.com/" target="_blank" rel="noopener noreferrer" class="text-xs bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 border border-pink-500/30 font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
-                        <i class="fa-brands fa-tiktok"></i> TikTok Shop Affiliate ↗
+                    <a href="https://affiliate.tiktok.com/" target="_blank" rel="noopener noreferrer" class="text-xs bg-pink-50 hover:bg-pink-100 dark:bg-pink-950/40 dark:hover:bg-pink-950/60 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800 font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-2xs">
+                        <i class="fa-brands fa-tiktok text-pink-500"></i> TikTok Shop Affiliate ↗
                     </a>
                 </div>
             </div>
@@ -1102,7 +1102,7 @@
                         </div>
 
                         <!-- Generate Button -->
-                        <button type="button" onclick="generateAffiliateCaption()" id="btn-gen-caption" class="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-zinc-950 font-black text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-yellow-500/10">
+                        <button type="button" onclick="generateAffiliateCaption()" id="btn-gen-caption" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-xs">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
                             <span>✨ ให้ Gemini AI คิดคำโปรโมทโพสต์นี้</span>
                         </button>
@@ -1201,24 +1201,24 @@
         <!-- ============================================================== -->
         <section id="tab-image-gen" class="tab-content hidden space-y-6">
             <!-- Header Banner -->
-            <div class="flex items-center justify-between flex-wrap gap-4 bg-gradient-to-r from-pink-950/40 via-zinc-900 to-zinc-900 p-5 rounded-2xl border border-pink-900/40 shadow-xl">
-                <div class="space-y-1">
+            <div class="flex items-center justify-between flex-wrap gap-4 bg-white dark:bg-stone-900 p-5 rounded-2xl border border-stone-200/80 dark:border-stone-800 shadow-xs">
+                <div class="space-y-1.5">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs bg-pink-500/20 text-pink-400 border border-pink-500/30 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> GOOGLE FLOW IMAGE STUDIO
+                        <span class="text-xs bg-pink-50 dark:bg-pink-950/50 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800 px-2.5 py-0.5 rounded-lg font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-wand-magic-sparkles text-pink-500"></i> GOOGLE FLOW IMAGE STUDIO
                         </span>
-                        <span id="flow-engine-status-pill" class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md font-mono flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="flow-engine-status-pill" class="text-[10px] bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-md font-mono flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                             <span id="flow-status-text">ตรวจพบ Google Flow [Ports 9222, 9223]</span>
                         </span>
                     </div>
-                    <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                    <h2 class="text-base sm:text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
                         <span>ระบบเจนรูปโพสต์ AI ด้วย Google Flow ตามรูปอ้างอิง</span>
                     </h2>
-                    <p class="text-xs text-zinc-400">แนบรูปอ้างอิงเพื่อถอดรหัสสไตล์ศิลป์ เจนภาพใหม่ความคมชัดสูงจาก Google Flow เปลี่ยนข้อความภาษาไทยได้อิสระ พร้อมออโต้โพสต์และตั้งเวลาลง Facebook</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-400">แนบรูปอ้างอิงเพื่อถอดรหัสสไตล์ศิลป์ เจนภาพใหม่ความคมชัดสูงจาก Google Flow เปลี่ยนข้อความภาษาไทยได้อิสระ พร้อมออโต้โพสต์และตั้งเวลาลง Facebook</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="checkFlowEngineStatus(true)" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 rounded-xl border border-zinc-700 transition flex items-center gap-1.5">
+                    <button onclick="checkFlowEngineStatus(true)" class="text-xs bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 px-3 py-1.5 rounded-xl border border-stone-200 dark:border-stone-700 transition flex items-center gap-1.5 shadow-2xs font-medium">
                         <i class="fa-solid fa-rotate"></i> เช็คพอร์ต Flow
                     </button>
                 </div>
@@ -1290,7 +1290,7 @@
                         </div>
 
                         <!-- Analyze & Build Prompt Button -->
-                        <button type="button" onclick="analyzeRefAndGeneratePrompt()" id="btn-analyze-ref" class="w-full bg-gradient-to-r from-pink-600 via-rose-600 to-amber-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-pink-600/20">
+                        <button type="button" onclick="analyzeRefAndGeneratePrompt()" id="btn-analyze-ref" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-xs">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
                             <span>✨ วิเคราะห์สไตล์ภาพ & สร้าง Prompt อัตโนมัติ</span>
                         </button>
@@ -1371,7 +1371,7 @@
                         </div>
 
                         <!-- Big Generate Button -->
-                        <button type="button" onclick="triggerFlowImageGeneration()" id="btn-flow-generate" class="w-full bg-gradient-to-r from-pink-500 via-rose-500 to-red-600 hover:from-pink-400 hover:to-red-500 text-white font-black text-sm py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-pink-500/20">
+                        <button type="button" onclick="triggerFlowImageGeneration()" id="btn-flow-generate" class="w-full bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-950 font-bold text-sm py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-xs">
                             <i class="fa-solid fa-play"></i>
                             <span>🚀 สั่งเจนรูปจาก Google Flow (ใช้เวลา ~25-35 วิ)</span>
                         </button>
@@ -1522,76 +1522,86 @@
             <!-- STATS CARDS: COUNTERS (วันนี้กี่โพสต์, 7 วันกี่โพสต์, เดือนนี้กี่โพสต์, ทั้งหมด, คิว FB) -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 <!-- 1. วันนี้ -->
-                <div class="bg-gradient-to-br from-zinc-900 to-emerald-950/30 border border-zinc-800 rounded-2xl p-4 space-y-1 relative overflow-hidden shadow-lg">
-                    <div class="text-[11px] text-zinc-400 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
+                    <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
                         <span>วันนี้ (Today)</span>
-                        <i class="fa-solid fa-calendar-day text-emerald-400"></i>
+                        <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-calendar-day"></i>
+                        </div>
                     </div>
                     <div class="flex items-baseline gap-1.5">
-                        <span id="stat-today-total" class="text-2xl font-black text-emerald-400">0</span>
-                        <span class="text-xs text-zinc-500">โพสต์</span>
+                        <span id="stat-today-total" class="text-2xl font-black text-emerald-600 dark:text-emerald-400">0</span>
+                        <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">โพสต์</span>
                     </div>
-                    <div class="text-[10px] text-zinc-400 truncate pt-0.5">
-                        <span id="stat-today-posts">0</span> ข่าว / <span id="stat-today-reels">0</span> Reels
+                    <div class="text-[11px] text-stone-600 dark:text-stone-400 truncate pt-0.5">
+                        <span id="stat-today-posts" class="font-bold text-stone-800 dark:text-stone-200">0</span> ข่าว / <span id="stat-today-reels" class="font-bold text-stone-800 dark:text-stone-200">0</span> Reels
                     </div>
                 </div>
 
                 <!-- 2. 7 วันที่ผ่านมา -->
-                <div class="bg-gradient-to-br from-zinc-900 to-blue-950/30 border border-zinc-800 rounded-2xl p-4 space-y-1 relative overflow-hidden shadow-lg">
-                    <div class="text-[11px] text-zinc-400 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
+                    <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
                         <span>7 วันล่าสุด</span>
-                        <i class="fa-solid fa-calendar-week text-blue-400"></i>
+                        <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-calendar-week"></i>
+                        </div>
                     </div>
                     <div class="flex items-baseline gap-1.5">
-                        <span id="stat-days7-total" class="text-2xl font-black text-blue-400">0</span>
-                        <span class="text-xs text-zinc-500">โพสต์</span>
+                        <span id="stat-days7-total" class="text-2xl font-black text-blue-600 dark:text-blue-400">0</span>
+                        <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">โพสต์</span>
                     </div>
-                    <div class="text-[10px] text-zinc-400 truncate pt-0.5">
+                    <div class="text-[11px] text-stone-600 dark:text-stone-400 truncate pt-0.5">
                         ในรอบ 7 วันที่ผ่านมา
                     </div>
                 </div>
 
                 <!-- 3. เดือนนี้ -->
-                <div class="bg-gradient-to-br from-zinc-900 to-purple-950/30 border border-zinc-800 rounded-2xl p-4 space-y-1 relative overflow-hidden shadow-lg">
-                    <div class="text-[11px] text-zinc-400 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
+                    <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
                         <span>เดือนนี้ (This Month)</span>
-                        <i class="fa-solid fa-calendar text-purple-400"></i>
+                        <div class="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-calendar"></i>
+                        </div>
                     </div>
                     <div class="flex items-baseline gap-1.5">
-                        <span id="stat-month-total" class="text-2xl font-black text-purple-400">0</span>
-                        <span class="text-xs text-zinc-500">โพสต์</span>
+                        <span id="stat-month-total" class="text-2xl font-black text-purple-600 dark:text-purple-400">0</span>
+                        <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">โพสต์</span>
                     </div>
-                    <div class="text-[10px] text-zinc-400 truncate pt-0.5">
+                    <div class="text-[11px] text-stone-600 dark:text-stone-400 truncate pt-0.5">
                         สะสมเดือนปัจจุบัน
                     </div>
                 </div>
 
                 <!-- 4. ทั้งหมด -->
-                <div class="bg-gradient-to-br from-zinc-900 to-amber-950/30 border border-zinc-800 rounded-2xl p-4 space-y-1 relative overflow-hidden shadow-lg">
-                    <div class="text-[11px] text-zinc-400 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-stone-300 dark:hover:border-stone-700 transition">
+                    <div class="text-xs font-semibold text-stone-600 dark:text-stone-300 flex items-center justify-between">
                         <span>ทั้งหมด (All-Time)</span>
-                        <i class="fa-solid fa-trophy text-amber-400"></i>
+                        <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
                     </div>
                     <div class="flex items-baseline gap-1.5">
-                        <span id="stat-alltime-total" class="text-2xl font-black text-amber-300">0</span>
-                        <span class="text-xs text-zinc-500">โพสต์</span>
+                        <span id="stat-alltime-total" class="text-2xl font-black text-amber-600 dark:text-amber-400">0</span>
+                        <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">โพสต์</span>
                     </div>
-                    <div class="text-[10px] text-zinc-400 truncate pt-0.5">
+                    <div class="text-[11px] text-stone-600 dark:text-stone-400 truncate pt-0.5">
                         เผยแพร่สำเร็จทั้งหมด
                     </div>
                 </div>
 
                 <!-- 5. คิวตั้งเวลาบน FB -->
-                <div class="bg-gradient-to-br from-zinc-900 to-sky-950/30 border border-sky-800/40 rounded-2xl p-4 space-y-1 relative overflow-hidden shadow-lg col-span-2 sm:col-span-1">
-                    <div class="text-[11px] text-sky-300 flex items-center justify-between">
+                <div class="bg-white dark:bg-stone-900 border border-sky-300/80 dark:border-sky-800/60 rounded-2xl p-4 space-y-1.5 shadow-xs hover:border-sky-400 dark:hover:border-sky-700 transition col-span-2 sm:col-span-1">
+                    <div class="text-xs font-semibold text-sky-700 dark:text-sky-300 flex items-center justify-between">
                         <span>คิวรอปล่อยบน FB</span>
-                        <i class="fa-brands fa-facebook text-sky-400"></i>
+                        <div class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs">
+                            <i class="fa-brands fa-facebook"></i>
+                        </div>
                     </div>
                     <div class="flex items-baseline gap-1.5">
-                        <span id="stat-fbqueue-total" class="text-2xl font-black text-sky-300">0</span>
-                        <span class="text-xs text-zinc-500">คิว</span>
+                        <span id="stat-fbqueue-total" class="text-2xl font-black text-sky-600 dark:text-sky-300">0</span>
+                        <span class="text-xs text-stone-500 dark:text-stone-400 font-medium">คิว</span>
                     </div>
-                    <div class="text-[10px] text-sky-400/80 truncate pt-0.5">
+                    <div class="text-[11px] text-sky-700/80 dark:text-sky-400 truncate pt-0.5 font-medium">
                         อยู่บนคลาวด์ Facebook แล้ว
                     </div>
                 </div>
@@ -1791,43 +1801,38 @@
                 </form>
 
                 <!-- AI NICHE FEED DISCOVERY HUB (ค้นหา 10 ฟีดต่างประเทศด้วย AI) -->
-                <div class="pt-4 border-t border-zinc-800 space-y-3 bg-gradient-to-r from-purple-950/25 via-zinc-950/60 to-pink-950/25 p-4 rounded-2xl border border-purple-500/25">
+                <div class="pt-4 border-t border-stone-200 dark:border-stone-800 space-y-3 bg-white dark:bg-stone-900 p-5 rounded-2xl border border-stone-200/80 dark:border-stone-800 shadow-xs">
                     <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div class="text-xs font-bold text-zinc-100 flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-lg bg-gradient-to-tr from-purple-600 to-pink-500 text-white flex items-center justify-center text-xs shadow-md">
+                        <div class="text-xs font-bold text-stone-900 dark:text-white flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs shadow-xs">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                             </span>
-                            <span class="text-sm font-bold bg-gradient-to-r from-purple-300 via-pink-200 to-amber-200 bg-clip-text text-transparent">AI Niche Feed Discovery (ค้นหา 10 แหล่งฟีดต่างประเทศอัตโนมัติ)</span>
-                            <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-0.5 rounded-full font-bold">พิมพ์ไทย ➔ ได้ฟีดสากล</span>
+                            <span class="text-sm font-bold text-stone-900 dark:text-white">AI Niche Feed Discovery (ค้นหา 10 แหล่งฟีดต่างประเทศอัตโนมัติ)</span>
+                            <span class="text-[10px] bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2.5 py-0.5 rounded-full font-bold">พิมพ์ไทย ➔ ได้ฟีดสากล</span>
                         </div>
-                        <span class="text-[11px] text-zinc-400">พิมพ์หัวข้อที่อยากทำเพจ ระบบจะค้นหา 10 แหล่งข่าวต่างประเทศที่ตรงที่สุดให้ทันที:</span>
+                        <span class="text-[11px] text-stone-500 dark:text-stone-400">พิมพ์หัวข้อที่อยากทำเพจ ระบบจะค้นหา 10 แหล่งข่าวต่างประเทศที่ตรงที่สุดให้ทันที:</span>
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
                         <div class="relative flex-1">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-zinc-500 text-xs"></i>
-                            <input type="text" id="ai-feed-topic" placeholder="พิมพ์หัวข้อภาษาไทย เช่น เรื่องลึกลับ, ดาราศาสตร์, คริปโต, รถคลาสสิก, หมาแมว, การทำอาหาร..." onkeydown="if(event.key==='Enter'){event.preventDefault();searchNicheFeeds();}" class="w-full bg-zinc-950/90 border border-zinc-700/80 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-500 transition shadow-inner">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-stone-400 text-xs"></i>
+                            <input type="text" id="ai-feed-topic" placeholder="พิมพ์หัวข้อภาษาไทย เช่น เรื่องลึกลับ, ดาราศาสตร์, คริปโต, รถคลาสสิก, หมาแมว, การทำอาหาร..." onkeydown="if(event.key==='Enter'){event.preventDefault();searchNicheFeeds();}" class="w-full bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-700 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-purple-500 transition shadow-inner">
                         </div>
-                        <button type="button" id="btn-discover-feeds" onclick="searchNicheFeeds()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 shrink-0">
+                        <button type="button" id="btn-discover-feeds" onclick="searchNicheFeeds()" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-xs shrink-0">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> ค้นหา 10 ฟีด (AI)
                         </button>
                     </div>
 
                     <!-- QUICK TOPIC CHIPS -->
-                    <div class="flex items-center gap-1.5 flex-wrap pt-1 text-[11px] text-zinc-400">
-                        <span class="text-[10px] text-zinc-500"><i class="fa-regular fa-lightbulb"></i> แตะเพื่อลอง:</span>
-                        <button type="button" onclick="setAndSearchTopic('เรื่องลึกลับ')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🔮 เรื่องลึกลับ</button>
-                        <button type="button" onclick="setAndSearchTopic('ดาราศาสตร์และอวกาศ')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🚀 ดาราศาสตร์ & อวกาศ</button>
-                        <button type="button" onclick="setAndSearchTopic('รถยนต์และยานยนต์ไฟฟ้า')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🏎️ ยานยนต์ & EV</button>
-                        <button type="button" onclick="setAndSearchTopic('การเงินและการลงทุน')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">💰 ลงทุน & คริปโต</button>
-                        <button type="button" onclick="setAndSearchTopic('เกมและอีสปอร์ต')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🎮 เกม & Esports</button>
-                        <button type="button" onclick="setAndSearchTopic('สัตว์เลี้ยง สุนัขและแมว')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">🐱 สัตว์เลี้ยง & แมว</button>
-                        <button type="button" onclick="setAndSearchTopic('ประวัติศาสตร์โลก')" class="bg-zinc-900/90 hover:bg-purple-950/60 border border-zinc-800 hover:border-purple-500/40 px-2.5 py-0.5 rounded-lg text-zinc-300 transition flex items-center gap-1">📜 ประวัติศาสตร์โลก</button>
-                    </div>
-
-                    <!-- RESULTS CONTAINER (HIDDEN UNTIL SEARCHED) -->
-                    <div id="ai-feed-results" class="hidden space-y-3 pt-3 border-t border-purple-500/20">
-                        <!-- Populated by JavaScript -->
+                    <div class="flex items-center gap-1.5 flex-wrap pt-1 text-[11px] text-stone-500 dark:text-stone-400">
+                        <span class="text-[10px] text-stone-400 dark:text-stone-500"><i class="fa-regular fa-lightbulb"></i> แตะเพื่อลอง:</span>
+                        <button type="button" onclick="setAndSearchTopic('เรื่องลึกลับ')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2.5 py-0.5 rounded-lg text-stone-700 dark:text-stone-300 transition flex items-center gap-1">🔮 เรื่องลึกลับ</button>
+                        <button type="button" onclick="setAndSearchTopic('ดาราศาสตร์และอวกาศ')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2.5 py-0.5 rounded-lg text-stone-700 dark:text-stone-300 transition flex items-center gap-1">🚀 ดาราศาสตร์ & อวกาศ</button>
+                        <button type="button" onclick="setAndSearchTopic('รถยนต์และยานยนต์ไฟฟ้า')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2.5 py-0.5 rounded-lg text-stone-700 dark:text-stone-300 transition flex items-center gap-1">🏎️ ยานยนต์ & EV</button>
+                        <button type="button" onclick="setAndSearchTopic('การเงินและการลงทุน')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2.5 py-0.5 rounded-lg text-stone-700 dark:text-stone-300 transition flex items-center gap-1">💰 ลงทุน & คริปโต</button>
+                        <button type="button" onclick="setAndSearchTopic('เกมและอีสปอร์ต')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2.5 py-0.5 rounded-lg text-stone-700 dark:text-stone-300 transition flex items-center gap-1">🎮 เกม & Esports</button>
+                        <button type="button" onclick="setAndSearchTopic('สัตว์เลี้ยง สุนัขและแมว')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2.5 py-0.5 rounded-lg text-stone-700 dark:text-stone-300 transition flex items-center gap-1">🐱 สัตว์เลี้ยง & แมว</button>
+                        <button type="button" onclick="setAndSearchTopic('ประวัติศาสตร์โลก')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 px-2.5 py-0.5 rounded-lg text-stone-700 dark:text-stone-300 transition flex items-center gap-1">📜 ประวัติศาสตร์โลก</button>
                     </div>
                 </div>
 
@@ -2007,39 +2012,22 @@
         <!-- ============================================================== -->
         <section id="tab-apikeys" class="tab-content hidden space-y-5">
             <!-- Header Banner -->
-            <div class="bg-gradient-to-r from-zinc-900 via-zinc-900 to-amber-950/30 border border-zinc-800 rounded-2xl p-5 sm:p-6 space-y-3">
+            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3 shadow-xs">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="space-y-1">
-                        <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-zinc-100">
-                            <i class="fa-solid fa-key text-yellow-400"></i>
+                        <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-stone-900 dark:text-white">
+                            <i class="fa-solid fa-key text-amber-500"></i>
                             <span>Google Gemini API Keys ของคุณ (ใส่ได้ไม่จำกัดจำนวน)</span>
                         </h2>
-                        <p class="text-xs text-zinc-400 max-w-2xl">
+                        <p class="text-xs text-stone-600 dark:text-stone-400 max-w-2xl">
                             ระบบรองรับการใส่ API Key หลายคีย์พร้อมกัน (Multi-Key Pool) โดยจะทำการหมุนเวียนและสลับคีย์อัตโนมัติ หากคีย์ใดคีย์หนึ่งติดโควต้าเต็ม (Rate Limit 429) ช่วยให้ระบบทำงานได้อย่างต่อเนื่อง 24 ชม.
                         </p>
                     </div>
-                    <button onclick="openAddApiKeyModal()" class="bg-yellow-500 hover:bg-yellow-400 text-zinc-950 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-yellow-500/10 shrink-0">
+                    <button onclick="openAddApiKeyModal()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-xs shrink-0">
                         <i class="fa-solid fa-plus"></i> เพิ่ม API Key ใหม่
                     </button>
                 </div>
-
-                <!-- How to get key box -->
-                <div class="bg-zinc-950/80 border border-zinc-800 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                    <div class="flex items-center gap-2.5 text-zinc-300">
-                        <i class="fa-brands fa-google text-blue-400 text-sm"></i>
-                        <span>ยังไม่มี API Key? ขอคีย์ฟรีได้ง่ายๆ จาก Google AI Studio (ไม่มีค่าใช้จ่าย)</span>
-                    </div>
-                    <div class="flex items-center gap-2 shrink-0">
-                        <button onclick="openModal('modal-gemini-guide')" class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 text-xs">
-                            <i class="fa-solid fa-book-open"></i>
-                            <span>ดูคู่มือวิธีขอคีย์ฟรี</span>
-                        </button>
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-xs text-yellow-400 hover:text-yellow-300 font-semibold flex items-center gap-1 underline px-2 py-1">
-                            <span>ไปที่ Google AI Studio</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                        </a>
-                    </div>
-                </div>
+            </div>
             </div>
 
             <!-- Keys List Container -->
@@ -2121,7 +2109,7 @@
 
                     <!-- ปุ่มโพสต์หรือตั้งเวลา Facebook Reels -->
                     <div class="space-y-2">
-                        <button id="video-post-reels-btn" type="button" onclick="postReelFromModal()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 hidden">
+                        <button id="video-post-reels-btn" type="button" onclick="postReelFromModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-xs flex items-center justify-center gap-2 hidden">
                             <i class="fa-brands fa-facebook text-base"></i> <span>🚀 โพสต์คลิปนี้ลง Facebook Reels ทันที</span>
                         </button>
                         <button id="video-schedule-reels-btn" type="button" onclick="scheduleReelFromModal()" class="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs py-2.5 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 hidden">
@@ -2164,7 +2152,7 @@
 
                     <div class="pt-3 flex items-center justify-end space-x-2 border-t border-zinc-800">
                         <button type="button" onclick="closeModal('modal-video')" class="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white">ปิด</button>
-                        <button type="button" onclick="generateShortVideoFromModal()" id="btn-video-render" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-lg shadow-pink-600/20 flex items-center gap-1.5">
+                        <button type="button" onclick="generateShortVideoFromModal()" id="btn-video-render" class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-xs flex items-center gap-1.5">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> เรนเดอร์วิดีโอสั้นทันที
                         </button>
                     </div>
@@ -2363,13 +2351,17 @@
                 </div>
 
                 <!-- Auto-Slot Calculator Button -->
-                <div class="bg-gradient-to-r from-amber-950/30 via-zinc-900 to-zinc-900 border border-amber-500/30 rounded-xl p-3 flex items-center justify-between">
+                <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl p-3 flex items-center justify-between shadow-2xs">
                     <div>
-                        <div class="text-[11px] font-bold text-amber-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-bolt"></i> คิวเวลาว่างถัดไปตามโควตา:
+                        <div class="text-[11px] font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt text-amber-500"></i> คิวเวลาว่างถัดไปตามโควตา:
                         </div>
-                        <div id="sched-auto-slot-label" class="text-xs text-zinc-300 font-semibold mt-0.5">กำลังตรวจคิว...</div>
+                        <div id="sched-auto-slot-label" class="text-xs text-stone-800 dark:text-stone-200 font-semibold mt-0.5">กำลังตรวจคิว...</div>
                     </div>
+                    <button type="button" onclick="applyAutoSlotToScheduleInput()" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-2xs">
+                        ⚡ ใช้เวลานี้ทันที
+                    </button>
+                </div>
                     <button type="button" onclick="applyAutoSlotToScheduleInput()" class="text-xs bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold px-3 py-1.5 rounded-lg transition shadow-md">
                         ⚡ ใช้เวลานี้ทันที
                     </button>
@@ -2385,7 +2377,7 @@
                 <!-- Quick Presets -->
                 <div class="flex flex-wrap gap-1.5 pt-0.5">
                     <span class="text-[11px] text-zinc-400 self-center mr-1">ทางลัด:</span>
-                    <button type="button" onclick="setScheduleGoldenHour()" class="text-[11px] bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 hover:bg-amber-500/30 px-2.5 py-1 rounded-lg text-amber-300 font-bold flex items-center gap-1 transition shadow-sm">
+                    <button type="button" onclick="setScheduleGoldenHour()" class="text-[11px] bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 px-2.5 py-1 rounded-lg text-amber-800 dark:text-amber-200 font-bold flex items-center gap-1 transition shadow-2xs">
                         <i class="fa-solid fa-bolt text-amber-400"></i> เวลาทอง AI
                     </button>
                     <button type="button" onclick="setSchedulePreset(20)" class="text-[11px] bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-lg text-zinc-300">+20 นาที</button>
@@ -4939,7 +4931,7 @@
                         <i class="fa-solid fa-circle-check text-emerald-400"></i>
                         <span class="text-xs font-bold text-zinc-200">พบ ${feeds.length} ฟีดคุณภาพตรงกับหัวข้อ "${topic}"</span>
                     </div>
-                    <button type="button" onclick="addAllDiscoveredFeeds()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20">
+                    <button type="button" onclick="addAllDiscoveredFeeds()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-xs">
                         <i class="fa-solid fa-layer-group"></i> ⚡ เพิ่มทั้งหมด 10 ฟีดใน 1 คลิก
                     </button>
                 </div>
@@ -5377,18 +5369,18 @@
                 if (winContainer && data.golden_windows) {
                     winContainer.innerHTML = data.golden_windows.map(w => {
                         return `
-                            <div class="bg-zinc-950/80 border border-zinc-800/80 hover:border-${w.badge_color}-500/40 rounded-xl p-3.5 space-y-2 transition shadow-md">
+                            <div class="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 hover:border-${w.badge_color}-400 rounded-xl p-3.5 space-y-2 transition shadow-xs">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                                    <span class="text-xs font-bold text-stone-900 dark:text-white flex items-center gap-1.5">
                                         <i class="fa-solid fa-clock text-${w.badge_color}-400"></i>
                                         <span>${w.title}</span>
                                     </span>
-                                    <span class="text-[10px] bg-${w.badge_color}-500/20 text-${w.badge_color}-300 border border-${w.badge_color}-500/30 px-2 py-0.5 rounded-full font-bold">
+                                    <span class="text-[10px] bg-${w.badge_color}-50 dark:bg-${w.badge_color}-950/50 text-${w.badge_color}-700 dark:text-${w.badge_color}-300 border border-${w.badge_color}-200 dark:border-${w.badge_color}-800 px-2 py-0.5 rounded-full font-bold">
                                         Traffic ${w.traffic_score}%
                                     </span>
                                 </div>
-                                <div class="text-[11px] font-mono text-zinc-300 font-semibold">${w.time_range}</div>
-                                <p class="text-[11px] text-zinc-400 leading-relaxed">${w.description}</p>
+                                <div class="text-[11px] font-mono text-stone-800 dark:text-stone-200 font-semibold">${w.time_range}</div>
+                                <p class="text-[11px] text-stone-600 dark:text-stone-400 leading-relaxed">${w.description}</p>
                                 <div class="text-[10px] text-${w.badge_color}-400/90 pt-1 border-t border-zinc-800/60 font-semibold">
                                     ✨ แนะนำ: ${w.recommended_types}
                                 </div>
@@ -5403,7 +5395,7 @@
                         let barBg = "bg-zinc-800 text-zinc-500";
                         if (h.tier === 'medium') barBg = "bg-blue-600/40 text-blue-300 border border-blue-500/30";
                         if (h.tier === 'high') barBg = "bg-emerald-500/40 text-emerald-300 border border-emerald-500/40";
-                        if (h.tier === 'peak' || h.tier === 'super_peak') barBg = "bg-gradient-to-t from-amber-600 to-amber-400 text-zinc-950 font-bold shadow-lg shadow-amber-500/20";
+                        if (h.tier === 'peak' || h.tier === 'super_peak') barBg = "bg-amber-500 text-white font-bold shadow-xs";
 
                         const heightPct = Math.max(25, h.score);
 
@@ -5476,19 +5468,19 @@
                             : `<span class="text-[10px] text-amber-400 font-semibold"><i class="fa-solid fa-sliders"></i> ควรปรับ</span>`;
 
                         return `
-                            <div class="space-y-1.5 bg-zinc-950/60 p-2.5 rounded-xl border border-zinc-800/60">
+                            <div class="space-y-1.5 bg-stone-50 dark:bg-stone-800/60 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700/60">
                                 <div class="flex items-center justify-between text-xs">
                                     <div class="flex items-center gap-2">
                                         <i class="fa-solid ${c.icon} text-${c.color}-400"></i>
-                                        <span class="font-semibold text-zinc-200">${c.name}</span>
+                                        <span class="font-semibold text-stone-900 dark:text-stone-100">${c.name}</span>
                                     </div>
                                     <div class="flex items-center gap-3">
                                         ${statusBadge}
-                                        <span class="text-zinc-400 text-[11px]">จริง: <b class="text-white">${c.actual_pct}%</b> (${c.count} โพสต์)</span>
+                                        <span class="text-stone-600 dark:text-stone-400 text-[11px]">จริง: <b class="text-stone-900 dark:text-white">${c.actual_pct}%</b> (${c.count} โพสต์)</span>
                                         <span class="text-zinc-500 text-[11px]">| เป้าหมาย: ${c.target_pct}%</span>
                                     </div>
                                 </div>
-                                <div class="w-full bg-zinc-800 rounded-full h-2 overflow-hidden flex">
+                                <div class="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-2 overflow-hidden flex">
                                     <div class="h-2 rounded-full transition-all" style="width: ${c.actual_pct}%; background-color: ${c.hex};"></div>
                                 </div>
                             </div>
@@ -5499,10 +5491,10 @@
                 const recContainer = document.getElementById('strategy-recommendations-list');
                 if (recContainer && data.recommendations) {
                     recContainer.innerHTML = data.recommendations.map(r => {
-                        let borderColor = "border-purple-500/30 bg-purple-950/20 text-purple-300";
-                        if (r.type === 'warning') borderColor = "border-amber-500/30 bg-amber-950/20 text-amber-300";
-                        if (r.type === 'success') borderColor = "border-emerald-500/30 bg-emerald-950/20 text-emerald-300";
-                        if (r.type === 'golden_hour') borderColor = "border-orange-500/30 bg-orange-950/20 text-orange-300";
+                        let borderColor = "border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/40 text-purple-900 dark:text-purple-200";
+                        if (r.type === 'warning') borderColor = "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200";
+                        if (r.type === 'success') borderColor = "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200";
+                        if (r.type === 'golden_hour') borderColor = "border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/40 text-orange-900 dark:text-orange-200";
 
                         return `
                             <div class="border ${borderColor} rounded-xl p-3 space-y-1">
@@ -5510,7 +5502,7 @@
                                     <i class="fa-solid ${r.icon}"></i>
                                     <span>${r.title}</span>
                                 </div>
-                                <p class="text-[11px] text-zinc-400 leading-relaxed">${r.message}</p>
+                                <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">${r.message}</p>
                             </div>
                         `;
                     }).join('');
@@ -7243,7 +7235,7 @@
             <span class="text-[10px]">ตั้งเวลา</span>
         </button>
         <!-- Center Floating Action Button -->
-        <button onclick="triggerFetch()" class="relative -top-2.5 w-11 h-11 rounded-full bg-gradient-to-tr from-lfc-red to-rose-600 text-white flex items-center justify-center shadow-lg shadow-lfc-red/50 hover:scale-105 active:scale-95 transition" title="ดึงข่าวทันที">
+        <button onclick="triggerFetch()" class="relative -top-2.5 w-11 h-11 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition" title="ดึงข่าวทันที">
             <i class="fa-solid fa-bolt text-lg"></i>
         </button>
         <button onclick="switchTab('tab-affiliate')" id="mob-nav-tab-affiliate" class="mob-nav-btn flex flex-col items-center justify-center py-1 px-2 text-zinc-400 transition">
