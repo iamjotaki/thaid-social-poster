@@ -122,8 +122,37 @@ def add_log(message: str, level: str = "info"):
         system_logs.pop()
     print(f"[{timestamp}] {message}")
 
+import hmac
+import hashlib
+import base64
+
+SSO_SECRET = b"thaid-super-sso-secret-prod-2026-secure"
+
+def base64url_decode(s: str) -> str:
+    s += '=' * ((4 - len(s) % 4) % 4)
+    return base64.urlsafe_b64decode(s.encode('utf-8')).decode('utf-8')
+
+def verify_sso_token(token: str, secret: bytes = SSO_SECRET) -> dict | None:
+    if not token or not isinstance(token, str):
+        return None
+    parts = token.split('.')
+    if len(parts) != 3:
+        return None
+    header, payload, signature = parts
+    data = f"{header}.{payload}".encode('utf-8')
+    expected = base64.urlsafe_b64encode(hmac.new(secret, data, hashlib.sha256).digest()).decode('utf-8').rstrip('=')
+    if not hmac.compare_digest(signature, expected):
+        return None
+    try:
+        decoded = json.loads(base64url_decode(payload))
+        if decoded.get('exp') and decoded['exp'] < int(time.time()):
+            return None
+        return decoded
+    except Exception:
+        return None
+
 def get_current_user():
-    """ดึงข้อมูลผู้ใช้ปัจจุบันจาก Session หรือ Impersonation"""
+    """ดึงข้อมูลผู้ใช้ปัจจุบันจาก Session, Impersonation, หรือ Central SSO Wildcard Cookie (.thaid.online)"""
     if "impersonate_user_id" in session:
         u = get_user_by_id(session["impersonate_user_id"])
         if u:
@@ -134,6 +163,27 @@ def get_current_user():
         if u:
             u["is_impersonating"] = False
             return u
+
+    # Check Central SSO Wildcard Cookie (.thaid.online)
+    sso_cookie = request.cookies.get("thaid_session")
+    if sso_cookie:
+        sso_data = verify_sso_token(sso_cookie)
+        if sso_data and sso_data.get("email"):
+            email = sso_data["email"].strip().lower()
+            u = get_user_by_email(email)
+            if not u:
+                u = create_or_update_google_user(
+                    email=email,
+                    name=sso_data.get("name") or email.split("@")[0],
+                    avatar_url=sso_data.get("avatar") or "",
+                    role=sso_data.get("role") or "member",
+                    plan_name=sso_data.get("plan") or "Free Trial"
+                )
+            if u:
+                session["user_id"] = u["id"]
+                u["is_impersonating"] = False
+                return u
+
     return None
 
 # -------------------------------------------------------------
