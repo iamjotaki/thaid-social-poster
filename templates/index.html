@@ -6734,8 +6734,29 @@
                 if (chev) chev.classList.remove('rotate-180');
             }
         }
-        function toggleUserDropdown(e) { toggleThaiDProfileMenu(e); }
 
+        function toggleUserControlDropdown(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('user-control-dropdown');
+            const chev = document.getElementById('user-control-chevron');
+            if (!dropdown) return;
+            const isHidden = dropdown.classList.contains('hidden');
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                if (chev) chev.classList.add('rotate-180');
+            } else {
+                dropdown.classList.add('hidden');
+                if (chev) chev.classList.remove('rotate-180');
+            }
+        }
+        function toggleUserDropdown(e) { toggleUserControlDropdown(e); }
+
+        function getInitialAvatar(name) {
+            const initial = (name || 'J').trim().charAt(0).toUpperCase();
+            return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="%23004bb5"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="central" fill="%23ffffff" font-size="28" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-weight="700">${initial}</text></svg>`;
+        }
+
+        // Standard ThaiD Ecosystem Profile Menu (Identical to Clip AI, Novel Studio, etc.)
         function renderThaiDProfileMenu(user) {
             const container = document.getElementById('thaidProfileMenuContent');
             if (!container) return;
@@ -6749,20 +6770,25 @@
             } else if (subs.length > 0) {
                 statusBadgeHtml = `<span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 font-bold text-[10px] border border-emerald-200/50">Active (${subs.length} แอป)</span>`;
             } else {
-                const planName = user.plan_name || 'Free Trial';
-                statusBadgeHtml = `<span class="px-2 py-0.5 rounded-full bg-stone-200/80 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-bold text-[10px]">${planName}</span>`;
+                statusBadgeHtml = '<span class="px-2 py-0.5 rounded-full bg-stone-200/80 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-bold text-[10px]">Free Member (ยังไม่มีแพ็กเกจ)</span>';
             }
 
-            let adminLinks = '';
+            const allApps = [
+                { slug: 'novel', name: 'Novel Studio', url: 'https://novel.thaid.online' },
+                { slug: 'social', name: 'Social Poster', url: 'https://social.thaid.online/dashboard' },
+                { slug: 'vault', name: 'Vault Storage', url: 'https://vault.thaid.online' },
+                { slug: 'sticker', name: 'Sticker Studio', url: 'https://sticker.thaid.online' },
+                { slug: 'clip', name: 'Clip AI Shorts', url: 'https://clip.thaid.online' },
+                { slug: 'chat', name: 'Smart Chat AI', url: 'https://chat.thaid.online' },
+                { slug: 'mockup', name: 'Mockup Studio', url: 'https://mockup.thaid.online' },
+            ];
+
+            let adminLinkHtml = '';
             if (isSuperAdmin) {
-                adminLinks = `
-                    <a href="/admin" class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-purple-600 dark:text-purple-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl font-bold transition">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>หลังบ้าน Admin (Social Poster)</span>
-                    </a>
-                    <a href="https://thaid.online/admin" target="_blank" class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-semibold text-xs transition border border-purple-200/60 dark:border-purple-800/60">
+                adminLinkHtml = `
+                    <a href="https://thaid.online/admin" target="_blank" class="flex items-center justify-between px-2.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/40 text-purple-900 dark:text-purple-200 font-semibold text-xs transition-colors border border-purple-200/60 mb-2">
                         <span class="flex items-center gap-1.5">
-                            <span>⚙️</span>
+                            <span class="text-stone-500">⚙️</span>
                             <span>ศูนย์กลางแอดมิน (Central Admin)</span>
                         </span>
                         <span class="text-[10px] text-purple-600">→</span>
@@ -6770,19 +6796,57 @@
                 `;
             }
 
+            let appsHtml = '';
+            if (isSuperAdmin) {
+                appsHtml = allApps.map(app => `
+                    <a href="${app.url}" class="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-200 text-xs transition-colors">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span>${app.name}</span>
+                        </span>
+                        <span class="text-[10px] text-stone-400">→</span>
+                    </a>
+                `).join('');
+            } else if (subs.length > 0) {
+                const activeApps = allApps.filter(app => subs.includes(app.slug));
+                appsHtml = activeApps.map(app => `
+                    <a href="${app.url}" class="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-200 text-xs transition-colors">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span>${app.name}</span>
+                        </span>
+                        <span class="text-[10px] text-stone-400">→</span>
+                    </a>
+                `).join('');
+            } else {
+                appsHtml = `
+                    <div class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 text-left space-y-1.5">
+                        <div class="text-[11px] font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1">
+                            <span>⚠️</span>
+                            <span>ยังไม่มีบริการที่สมัครสมาชิก</span>
+                        </div>
+                        <p class="text-[10px] text-amber-700 dark:text-amber-300 leading-snug">
+                            กรุณาสมัครสมาชิกรายเดือน/รายปี หรือซื้อเครดิต เพื่อเข้าใช้งานแอปที่คุณต้องการ
+                        </p>
+                        <a href="https://thaid.online#pricing" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#0569ff] hover:underline">
+                            ดูแพ็กเกจและราคา →
+                        </a>
+                    </div>
+                `;
+            }
+
             container.innerHTML = `
-                <div class="mb-2 px-1">
+                <div class="flex items-center justify-between px-2 py-1.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-black/[0.04] dark:border-white/[0.04] mb-2">
+                    <span class="text-stone-500 dark:text-stone-400 font-medium">สถานะ:</span>
                     ${statusBadgeHtml}
                 </div>
-                ${adminLinks}
-                <button onclick="toggleThaiDProfileMenu(); switchTab('tab-apikeys');" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-amber-600 dark:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition text-left font-semibold">
-                    <i class="fa-solid fa-key"></i>
-                    <span>จัดการ API Keys ของฉัน</span>
-                </button>
-                <a href="https://thaid.online" target="_blank" class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition text-left">
-                    <i class="fa-solid fa-cubes text-blue-500"></i>
-                    <span>ศูนย์รวมบริการ ThaiD SaaS</span>
-                </a>
+                ${adminLinkHtml}
+                <div class="space-y-1">
+                    <div class="px-1 text-[10px] uppercase font-bold text-stone-400 tracking-wider">
+                        บริการที่คุณสมัครใช้งานแล้ว
+                    </div>
+                    ${appsHtml}
+                </div>
             `;
         }
 
@@ -6811,7 +6875,6 @@
                 if (user && (user.email || user.name)) {
                     currentUser = user;
 
-                    // Show / Hide Admin Portal Button in control bar
                     const isSuperAdmin = currentUser.role === 'admin' || currentUser.role === 'superadmin' || currentUser.email === 'iamjotaki@gmail.com';
                     if (adminBtn) {
                         if (isSuperAdmin) adminBtn.classList.remove('hidden');
@@ -6829,7 +6892,7 @@
                         }
                     }
 
-                    // 1. Top Navbar: Update Profile Pill
+                    // 1. Top Navbar: Update Standard Profile Pill (Initial Avatar, No cartoon)
                     if (loginBtn) loginBtn.classList.add('hidden');
                     if (profWrap) {
                         profWrap.classList.remove('hidden');
@@ -6838,8 +6901,11 @@
                         const avL = document.getElementById('thaidUserAvatarLarge');
                         const nmL = document.getElementById('thaidUserNameLarge');
                         const emL = document.getElementById('thaidUserEmailLarge');
-                        const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name || currentUser.id || 'User')}`;
-                        const userAvatar = currentUser.avatar_url || currentUser.avatar || defaultAvatar;
+
+                        let userAvatar = currentUser.avatar_url || currentUser.avatar || '';
+                        if (!userAvatar || userAvatar.includes('dicebear.com') || userAvatar.includes('api.dicebear')) {
+                            userAvatar = getInitialAvatar(currentUser.name || 'Jotaki');
+                        }
 
                         if (av) av.src = userAvatar;
                         if (nm) nm.textContent = currentUser.name ? (currentUser.name.length > 12 ? currentUser.name.substring(0, 12) + '...' : currentUser.name) : 'User';
@@ -6850,13 +6916,32 @@
                         renderThaiDProfileMenu(currentUser);
                     }
 
-                    // 2. Control Bar (#auth-container): Keep Credits at Original Place
+                    // 2. Control Bar (#auth-container): Keep Credits + Unrelated Social Poster Menus here!
                     if (container) {
                         const credits = currentUser.video_credits !== undefined ? Number(currentUser.video_credits) : 0;
                         container.innerHTML = `
-                            <div id="user-credits-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200/80 dark:border-stone-700 shadow-2xs font-bold text-xs text-rose-500">
-                                <span>🎬</span>
-                                <span>${credits.toLocaleString()} เครดิต</span>
+                            <div class="relative">
+                                <button id="btn-user-control" onclick="toggleUserControlDropdown(event)" class="flex items-center gap-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 border border-stone-200/80 dark:border-stone-700 rounded-full px-3.5 py-1.5 transition text-left cursor-pointer select-none shadow-2xs">
+                                    <span class="text-xs font-bold text-rose-500 flex items-center gap-1.5">
+                                        <span>🎬</span>
+                                        <span>${credits.toLocaleString()} เครดิต</span>
+                                    </span>
+                                    <i id="user-control-chevron" class="fa-solid fa-chevron-down text-[10px] text-stone-400 transition-transform duration-200"></i>
+                                </button>
+
+                                <!-- Social Poster Local Menu Dropdown -->
+                                <div id="user-control-dropdown" class="hidden absolute right-0 top-full mt-2 w-60 bg-white dark:bg-stone-900 border border-black/[0.08] dark:border-white/10 rounded-2xl p-2 shadow-2xl z-[100] space-y-1 text-left">
+                                    <div class="px-3 py-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider border-b border-black/[0.05] dark:border-white/[0.05] mb-1">
+                                        เมนูจัดการ Social Poster
+                                    </div>
+                                    ${(currentUser.role === 'admin' || isSuperAdmin) ? `
+                                    <a href="/admin" class="flex items-center gap-2 px-3 py-2 text-xs text-purple-600 dark:text-purple-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl font-bold transition">
+                                        <i class="fa-solid fa-shield-halved"></i> หลังบ้าน Admin (Social Poster)
+                                    </a>` : ''}
+                                    <button onclick="toggleUserControlDropdown(); switchTab('tab-apikeys');" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-amber-600 dark:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition text-left font-semibold cursor-pointer">
+                                        <i class="fa-solid fa-key"></i> จัดการ API Keys ของฉัน
+                                    </button>
+                                </div>
                             </div>
                         `;
                     }
@@ -6874,6 +6959,7 @@
 
         // Outside Click Listener to close Menus
         document.addEventListener('click', (e) => {
+            // Top profile menu
             const menu = document.getElementById('thaidProfileMenu');
             const btn = document.getElementById('thaidProfileBtn');
             if (menu && !menu.classList.contains('hidden')) {
@@ -6883,6 +6969,7 @@
                     if (chev) chev.classList.remove('rotate-180');
                 }
             }
+            // SaaS selector menu
             const saasMenu = document.getElementById('thaidSaasMenu');
             const saasBtn = document.getElementById('thaidSaasBtn');
             if (saasMenu && !saasMenu.classList.contains('hidden')) {
@@ -6890,6 +6977,16 @@
                     saasMenu.classList.add('hidden');
                     const saasChev = document.getElementById('thaidSaasChevron');
                     if (saasChev) saasChev.classList.remove('rotate-180');
+                }
+            }
+            // Control bar credits dropdown
+            const ctrlMenu = document.getElementById('user-control-dropdown');
+            const ctrlBtn = document.getElementById('btn-user-control');
+            if (ctrlMenu && !ctrlMenu.classList.contains('hidden')) {
+                if (!ctrlMenu.contains(e.target) && (!ctrlBtn || !ctrlBtn.contains(e.target))) {
+                    ctrlMenu.classList.add('hidden');
+                    const ctrlChev = document.getElementById('user-control-chevron');
+                    if (ctrlChev) ctrlChev.classList.remove('rotate-180');
                 }
             }
         });
