@@ -190,6 +190,45 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Far Right Login Pill (Guest) -->
+                <button id="thaidLoginBtn" type="button" onclick="openThaiDAuthModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#171717] hover:bg-black text-white text-xs font-semibold shadow-2xs transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                    </svg>
+                    <span>เข้าสู่ระบบ</span>
+                </button>
+
+                <!-- Far Right Profile Pill (Logged-in) -->
+                <div id="thaidProfileWrap" class="hidden relative">
+                    <button id="thaidProfileBtn" type="button" onclick="toggleThaiDProfileMenu(event)" class="flex items-center gap-1.5 p-1 pl-1 pr-2.5 rounded-full border border-black/[0.08] dark:border-white/10 hover:border-[#0569ff] transition-all bg-white dark:bg-stone-800 shadow-2xs cursor-pointer group">
+                        <img id="thaidUserAvatar" src="" alt="User" class="w-6 h-6 rounded-full object-cover bg-stone-100 ring-1 ring-black/[0.06]" />
+                        <span id="thaidUserName" class="text-xs font-semibold text-[#2b313b] dark:text-stone-200 hidden md:inline max-w-[80px] truncate"></span>
+                        <svg id="thaidProfileChevron" width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" class="text-stone-400 group-hover:text-[#171717] dark:group-hover:text-white transition-transform duration-200">
+                            <path d="m4.5 6 3.5 3.5L11.5 6" />
+                        </svg>
+                    </button>
+
+                    <!-- Profile Dropdown -->
+                    <div id="thaidProfileMenu" class="hidden absolute right-0 top-full mt-2 w-64 bg-white/95 dark:bg-stone-900/95 backdrop-blur-2xl border border-black/[0.08] dark:border-white/10 rounded-2xl shadow-2xl p-3 z-50 text-left">
+                        <div class="flex items-center gap-2.5 pb-2.5 border-b border-black/[0.06] dark:border-white/[0.06]">
+                            <img id="thaidUserAvatarLarge" src="" alt="User" class="w-10 h-10 rounded-full object-cover bg-stone-100 dark:bg-stone-800 ring-1 ring-black/[0.08]" />
+                            <div class="flex-1 min-w-0">
+                                <div id="thaidUserNameLarge" class="text-xs font-bold text-[#171717] dark:text-stone-100 truncate"></div>
+                                <div id="thaidUserEmailLarge" class="text-[10px] text-stone-400 truncate"></div>
+                            </div>
+                        </div>
+                        <div id="thaidProfileMenuContent" class="py-2 text-[11px] space-y-1">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <button type="button" onclick="logoutAuth()" class="w-full mt-1 pt-2 border-t border-black/[0.06] dark:border-white/[0.06] text-left text-xs font-semibold text-rose-600 hover:text-rose-700 flex items-center justify-between px-2 py-1 rounded-lg hover:bg-rose-50/50 dark:hover:bg-rose-950/30 cursor-pointer transition-colors">
+                            <span>ออกจากระบบ</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -6681,154 +6720,201 @@
         // AUTH & USER STATE
         let currentUser = null;
 
+        function toggleThaiDProfileMenu(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('thaidProfileMenu');
+            const chev = document.getElementById('thaidProfileChevron');
+            if (!menu) return;
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chev) chev.classList.add('rotate-180');
+            } else {
+                menu.classList.add('hidden');
+                if (chev) chev.classList.remove('rotate-180');
+            }
+        }
+        function toggleUserDropdown(e) { toggleThaiDProfileMenu(e); }
+
+        function renderThaiDProfileMenu(user) {
+            const container = document.getElementById('thaidProfileMenuContent');
+            if (!container) return;
+
+            const isSuperAdmin = user.role === 'admin' || user.role === 'superadmin' || user.email === 'iamjotaki@gmail.com';
+            const subs = user.subscriptions || [];
+
+            let statusBadgeHtml = '';
+            if (isSuperAdmin) {
+                statusBadgeHtml = '<span class="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 font-bold text-[10px] border border-purple-200/50">👑 Super Admin (All Access)</span>';
+            } else if (subs.length > 0) {
+                statusBadgeHtml = `<span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 font-bold text-[10px] border border-emerald-200/50">Active (${subs.length} แอป)</span>`;
+            } else {
+                const planName = user.plan_name || 'Free Trial';
+                statusBadgeHtml = `<span class="px-2 py-0.5 rounded-full bg-stone-200/80 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-bold text-[10px]">${planName}</span>`;
+            }
+
+            let adminLinks = '';
+            if (isSuperAdmin) {
+                adminLinks = `
+                    <a href="/admin" class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-purple-600 dark:text-purple-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl font-bold transition">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>หลังบ้าน Admin (Social Poster)</span>
+                    </a>
+                    <a href="https://thaid.online/admin" target="_blank" class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-semibold text-xs transition border border-purple-200/60 dark:border-purple-800/60">
+                        <span class="flex items-center gap-1.5">
+                            <span>⚙️</span>
+                            <span>ศูนย์กลางแอดมิน (Central Admin)</span>
+                        </span>
+                        <span class="text-[10px] text-purple-600">→</span>
+                    </a>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="mb-2 px-1">
+                    ${statusBadgeHtml}
+                </div>
+                ${adminLinks}
+                <button onclick="toggleThaiDProfileMenu(); switchTab('tab-apikeys');" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-amber-600 dark:text-amber-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition text-left font-semibold">
+                    <i class="fa-solid fa-key"></i>
+                    <span>จัดการ API Keys ของฉัน</span>
+                </button>
+                <a href="https://thaid.online" target="_blank" class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition text-left">
+                    <i class="fa-solid fa-cubes text-blue-500"></i>
+                    <span>ศูนย์รวมบริการ ThaiD SaaS</span>
+                </a>
+            `;
+        }
+
         async function loadAuthUser() {
             try {
+                let user = null;
                 const res = await fetch('/api/auth/me');
                 const data = await res.json();
+                if (data.logged_in && data.user) {
+                    user = data.user;
+                }
+
+                if (!user) {
+                    const raw = localStorage.getItem('thaid_user');
+                    if (raw) {
+                        try { user = JSON.parse(raw); } catch (e) {}
+                    }
+                }
+
                 const container = document.getElementById('auth-container');
+                const loginBtn = document.getElementById('thaidLoginBtn');
+                const profWrap = document.getElementById('thaidProfileWrap');
                 const adminBtn = document.getElementById('btn-admin-portal');
                 const banner = document.getElementById('impersonate-banner');
 
-                if (data.logged_in && data.user) {
-                    currentUser = data.user;
+                if (user && (user.email || user.name)) {
+                    currentUser = user;
 
-                    // Show / Hide Admin Portal Button
-                    if (currentUser.role === 'admin') {
-                        adminBtn.classList.remove('hidden');
-                    } else {
-                        adminBtn.classList.add('hidden');
+                    // Show / Hide Admin Portal Button in control bar
+                    const isSuperAdmin = currentUser.role === 'admin' || currentUser.role === 'superadmin' || currentUser.email === 'iamjotaki@gmail.com';
+                    if (adminBtn) {
+                        if (isSuperAdmin) adminBtn.classList.remove('hidden');
+                        else adminBtn.classList.add('hidden');
                     }
 
                     // Impersonation Banner
-                    if (data.is_impersonating) {
-                        banner.classList.remove('hidden');
-                        document.getElementById('impersonate-user-name').innerText = currentUser.name;
-                        document.getElementById('impersonate-user-email').innerText = currentUser.email;
-                    } else {
-                        banner.classList.add('hidden');
+                    if (banner) {
+                        if (data && data.is_impersonating) {
+                            banner.classList.remove('hidden');
+                            document.getElementById('impersonate-user-name').innerText = currentUser.name;
+                            document.getElementById('impersonate-user-email').innerText = currentUser.email;
+                        } else {
+                            banner.classList.add('hidden');
+                        }
                     }
 
-                    let planBadge = `<span class="bg-zinc-800 text-zinc-400 px-1.5 py-0.2 rounded-full text-[9px] font-semibold">${currentUser.plan_name || 'Free'}</span>`;
-                    if (currentUser.plan_name === 'Pro') {
-                        planBadge = `<span class="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Pro</span>`;
-                    } else if (currentUser.plan_name === 'VIP Agency') {
-                        planBadge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.2 rounded-full text-[9px] font-bold">VIP</span>`;
+                    // 1. Top Navbar: Update Profile Pill
+                    if (loginBtn) loginBtn.classList.add('hidden');
+                    if (profWrap) {
+                        profWrap.classList.remove('hidden');
+                        const av = document.getElementById('thaidUserAvatar');
+                        const nm = document.getElementById('thaidUserName');
+                        const avL = document.getElementById('thaidUserAvatarLarge');
+                        const nmL = document.getElementById('thaidUserNameLarge');
+                        const emL = document.getElementById('thaidUserEmailLarge');
+                        const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name || currentUser.id || 'User')}`;
+                        const userAvatar = currentUser.avatar_url || currentUser.avatar || defaultAvatar;
+
+                        if (av) av.src = userAvatar;
+                        if (nm) nm.textContent = currentUser.name ? (currentUser.name.length > 12 ? currentUser.name.substring(0, 12) + '...' : currentUser.name) : 'User';
+                        if (avL) avL.src = userAvatar;
+                        if (nmL) nmL.textContent = currentUser.name || 'User';
+                        if (emL) emL.textContent = currentUser.email || '';
+
+                        renderThaiDProfileMenu(currentUser);
                     }
 
-                    container.innerHTML = `
-                        <div class="relative">
-                            <button id="btn-user-profile" onclick="toggleUserDropdown(event)" class="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 rounded-xl px-2.5 py-1.5 transition text-left cursor-pointer select-none">
-                                <img src="${currentUser.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + currentUser.id}" class="w-6 h-6 rounded-full bg-zinc-700 shrink-0">
-                                <div class="hidden sm:block leading-none">
-                                    <div class="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
-                                        <span>${currentUser.name.length > 14 ? currentUser.name.substring(0, 14) + '...' : currentUser.name}</span>
-                                        ${planBadge}
-                                    </div>
-                                    <div class="text-[10px] text-rose-400 font-semibold mt-0.5">🎬 ${currentUser.video_credits} เครดิต</div>
-                                </div>
-                                <i class="fa-solid fa-chevron-down text-[10px] text-zinc-400 ml-1"></i>
-                            </button>
-
-                            <!-- Dropdown Menu (Click to Toggle) -->
-                            <div id="user-profile-dropdown" class="hidden absolute right-0 top-full mt-2 w-56 bg-zinc-900 border border-zinc-700/80 rounded-2xl p-2 shadow-2xl z-50 space-y-1">
-                                <div class="px-3 py-2 border-b border-zinc-800">
-                                    <div class="text-xs font-bold text-zinc-200">${currentUser.name}</div>
-                                    <div class="text-[11px] text-zinc-400 truncate">${currentUser.email}</div>
-                                </div>
-                                ${currentUser.role === 'admin' ? `
-                                <a href="/admin" class="flex items-center gap-2 px-3 py-2 text-xs text-purple-400 hover:bg-zinc-800 rounded-xl font-bold transition">
-                                    <i class="fa-solid fa-shield-halved"></i> หลังบ้าน Admin
-                                </a>` : ''}
-                                <button onclick="toggleUserDropdown(); switchTab('tab-apikeys');" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-yellow-400 hover:bg-zinc-800 rounded-xl transition text-left font-semibold">
-                                    <i class="fa-solid fa-key"></i> จัดการ API Keys ของฉัน
-                                </button>
-                                <button onclick="toggleUserDropdown(); openGoogleLoginModal();" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 rounded-xl transition text-left">
-                                    <i class="fa-solid fa-arrows-rotate text-blue-400"></i> สลับบัญชี Google
-                                </button>
-                                <button onclick="logoutAuth()" class="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 rounded-xl transition text-left font-semibold">
-                                    <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
-                                </button>
+                    // 2. Control Bar (#auth-container): Keep Credits at Original Place
+                    if (container) {
+                        const credits = currentUser.video_credits !== undefined ? Number(currentUser.video_credits) : 0;
+                        container.innerHTML = `
+                            <div id="user-credits-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200/80 dark:border-stone-700 shadow-2xs font-bold text-xs text-rose-500">
+                                <span>🎬</span>
+                                <span>${credits.toLocaleString()} เครดิต</span>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    }
                 } else {
-                    adminBtn.classList.add('hidden');
-                    banner.classList.add('hidden');
-                    container.innerHTML = `
-                        <button onclick="openGoogleLoginModal()" class="bg-white hover:bg-zinc-100 text-zinc-900 font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-2 shadow-lg shadow-white/5">
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24">
-                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                            </svg>
-                            <span>เข้าสู่ระบบ Google</span>
-                        </button>
-                    `;
+                    if (adminBtn) adminBtn.classList.add('hidden');
+                    if (banner) banner.classList.add('hidden');
+                    if (loginBtn) loginBtn.classList.remove('hidden');
+                    if (profWrap) profWrap.classList.add('hidden');
+                    if (container) container.innerHTML = '';
                 }
             } catch (err) {
                 console.error("Error loading auth status:", err);
             }
         }
 
-        function toggleUserDropdown(e) {
-            if (e) e.stopPropagation();
-            const dropdown = document.getElementById('user-profile-dropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('hidden');
-            }
-        }
-
-        // ปิดเมนูโปรไฟล์เมื่อคลิกที่อื่นบนหน้าจอ
+        // Outside Click Listener to close Menus
         document.addEventListener('click', (e) => {
-            const dropdown = document.getElementById('user-profile-dropdown');
-            const btn = document.getElementById('btn-user-profile');
-            if (dropdown && !dropdown.classList.contains('hidden')) {
-                if (!dropdown.contains(e.target) && (!btn || !btn.contains(e.target))) {
-                    dropdown.classList.add('hidden');
+            const menu = document.getElementById('thaidProfileMenu');
+            const btn = document.getElementById('thaidProfileBtn');
+            if (menu && !menu.classList.contains('hidden')) {
+                if (!menu.contains(e.target) && (!btn || !btn.contains(e.target))) {
+                    menu.classList.add('hidden');
+                    const chev = document.getElementById('thaidProfileChevron');
+                    if (chev) chev.classList.remove('rotate-180');
+                }
+            }
+            const saasMenu = document.getElementById('thaidSaasMenu');
+            const saasBtn = document.getElementById('thaidSaasBtn');
+            if (saasMenu && !saasMenu.classList.contains('hidden')) {
+                if (!saasMenu.contains(e.target) && (!saasBtn || !saasBtn.contains(e.target))) {
+                    saasMenu.classList.add('hidden');
+                    const saasChev = document.getElementById('thaidSaasChevron');
+                    if (saasChev) saasChev.classList.remove('rotate-180');
                 }
             }
         });
 
-        function openGoogleLoginModal() {
-            document.getElementById('modal-google-login').classList.remove('hidden');
+        function openThaiDAuthModal() {
+            const modal = document.getElementById('thaidAuthModal');
+            if (modal) modal.classList.remove('hidden');
         }
 
-        function closeGoogleLoginModal() {
-            document.getElementById('modal-google-login').classList.add('hidden');
+        function closeThaiDAuthModal() {
+            const modal = document.getElementById('thaidAuthModal');
+            if (modal) modal.classList.add('hidden');
         }
 
-        async function quickLogin(email, name, role, plan_name, avatar_url) {
-            try {
-                const res = await fetch('/api/auth/google/mock_login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, name, role, plan_name, avatar_url })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showToast(`เข้าสู่ระบบสำเร็จ: ${name}`);
-                    closeGoogleLoginModal();
-                    await loadAuthUser();
-                    await loadPages();
-                }
-            } catch (e) {
-                showToast("เข้าสู่ระบบไม่สำเร็จ", false);
-            }
-        }
-
-        async function customGoogleLogin() {
-            const email = document.getElementById('custom-google-email').value.trim();
-            if (!email) {
-                alert('กรุณากรอกอีเมล Google');
-                return;
-            }
-            const name = email.split('@')[0];
-            await quickLogin(email, name, 'member', 'Free Trial', `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`);
-        }
+        function openGoogleLoginModal() { openThaiDAuthModal(); }
+        function closeGoogleLoginModal() { closeThaiDAuthModal(); }
 
         async function logoutAuth() {
-            await fetch('/api/auth/logout', { method: 'POST' });
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch (e) {}
+            localStorage.removeItem('thaid_user');
+            localStorage.removeItem('thaid_token');
+            document.cookie = 'thaid_session=; Path=/; Domain=.thaid.online; Max-Age=0;';
+            document.cookie = 'thaid_user=; Path=/; Domain=.thaid.online; Max-Age=0;';
             window.location.href = '/';
         }
 
@@ -7142,89 +7228,45 @@
         }
     </script>
 
-    <!-- GOOGLE LOGIN MOCKUP MODAL -->
-    <div id="modal-google-login" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-zinc-700 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
-            <button onclick="closeGoogleLoginModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <!-- THAID UNIFIED GOOGLE AUTH MODAL -->
+    <div id="thaidAuthModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-stone-900 rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-black/[0.08] dark:border-white/10 text-center space-y-5 relative">
+            <button onclick="closeThaiDAuthModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-900 dark:hover:text-white p-1 cursor-pointer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
 
-            <!-- Google Header -->
-            <div class="text-center space-y-2">
-                <div class="w-12 h-12 bg-white rounded-2xl mx-auto flex items-center justify-center shadow-lg">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24">
+            <div class="space-y-1 pt-2">
+                <div class="w-10 h-10 rounded-2xl bg-[#2b313b] text-white flex items-center justify-center mx-auto shadow-sm">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6.5H15M9.5 6.5V19" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 10.5C14 10.5 18 10.8 18 14.5C18 18.2 14 18.5 14 18.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 class="text-base font-bold text-[#171717] dark:text-stone-100">เข้าสู่ระบบหรือสมัครสมาชิก ThaiD</h3>
+                <p class="text-xs text-stone-500 dark:text-stone-400">เข้าถึงทุกบริการ SaaS ใน ThaiD Ecosystem ด้วยบัญชีเดียว</p>
+            </div>
+
+            <!-- Google Account OAuth Sign-In -->
+            <div class="pt-2">
+                <a
+                    href="https://thaid.online/api/auth/google" onclick="this.href='https://thaid.online/api/auth/google?from='+encodeURIComponent(window.location.href)"
+                    class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-2xl border border-black/[0.12] hover:border-black/[0.25] dark:border-white/10 dark:hover:border-white/20 bg-white hover:bg-stone-50 dark:bg-stone-800 dark:hover:bg-stone-700 text-[#1f1f1f] dark:text-stone-100 text-xs font-semibold shadow-xs transition-all cursor-pointer group"
+                >
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                     </svg>
-                </div>
-                <h3 class="text-base font-bold text-zinc-100">เข้าสู่ระบบด้วย Google Account</h3>
-                <p class="text-xs text-zinc-400">เลือกล็อกอินด้วยบัญชีจำลอง หรือระบุอีเมล Google ของคุณเพื่อทดสอบระบบ SaaS</p>
-            </div>
-
-            <!-- Quick Presets -->
-            <div class="space-y-2.5">
-                <div class="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">บัญชีจำลองพร้อมทดสอบ (One-Click Login):</div>
-
-                <!-- Admin Preset -->
-                <button onclick="quickLogin('admin@lfcautonews.com', 'Admin Boss (ผู้ดูแลระบบ)', 'admin', 'VIP Agency', 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss')" class="w-full bg-zinc-950 hover:bg-purple-950/40 border border-zinc-800 hover:border-purple-500/50 rounded-2xl p-3 flex items-center justify-between transition group text-left">
-                    <div class="flex items-center gap-3">
-                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=AdminBoss" class="w-9 h-9 rounded-full bg-zinc-800">
-                        <div>
-                            <div class="text-xs font-bold text-zinc-200 group-hover:text-purple-300 flex items-center gap-1.5">
-                                <span>Admin Boss</span>
-                                <span class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.2 rounded-full font-bold">Admin</span>
-                            </div>
-                            <div class="text-[11px] text-zinc-400">admin@lfcautonews.com · เข้าแดชบอร์ดหลังบ้านได้</div>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-xs text-zinc-600 group-hover:text-purple-400"></i>
-                </button>
-
-                <!-- Member Pro Preset -->
-                <button onclick="quickLogin('thekop@fanpage.com', 'The Kop Thailand (คุณกฤต)', 'member', 'Pro', 'https://api.dicebear.com/7.x/avataaars/svg?seed=TheKop')" class="w-full bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-2xl p-3 flex items-center justify-between transition group text-left">
-                    <div class="flex items-center gap-3">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=TheKop" class="w-9 h-9 rounded-full bg-zinc-800">
-                        <div>
-                            <div class="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
-                                <span>The Kop Thailand (คุณกฤต)</span>
-                                <span class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.2 rounded-full font-bold">Pro</span>
-                            </div>
-                            <div class="text-[11px] text-zinc-400">thekop@fanpage.com · สมาชิกทั่วไป มี 30 เครดิต</div>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-xs text-zinc-600 group-hover:text-zinc-300"></i>
-                </button>
-
-                <!-- Free Trial Preset -->
-                <button onclick="quickLogin('newbie@gmail.com', 'สมาชิกใหม่ บอลเต็ง', 'member', 'Free Trial', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Newbie')" class="w-full bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-2xl p-3 flex items-center justify-between transition group text-left">
-                    <div class="flex items-center gap-3">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Newbie" class="w-9 h-9 rounded-full bg-zinc-800">
-                        <div>
-                            <div class="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
-                                <span>สมาชิกใหม่ บอลเต็ง</span>
-                                <span class="text-[10px] bg-zinc-800 text-zinc-400 px-1.5 py-0.2 rounded-full font-bold">Free Trial</span>
-                            </div>
-                            <div class="text-[11px] text-zinc-400">newbie@gmail.com · เครดิตวิดีโอ 5 คลิป</div>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-xs text-zinc-600 group-hover:text-zinc-300"></i>
-                </button>
-            </div>
-
-            <!-- Custom Email Mockup Form -->
-            <div class="pt-3 border-t border-zinc-800 space-y-2">
-                <div class="text-[11px] font-semibold text-zinc-400">หรือระบุอีเมล Google ของคุณเอง:</div>
-                <div class="flex items-center gap-2">
-                    <input type="email" id="custom-google-email" placeholder="youremail@gmail.com" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-500">
-                    <button onclick="customGoogleLogin()" class="bg-white hover:bg-zinc-200 text-zinc-950 font-bold px-3 py-2 rounded-xl text-xs transition">
-                        เข้าสู่ระบบ
-                    </button>
-                </div>
+                    <span>ดำเนินการต่อด้วย Google Account</span>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- MOBILE BOTTOM NAVIGATION (Google Stitch Thumb-Zone Dock for <640px) -->
+<!-- MOBILE BOTTOM NAVIGATION (Google Stitch Thumb-Zone Dock for <640px) -->
     <div class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800/90 px-3 py-1 flex items-center justify-around shadow-2xl">
         <button onclick="switchTab('tab-news')" id="mob-nav-tab-news" class="mob-nav-btn flex flex-col items-center justify-center py-1 px-2 text-lfc-red font-bold transition">
             <i class="fa-solid fa-newspaper text-base mb-0.5"></i>
